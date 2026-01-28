@@ -1,0 +1,1877 @@
+@import "tailwindcss";
+
+/* Global font stack for consistent rendering */
+html,
+body {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+} */
+
+/* Popup animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom animations for mentorship banner */
+@keyframes circular-rotation {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes counter-rotation {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(147, 51, 234, 0.4);
+  }
+}
+
+.animate-circular-rotation {
+  animation: circular-rotation 4s linear infinite;
+}
+
+.animate-counter-rotation {
+  animation: counter-rotation 2s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Banner sliding animation */
+@keyframes slide-right-to-left {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-slide-right-to-left {
+  animation: slide-right-to-left 12s linear infinite;
+}
+
+/* 360-degree rotation for content */
+@keyframes rotate-360 {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotate-360 {
+  animation: rotate-360 8s linear infinite;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Rich text defaults (used for content coming from WYSIWYG editors) */
+.rich-text-content {
+  line-height: 1.6;
+  color: inherit;
+}
+
+/* Headings */
+.rich-text-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem 0;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.rich-text-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 1.25rem 0 0.875rem 0;
+  line-height: 1.3;
+  color: #1f2937;
+}
+
+.rich-text-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1rem 0 0.75rem 0;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.rich-text-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.875rem 0 0.625rem 0;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.rich-text-content h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0.75rem 0 0.5rem 0;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.rich-text-content h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.625rem 0 0.5rem 0;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+/* Paragraphs */
+.rich-text-content p {
+  margin: 0.75rem 0;
+  line-height: 1.6;
+}
+
+.rich-text-content p:first-child {
+  margin-top: 0;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.rich-text-content ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  /* 20px */
+  margin: 0.5rem 0;
+  /* 8px top/bottom */
+  line-height: 1.5;
+}
+
+.rich-text-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+  line-height: 1.6;
+}
+
+.rich-text-content ul ul {
+  list-style-type: circle;
+  margin: 0.5rem 0;
+}
+
+.rich-text-content ul ul ul {
+  list-style-type: square;
+}
+
+.rich-text-content ol ol {
+  list-style-type: lower-alpha;
+  margin: 0.5rem 0;
+}
+
+.rich-text-content ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.rich-text-content li {
+  margin: 0.375rem 0;
+  line-height: 1.6;
+}
+
+/* Text formatting */
+.rich-text-content strong,
+.rich-text-content b {
+  font-weight: 700;
+  color: inherit;
+}
+
+.rich-text-content em,
+.rich-text-content i {
+  font-style: italic;
+}
+
+.rich-text-content u {
+  text-decoration: underline;
+}
+
+.rich-text-content s,
+.rich-text-content strike {
+  text-decoration: line-through;
+}
+
+.rich-text-content sub {
+  vertical-align: sub;
+  font-size: 0.75em;
+}
+
+.rich-text-content sup {
+  vertical-align: super;
+  font-size: 0.75em;
+}
+
+/* Links */
+.rich-text-content a {
+  color: #2563eb;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.rich-text-content a:hover {
+  color: #1d4ed8;
+}
+
+/* Images */
+.rich-text-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+.rich-text-content figure {
+  margin: 1rem 0;
+}
+
+.rich-text-content figure img {
+  margin: 0;
+}
+
+/* Code blocks */
+.rich-text-content code {
+  background-color: #f3f4f6;
+  color: #dc2626;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.rich-text-content pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.rich-text-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Blockquotes */
+.rich-text-content blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Text alignment */
+.rich-text-content[style*="text-align: left"],
+.rich-text-content .ql-align-left {
+  text-align: left;
+}
+
+.rich-text-content[style*="text-align: center"],
+.rich-text-content .ql-align-center {
+  text-align: center;
+}
+
+.rich-text-content[style*="text-align: right"],
+.rich-text-content .ql-align-right {
+  text-align: right;
+}
+
+.rich-text-content[style*="text-align: justify"],
+.rich-text-content .ql-align-justify {
+  text-align: justify;
+}
+
+/* Table styles for rich text content - Enhanced with highlighted design */
+.rich-text-content table,
+.prose table,
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  border: 2px solid #3b82f6;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+}
+
+.rich-text-content table th,
+.prose table th,
+table th {
+  border: 1px solid #dbeafe;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  font-weight: 700;
+  text-align: left;
+  color: #ffffff;
+  font-size: 0.9375rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  border-bottom: 2px solid #1e40af;
+}
+
+.rich-text-content table td,
+.prose table td,
+table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.875rem 1.25rem;
+  color: #1f2937;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  transition: background-color 0.2s ease;
+}
+
+.rich-text-content table tr:nth-child(even),
+.prose table tr:nth-child(even),
+table tr:nth-child(even) {
+  background-color: #f0f9ff;
+}
+
+.rich-text-content table tr:nth-child(odd),
+.prose table tr:nth-child(odd),
+table tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.rich-text-content table tr:hover,
+.prose table tr:hover,
+table tr:hover {
+  background-color: #dbeafe !important;
+  transform: scale(1.001);
+  transition: all 0.2s ease;
+}
+
+.rich-text-content table tbody tr:first-child td {
+  border-top: 2px solid #3b82f6;
+}
+
+.rich-text-content table tbody tr:last-child td {
+  border-bottom: 2px solid #3b82f6;
+}
+
+/* Horizontal rules */
+.rich-text-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+/* Indentation */
+.rich-text-content .ql-indent-1 {
+  padding-left: 3rem;
+}
+
+.rich-text-content .ql-indent-2 {
+  padding-left: 6rem;
+}
+
+.rich-text-content .ql-indent-3 {
+  padding-left: 9rem;
+}
+
+.rich-text-content .ql-indent-4 {
+  padding-left: 12rem;
+}
+
+.rich-text-content .ql-indent-5 {
+  padding-left: 15rem;
+}
+
+.rich-text-content .ql-indent-6 {
+  padding-left: 18rem;
+}
+
+.rich-text-content .ql-indent-7 {
+  padding-left: 21rem;
+}
+
+.rich-text-content .ql-indent-8 {
+  padding-left: 24rem;
+}
+
+/* Quill-specific classes */
+.rich-text-content .ql-syntax {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.rich-text-content .ql-size-small {
+  font-size: 0.875rem;
+}
+
+.rich-text-content .ql-size-large {
+  font-size: 1.25rem;
+}
+
+.rich-text-content .ql-size-huge {
+  font-size: 1.5rem;
+}
+
+/* Ensure proper display for Quill-generated content */
+.rich-text-content .ql-editor {
+  padding: 0;
+}
+
+.rich-text-content .ql-container {
+  font-family: inherit;
+}
+
+/* Handle Quill video embeds */
+.rich-text-content iframe {
+  max-width: 100%;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+}
+
+/* Ensure proper spacing for nested elements */
+.rich-text-content > *:first-child {
+  margin-top: 0;
+}
+
+.rich-text-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Prose styling for HTML content */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.25;
+}
+
+.prose h1 {
+  font-size: 1.875rem;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose h4 {
+  font-size: 1.125rem;
+}
+
+.prose p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1em 0;
+  padding-left: 2em;
+  display: block;
+}
+
+.prose ul {
+  list-style-type: disc;
+  list-style-position: outside;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  list-style-position: outside;
+}
+
+.prose li {
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+  display: list-item;
+}
+
+.prose ul li {
+  list-style-type: disc;
+}
+
+.prose ol li {
+  list-style-type: decimal;
+}
+
+.prose ul ul {
+  list-style-type: circle;
+  padding-left: 2em;
+  margin: 0.25em 0;
+}
+
+.prose ul ul ul {
+  list-style-type: square;
+}
+
+.prose ol ol {
+  list-style-type: lower-alpha;
+  padding-left: 2em;
+  margin: 0.25em 0;
+}
+
+.prose ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #1d4ed8;
+}
+
+/* Dark mode prose */
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6 {
+  color: #f9fafb !important;
+}
+
+.prose-invert p {
+  color: #d1d5db !important;
+}
+
+.prose-invert a {
+  color: #60a5fa !important;
+}
+
+.prose-invert a:hover {
+  color: #93c5fd !important;
+}
+
+.prose-invert strong {
+  color: #f9fafb !important;
+}
+
+.prose-invert ul,
+.prose-invert ol {
+  color: #d1d5db !important;
+}
+
+.prose-invert li {
+  color: #d1d5db !important;
+}
+
+.prose-invert em {
+  color: #e5e7eb !important;
+}
+
+/* Force dark theme colors for HTML content */
+.prose-invert * {
+  color: inherit !important;
+}
+
+/* Allow background colors in HTML content */
+.prose * {
+  /* Don't force transparent backgrounds - allow HTML background colors */
+  background: inherit;
+}
+
+.prose-invert * {
+  /* Don't force transparent backgrounds - allow HTML background colors */
+  background: inherit;
+}
+
+/* Ensure proper text colors in dark mode while preserving backgrounds */
+.prose-invert p,
+.prose-invert li,
+.prose-invert span,
+.prose-invert div {
+  color: #d1d5db !important;
+  /* Remove background-color override to allow HTML backgrounds */
+}
+
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6 {
+  color: #f9fafb !important;
+  /* Remove background-color override to allow HTML backgrounds */
+}
+
+.prose-invert strong,
+.prose-invert b {
+  color: #f3f4f6 !important;
+  /* Remove background-color override to allow HTML backgrounds */
+}
+
+.prose-invert em,
+.prose-invert i {
+  color: #e5e7eb !important;
+  /* Remove background-color override to allow HTML backgrounds */
+}
+
+/* Remove any highlight or selection backgrounds */
+.prose-invert ::selection {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+.prose-invert ::-moz-selection {
+  background-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Rich Text Editor Styles */
+.rdw-editor-wrapper {
+  width: 100% !important;
+}
+
+.rdw-editor-main {
+  width: 100% !important;
+  min-height: 150px;
+}
+
+.rdw-editor-toolbar {
+  width: 100% !important;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 0;
+  padding: 8px;
+  flex-wrap: wrap;
+}
+
+.rdw-editor-toolbar .rdw-option-wrapper,
+.rdw-editor-toolbar .rdw-dropdown-wrapper {
+  margin: 2px;
+}
+
+.rdw-colorpicker-modal {
+  z-index: 1000;
+}
+
+.rdw-embedded-modal,
+.rdw-link-modal,
+.rdw-image-modal {
+  z-index: 1000;
+}
+
+/* Dark theme support for editor */
+.dark .rdw-editor-wrapper {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+.dark .rdw-editor-toolbar {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+.dark .rdw-editor-main {
+  background-color: #374151 !important;
+  color: white !important;
+}
+
+.dark .rdw-dropdown-selectedtext {
+  color: white !important;
+  background-color: #374151 !important;
+}
+
+.dark .rdw-dropdown-carettoopen,
+.dark .rdw-dropdown-carettoclose {
+  border-top-color: white !important;
+}
+
+.dark .rdw-dropdown-wrapper:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .rdw-option-wrapper:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .rdw-option-wrapper {
+  color: white !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .rdw-dropdown-wrapper {
+  color: white !important;
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .rdw-dropdown-optionwrapper {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+.dark .rdw-dropdown-optionwrapper:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .rdw-colorpicker-modal {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .rdw-colorpicker-option {
+  border-color: #4b5563 !important;
+}
+
+.dark .rdw-link-modal,
+.dark .rdw-embedded-modal,
+.dark .rdw-image-modal {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: white !important;
+}
+
+.dark .rdw-link-modal input,
+.dark .rdw-embedded-modal input,
+.dark .rdw-image-modal input {
+  background-color: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: white !important;
+}
+
+.dark .rdw-link-modal-btn,
+.dark .rdw-embedded-modal-btn,
+.dark .rdw-image-modal-btn {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.dark .rdw-link-modal-btn:hover,
+.dark .rdw-embedded-modal-btn:hover,
+.dark .rdw-image-modal-btn:hover {
+  background-color: #2563eb !important;
+}
+
+/* Ensure HTML content displays properly */
+.prose {
+  max-width: none;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.prose p {
+  margin-bottom: 1em;
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: 1em;
+  padding-left: 1.5em;
+}
+
+.prose blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+}
+
+/* Allow background colors for rich text content */
+.prose * {
+  /* Don't override background colors - let HTML backgrounds show */
+  background: inherit;
+}
+
+.dark .prose {
+  color: #e5e7eb;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: #f9fafb;
+}
+
+.dark .prose blockquote {
+  border-left-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark .prose strong {
+  color: #f9fafb;
+}
+
+.dark .prose code {
+  color: #fbbf24;
+  background-color: #374151 !important;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+/* Additional dark theme fixes for rich text editor */
+.dark .rdw-editor-main .DraftEditor-root {
+  color: white !important;
+}
+
+.dark .rdw-editor-main .public-DraftEditorPlaceholder-root {
+  color: #9ca3af !important;
+}
+
+.dark .rdw-editor-main .public-DraftEditor-content {
+  color: white !important;
+}
+
+.dark .rdw-fontsize-dropdown,
+.dark .rdw-fontfamily-dropdown,
+.dark .rdw-blocktype-dropdown {
+  background-color: #374151 !important;
+  color: white !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .rdw-fontsize-dropdown:hover,
+.dark .rdw-fontfamily-dropdown:hover,
+.dark .rdw-blocktype-dropdown:hover {
+  background-color: #4b5563 !important;
+}
+
+.dark .rdw-dropdown-optionwrapper .rdw-dropdown-option {
+  color: white !important;
+}
+
+.dark .rdw-dropdown-optionwrapper .rdw-dropdown-option:hover {
+  background-color: #4b5563 !important;
+}
+
+/* Fix for toolbar icons in dark mode */
+.dark .rdw-option-wrapper img {
+  filter: invert(1) brightness(0.8);
+}
+
+.dark .rdw-dropdown-wrapper img {
+  filter: invert(1) brightness(0.8);
+}
+
+/* Ensure proper contrast for selected options */
+.dark .rdw-option-active {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.dark .rdw-dropdown-selectedtext {
+  background-color: transparent !important;
+}
+
+/* Enhanced Rich Text Editor - Word-like styling */
+.rdw-editor-wrapper {
+  width: 100% !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.rdw-editor-toolbar {
+  background: #f8f9fa !important;
+  border: none !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding: 8px 12px !important;
+  margin: 0 !important;
+  min-height: 48px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.rdw-editor-toolbar-dark {
+  background: #374151 !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+.rdw-editor-main {
+  background: #ffffff !important;
+  min-height: 200px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  padding: 0 !important;
+}
+
+.dark .rdw-editor-main {
+  background: #374151 !important;
+  color: #ffffff !important;
+}
+
+/* Toolbar Button Styling */
+.rdw-option-wrapper,
+.rdw-dropdown-wrapper {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  margin: 1px !important;
+  padding: 6px 8px !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.rdw-option-wrapper:hover,
+.rdw-dropdown-wrapper:hover {
+  background: #e9ecef !important;
+  border-color: #dee2e6 !important;
+}
+
+.rdw-option-active {
+  background: #0d6efd !important;
+  color: white !important;
+  border-color: #0d6efd !important;
+}
+
+.dark .rdw-option-wrapper,
+.dark .rdw-dropdown-wrapper {
+  color: #ffffff !important;
+}
+
+.dark .rdw-option-wrapper:hover,
+.dark .rdw-dropdown-wrapper:hover {
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+}
+
+.dark .rdw-option-active {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Dropdown Styling */
+.rdw-dropdown-selectedtext {
+  font-size: 13px !important;
+  padding: 0 8px !important;
+  color: #495057 !important;
+  font-weight: 500 !important;
+}
+
+.dark .rdw-dropdown-selectedtext {
+  color: #ffffff !important;
+}
+
+.rdw-dropdown-optionwrapper {
+  background: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  z-index: 1000 !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.dark .rdw-dropdown-optionwrapper {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.rdw-dropdown-option {
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  color: #495057 !important;
+  cursor: pointer !important;
+  border-bottom: 1px solid #f8f9fa !important;
+}
+
+.rdw-dropdown-option:hover {
+  background: #f8f9fa !important;
+  color: #0d6efd !important;
+}
+
+.dark .rdw-dropdown-option {
+  color: #ffffff !important;
+  border-bottom-color: #4b5563 !important;
+}
+
+.dark .rdw-dropdown-option:hover {
+  background: #4b5563 !important;
+  color: #60a5fa !important;
+}
+
+/* Font Size and Family Dropdowns */
+.rdw-fontsize-dropdown,
+.rdw-fontfamily-dropdown {
+  min-width: 60px !important;
+}
+
+.rdw-fontfamily-dropdown {
+  min-width: 120px !important;
+}
+
+/* Color Picker */
+.rdw-colorpicker-modal {
+  background: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  padding: 12px !important;
+  z-index: 1000 !important;
+}
+
+.dark .rdw-colorpicker-modal {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.rdw-colorpicker-option {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+  margin: 2px !important;
+  border: 2px solid #ffffff !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease !important;
+}
+
+.rdw-colorpicker-option:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Link Modal */
+.rdw-link-modal,
+.rdw-embedded-modal,
+.rdw-image-modal {
+  background: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  padding: 16px !important;
+  z-index: 1000 !important;
+  min-width: 300px !important;
+}
+
+.dark .rdw-link-modal,
+.dark .rdw-embedded-modal,
+.dark .rdw-image-modal {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.rdw-link-modal input,
+.rdw-embedded-modal input,
+.rdw-image-modal input {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  margin: 4px 0 !important;
+}
+
+.dark .rdw-link-modal input,
+.dark .rdw-embedded-modal input,
+.dark .rdw-image-modal input {
+  background: #4b5563 !important;
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+}
+
+.rdw-link-modal-btn,
+.rdw-embedded-modal-btn,
+.rdw-image-modal-btn {
+  background: #0d6efd !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  margin: 4px 2px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.rdw-link-modal-btn:hover,
+.rdw-embedded-modal-btn:hover,
+.rdw-image-modal-btn:hover {
+  background: #0b5ed7 !important;
+}
+
+/* Editor Content Area */
+.rdw-editor-main .DraftEditor-root {
+  padding: 16px !important;
+  min-height: 150px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: #212529 !important;
+}
+
+.dark .rdw-editor-main .DraftEditor-root {
+  color: #ffffff !important;
+}
+
+.rdw-editor-main .public-DraftEditorPlaceholder-root {
+  color: #6c757d !important;
+  font-style: italic !important;
+  position: absolute !important;
+  pointer-events: none !important;
+}
+
+.dark .rdw-editor-main .public-DraftEditorPlaceholder-root {
+  color: #9ca3af !important;
+}
+
+/* Block Quotes */
+.rdw-editor-main blockquote {
+  border-left: 4px solid #0d6efd !important;
+  padding-left: 16px !important;
+  margin: 16px 0 !important;
+  font-style: italic !important;
+  color: #6c757d !important;
+  background: #f8f9fa !important;
+  padding: 12px 16px !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.dark .rdw-editor-main blockquote {
+  border-left-color: #3b82f6 !important;
+  color: #d1d5db !important;
+  background: #4b5563 !important;
+}
+
+/* Code Blocks */
+.rdw-editor-main pre {
+  background: #f8f9fa !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  font-family: 'Courier New', monospace !important;
+  font-size: 13px !important;
+  overflow-x: auto !important;
+  margin: 12px 0 !important;
+}
+
+.dark .rdw-editor-main pre {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+/* Lists */
+.rdw-editor-main ul,
+.rdw-editor-main ol {
+  padding-left: 24px !important;
+  margin: 12px 0 !important;
+}
+
+.rdw-editor-main li {
+  margin: 4px 0 !important;
+  line-height: 1.6 !important;
+}
+
+/* Headers */
+.rdw-editor-main h1,
+.rdw-editor-main h2,
+.rdw-editor-main h3,
+.rdw-editor-main h4,
+.rdw-editor-main h5,
+.rdw-editor-main h6 {
+  margin: 16px 0 8px 0 !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.rdw-editor-main h1 {
+  font-size: 28px !important;
+}
+
+.rdw-editor-main h2 {
+  font-size: 24px !important;
+}
+
+.rdw-editor-main h3 {
+  font-size: 20px !important;
+}
+
+.rdw-editor-main h4 {
+  font-size: 18px !important;
+}
+
+.rdw-editor-main h5 {
+  font-size: 16px !important;
+}
+
+.rdw-editor-main h6 {
+  font-size: 14px !important;
+}
+
+/* Scrollbar Styling */
+.rdw-editor-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rdw-editor-main::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.rdw-editor-main::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.rdw-editor-main::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.dark .rdw-editor-main::-webkit-scrollbar-track {
+  background: #4b5563;
+}
+
+.dark .rdw-editor-main::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .rdw-editor-main::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}/* E
+nhanced Color Picker Styling */
+.rdw-colorpicker-wrapper {
+  position: relative !important;
+}
+
+.rdw-colorpicker-modal {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  z-index: 1000 !important;
+  margin-top: 4px !important;
+  background: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  padding: 12px !important;
+  min-width: 200px !important;
+}
+
+.dark .rdw-colorpicker-modal {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.rdw-colorpicker-option {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+  margin: 3px !important;
+  border: 2px solid #ffffff !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-block !important;
+  position: relative !important;
+}
+
+.rdw-colorpicker-option:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  z-index: 10 !important;
+}
+
+.rdw-colorpicker-option:after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 3px !important;
+  background: inherit !important;
+}
+
+/* Add clear/remove color option */
+.rdw-colorpicker-option.clear-color {
+  background: linear-gradient(45deg, #ff4444 0%, #ff4444 45%, transparent 45%, transparent 55%, #ff4444 55%) !important;
+  background-size: 8px 8px !important;
+}
+
+.rdw-colorpicker-option.clear-color:after {
+  content: '×' !important;
+  background: transparent !important;
+  color: #ff4444 !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Better color picker button */
+.rdw-option-wrapper .rdw-colorpicker-option-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  height: 32px !important;
+}
+
+/* Color picker icon styling */
+.rdw-colorpicker-wrapper .rdw-option-wrapper {
+  position: relative !important;
+}
+
+.rdw-colorpicker-wrapper .rdw-option-wrapper:after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 20px !important;
+  height: 3px !important;
+  background: currentColor !important;
+  border-radius: 1px !important;
+}
+
+/* Responsive color picker */
+@media (max-width: 768px) {
+  .rdw-colorpicker-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin-top: 0 !important;
+    max-width: 280px !important;
+  }
+  
+  .rdw-colorpicker-option {
+    width: 32px !important;
+    height: 32px !important;
+    margin: 4px !important;
+  }
+}
+
+/* Color picker grid layout */
+.rdw-colorpicker-modal .rdw-colorpicker-option:nth-child(4n+1) {
+  clear: left !important;
+}
+
+/* Enhanced focus states */
+.rdw-colorpicker-option:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* Color picker header */
+.rdw-colorpicker-modal:before {
+  content: 'Text Color' !important;
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #6b7280 !important;
+  margin-bottom: 8px !important;
+  text-align: center !important;
+}
+
+.dark .rdw-colorpicker-modal:before {
+  color: #9ca3af !important;
+}/* Rich
+ Text Field Styling */
+[contenteditable]:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  font-style: italic;
+  pointer-events: none;
+}
+
+.dark [contenteditable]:empty:before {
+  color: #6b7280;
+}
+
+[contenteditable]:focus:before {
+  content: none;
+}
+
+/* Rich text field content styling */
+[contenteditable] {
+  outline: none;
+}
+
+[contenteditable] strong {
+  font-weight: 600;
+}
+
+[contenteditable] em {
+  font-style: italic;
+}
+
+[contenteditable] u {
+  text-decoration: underline;
+}
+
+/* Support for background colors in contentEditable */
+[contenteditable] span[style*="background-color"],
+[contenteditable] span[style*="background"],
+[contenteditable] font[style*="background-color"],
+[contenteditable] font[style*="background"] {
+  /* Allow background colors to show */
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+/* Support for inline styles in contentEditable */
+[contenteditable] * {
+  /* Preserve all inline styles including background colors */
+  background: inherit;
+}
+
+/* Prevent line breaks in single-line fields */
+[contenteditable].single-line {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+[contenteditable].single-line br {
+  display: none;
+}
+
+[contenteditable].single-line * {
+  display: inline;
+}
+
+/* Better focus states for rich text fields */
+[contenteditable]:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark [contenteditable]:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Ensure background colors work in rich text content */
+.prose span[style*="background-color"],
+.prose span[style*="background"],
+.prose font[style*="background-color"],
+.prose font[style*="background"],
+.prose-invert span[style*="background-color"],
+.prose-invert span[style*="background"],
+.prose-invert font[style*="background-color"],
+.prose-invert font[style*="background"] {
+  /* Preserve background colors from inline styles */
+  padding: 1px 2px !important;
+  border-radius: 2px !important;
+}
+
+/* Support for highlighted text */
+.prose mark,
+.prose-invert mark {
+  background-color: yellow !important;
+  color: black !important;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* Ensure contentEditable preserves background colors */
+[contenteditable] span[style*="background"],
+[contenteditable] font[style*="background"] {
+  display: inline !important;
+  padding: 2px 4px !important;
+  border-radius: 3px !important;
+  margin: 0 1px !important;
+}
+
+/* Better background color support for contentEditable */
+[contenteditable] span[style*="background-color"] {
+  display: inline !important;
+  padding: 2px 4px !important;
+  border-radius: 3px !important;
+  margin: 0 1px !important;
+  line-height: 1.4 !important;
+}
+
+/* Override any CSS that might remove backgrounds */
+.prose *[style*="background-color"],
+.prose-invert *[style*="background-color"] {
+  /* Don't override inline background colors */
+  background: inherit !important;
+}
+
+/* ContentEditable List Support - Fixed Numbering */
+[contenteditable] ul,
+[contenteditable] ol {
+  list-style-position: outside;
+  padding-left: 2em;
+  margin: 0.75em 0;
+  display: block;
+}
+
+[contenteditable] ul {
+  list-style-type: disc;
+}
+
+[contenteditable] ol {
+  list-style-type: decimal;
+  counter-reset: item;
+}
+
+[contenteditable] li {
+  display: list-item;
+  margin: 0.35em 0;
+  padding-left: 0.25em;
+  line-height: 1.6;
+}
+
+/* Nested lists */
+[contenteditable] ul ul {
+  list-style-type: circle;
+  padding-left: 2em;
+  margin: 0.25em 0;
+}
+
+[contenteditable] ul ul ul {
+  list-style-type: square;
+  padding-left: 2em;
+}
+
+[contenteditable] ol ol {
+  list-style-type: lower-alpha;
+  padding-left: 2em;
+  margin: 0.25em 0;
+}
+
+[contenteditable] ol ol ol {
+  list-style-type: lower-roman;
+  padding-left: 2em;
+}
+
+/* Ensure proper list rendering */
+[contenteditable] ol > li {
+  list-style-type: decimal;
+}
+
+[contenteditable] ol ol > li {
+  list-style-type: lower-alpha;
+}
+
+[contenteditable] ol ol ol > li {
+  list-style-type: lower-roman;
+}
+
+/* Ensure lists display properly in multiline fields */
+[contenteditable].multiline ul,
+[contenteditable].multiline ol {
+  display: block;
+  list-style-position: inside;
+}
+
+[contenteditable].multiline li {
+  display: list-item;
+}
+
+/* Fix for blockquote */
+[contenteditable] blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.dark [contenteditable] blockquote {
+  border-left-color: #60a5fa;
+  color: #9ca3af;
+}
+
+/* Horizontal rule */
+[contenteditable] hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 1em 0;
+}
+
+.dark [contenteditable] hr {
+  border-top-color: #4b5563;
+}
+
+/* Links */
+[contenteditable] a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+[contenteditable] a:hover {
+  color: #2563eb;
+}
+
+.dark [contenteditable] a {
+  color: #60a5fa;
+}
+
+.dark [contenteditable] a:hover {
+  color: #93c5fd;
+}
+
+/* Headings in contentEditable */
+[contenteditable] h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0.67em 0;
+}
+
+[contenteditable] h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.75em 0;
+}
+
+[contenteditable] h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0.83em 0;
+}
+
+[contenteditable] h4 {
+  font-size: 1.125em;
+  font-weight: 600;
+  margin: 1em 0;
+}
+
+[contenteditable] h5 {
+  font-size: 1em;
+  font-weight: 600;
+  margin: 1.17em 0;
+}
+
+[contenteditable] h6 {
+  font-size: 0.875em;
+  font-weight: 600;
+  margin: 1.33em 0;
+}
+
+/* Superscript and Subscript */
+[contenteditable] sup {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+[contenteditable] sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+/* Sidebar Scrollbar Styling */
+aside::-webkit-scrollbar {
+  width: 6px;
+}
+
+aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+aside::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark aside::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark aside::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+
+/* Blog Content Styles - Clean up rich text editor output */
+.blog-content {
+  /* Remove inline styles that cause issues */
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+.blog-content * {
+  /* Override inline styles */
+  font-family: inherit !important;
+  max-width: 100% !important;
+}
+
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.blog-content h1 { font-size: 2em; }
+.blog-content h2 { font-size: 1.5em; }
+.blog-content h3 { font-size: 1.25em; }
+
+.blog-content p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.blog-content li {
+  margin-bottom: 0.5em;
+}
+
+.blog-content strong {
+  font-weight: 700;
+}
+
+.blog-content em {
+  font-style: italic;
+}
+
+.blog-content a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.blog-content a:hover {
+  color: #1d4ed8;
+}
+
+/* Remove comment markers from rich text editor */
+.blog-content:before,
+.blog-content:after {
+  content: none !important;
+}

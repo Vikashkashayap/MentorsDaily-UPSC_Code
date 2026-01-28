@@ -1,0 +1,42 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://mentorsdaily.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin and private areas
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /home
+Disallow: /ask
+Disallow: /current-affairs
+Disallow: /library
+Disallow: /mcq
+Disallow: /pyqs
+Disallow: /my-tests
+Disallow: /answer-evaluation
+Disallow: /mains-pyqs
+Disallow: /my-progress
+Disallow: /help-support
+Disallow: /profile
+
+# Allow important pages
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /uppcs-mentorship
+Allow: /integrated-mentorship
+Allow: /integrated-mentorship-2026
+Allow: /integrated-mentorship-2027
+Allow: /integrated-mentorship-2028
+Allow: /previous-year-papers
+Allow: /free-study-materials
+Allow: /upsc-syllabus
+Allow: /download-ncerts
+Allow: /upsc-preparation-blog
+Allow: /currentAffairs
+Allow: /MentorshipCourses
+Allow: /blogs/
