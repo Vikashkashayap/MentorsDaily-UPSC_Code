@@ -13,12 +13,22 @@ const freeResourceSchema = new mongoose.Schema({
     fileId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UploadedDocuments',
-        required: true
+        required: false
     },
     fileSize: {
         type: String,
         required: true
     },
+    category: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    subcategory: {
+        type: String,
+        trim: true
+    },
+    // Keep categories array for backward compatibility (deprecated)
     categories: [{
         type: String,
         trim: true

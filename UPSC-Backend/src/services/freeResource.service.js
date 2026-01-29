@@ -6,11 +6,15 @@ const logger = require('../utility/logger.js');
 exports.createFreeResourceService = async (resourceData, file, userId) => {
     logger.info('freeResource.service.js << createFreeResourceService << Creating free resource');
     try {
-        const uploadedFile = await uploadFileService(file, userId);
+        let fileId = null;
+        if (file) {
+            const uploadedFile = await uploadFileService(file, userId);
+            fileId = uploadedFile._id;
+        }
 
         const resource = await freeResourceRepository.createFreeResource({
             ...resourceData,
-            fileId: uploadedFile._id,
+            fileId: fileId,
             uploadedBy: userId
         });
         return resource;
@@ -24,18 +28,35 @@ exports.getAllFreeResourcesService = async (filters = {}) => {
     logger.info('freeResource.service.js << getAllFreeResourcesService << Fetching all resources');
     try {
         const query = { isActive: true };
+        const andConditions = [];
 
         if (filters.category) {
-            query.categories = filters.category;
+            // Support both new category field and legacy categories array
+            andConditions.push({
+                $or: [
+                    { category: filters.category },
+                    { categories: filters.category }
+                ]
+            });
+        }
+        if (filters.subcategory) {
+            query.subcategory = filters.subcategory;
         }
         if (filters.difficulty) {
             query.difficulty = filters.difficulty;
         }
         if (filters.search) {
-            query.$or = [
-                { title: { $regex: filters.search, $options: 'i' } },
-                { description: { $regex: filters.search, $options: 'i' } }
-            ];
+            andConditions.push({
+                $or: [
+                    { title: { $regex: filters.search, $options: 'i' } },
+                    { description: { $regex: filters.search, $options: 'i' } }
+                ]
+            });
+        }
+
+        // Combine all conditions
+        if (andConditions.length > 0) {
+            query.$and = andConditions;
         }
 
         const resources = await freeResourceRepository.findAllFreeResources(query);

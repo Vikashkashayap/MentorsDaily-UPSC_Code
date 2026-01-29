@@ -17,21 +17,27 @@ const {
 exports.createFreeResource = async (req, res) => {
     try {
         const file = req.file;
-        if (!file) {
-            return setBadRequest(res, { message: 'No file uploaded' });
+        const { title, description, fileSize, category, subcategory, categories, difficulty } = req.body;
+
+        if (!title || !description) {
+            return setBadRequest(res, { message: 'Title and description are required' });
         }
 
-        const { title, description, fileSize, categories, difficulty } = req.body;
-
-        if (!title || !description || !fileSize) {
-            return setBadRequest(res, { message: 'Title, description, and fileSize are required' });
+        if (!category) {
+            return setBadRequest(res, { message: 'Category is required' });
         }
+
+        // File size is optional if no file is uploaded
+        const finalFileSize = fileSize || (file ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : '');
 
         const resourceData = {
             title,
             description,
-            fileSize,
-            categories: categories ? JSON.parse(categories) : [],
+            fileSize: finalFileSize,
+            category,
+            subcategory: subcategory || null,
+            // Keep categories for backward compatibility
+            categories: categories ? JSON.parse(categories) : [category],
             difficulty: difficulty || 'Intermediate'
         };
 
@@ -48,8 +54,8 @@ exports.createFreeResource = async (req, res) => {
 
 exports.getAllFreeResources = async (req, res) => {
     try {
-        const { category, difficulty, search } = req.query;
-        const filters = { category, difficulty, search };
+        const { category, subcategory, difficulty, search } = req.query;
+        const filters = { category, subcategory, difficulty, search };
 
         const resources = await getAllFreeResourcesService(filters);
         return setSuccess(res, {
@@ -77,13 +83,15 @@ exports.getFreeResourceById = async (req, res) => {
 
 exports.updateFreeResource = async (req, res) => {
     try {
-        const { title, description, fileSize, categories, difficulty, isActive } = req.body;
+        const { title, description, fileSize, category, subcategory, categories, difficulty, isActive } = req.body;
         const file = req.file;
 
         const updateData = {};
         if (title) updateData.title = title;
         if (description) updateData.description = description;
         if (fileSize) updateData.fileSize = fileSize;
+        if (category) updateData.category = category;
+        if (subcategory !== undefined) updateData.subcategory = subcategory || null;
         if (categories) updateData.categories = JSON.parse(categories);
         if (difficulty) updateData.difficulty = difficulty;
         if (isActive !== undefined) updateData.isActive = isActive;
