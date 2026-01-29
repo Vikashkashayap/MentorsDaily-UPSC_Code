@@ -52,6 +52,10 @@ const EditCourseModal = ({
           setPreviewUrl(course.thumbnail);
         } else if (course.thumbnail.data) {
           setPreviewUrl(`data:${course.thumbnail.contentType || 'image/png'};base64,${course.thumbnail.data}`);
+        } else if (course.thumbnail._id) {
+          // If it's an object with _id (from backend populate)
+          const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+          setPreviewUrl(`${BASE_URL}/api/v1/view/${course.thumbnail._id}`);
         }
       } else {
         setPreviewUrl("");

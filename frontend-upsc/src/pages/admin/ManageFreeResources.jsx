@@ -7,7 +7,9 @@ import {
   updateFreeResource,
   deleteFreeResource,
   getAvailableCategories,
-  getDifficultyLevels
+  getDifficultyLevels,
+  getCategorySubcategories,
+  getSubcategoriesForCategory
 } from '../../api/freeResourceService';
 import { showSuccess, showError } from '../../utils/messageHandler';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -26,6 +28,8 @@ export default function ManageFreeResources() {
     title: '',
     description: '',
     fileSize: '',
+    category: '',
+    subcategory: '',
     categories: [],
     difficulty: 'Intermediate'
   });
@@ -71,6 +75,8 @@ export default function ManageFreeResources() {
         title: resource.title,
         description: resource.description,
         fileSize: resource.fileSize,
+        category: resource.category || (resource.categories && resource.categories[0]) || '',
+        subcategory: resource.subcategory || '',
         categories: resource.categories || [],
         difficulty: resource.difficulty
       });
@@ -80,6 +86,8 @@ export default function ManageFreeResources() {
         title: '',
         description: '',
         fileSize: '',
+        category: '',
+        subcategory: '',
         categories: [],
         difficulty: 'Intermediate'
       });
@@ -95,6 +103,8 @@ export default function ManageFreeResources() {
       title: '',
       description: '',
       fileSize: '',
+      category: '',
+      subcategory: '',
       categories: [],
       difficulty: 'Intermediate'
     });
@@ -114,12 +124,21 @@ export default function ManageFreeResources() {
     setActiveField(fieldName);
   };
 
-  const handleCategoryToggle = (category) => {
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
     setFormData(prev => ({
       ...prev,
-      categories: prev.categories.includes(category)
-        ? prev.categories.filter(c => c !== category)
-        : [...prev.categories, category]
+      category: selectedCategory,
+      subcategory: '', // Reset subcategory when category changes
+      categories: selectedCategory ? [selectedCategory] : []
+    }));
+  };
+
+  const handleSubcategoryChange = (e) => {
+    const selectedSubcategory = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      subcategory: selectedSubcategory
     }));
   };
 
@@ -136,8 +155,8 @@ export default function ManageFreeResources() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.description) {
-      showError('Please fill all required fields');
+    if (!formData.title || !formData.description || !formData.category) {
+      showError('Please fill all required fields (Title, Description, and Category)');
       return;
     }
 
@@ -147,6 +166,10 @@ export default function ManageFreeResources() {
       data.append('title', formData.title);
       data.append('description', formData.description);
       data.append('fileSize', formData.fileSize);
+      data.append('category', formData.category);
+      if (formData.subcategory) {
+        data.append('subcategory', formData.subcategory);
+      }
       data.append('categories', JSON.stringify(formData.categories));
       data.append('difficulty', formData.difficulty);
 
@@ -256,25 +279,23 @@ export default function ManageFreeResources() {
                         dangerouslySetInnerHTML={{ __html: resource.title }}
                       />
                       <div
-                        className={`text-sm ${isDark ? 'text-gray-300 [&_*]:!text-gray-300' : 'text-gray-500'} truncate max-w-xs prose max-w-none prose-sm mt-1`}
+                        className={`text-sm ${isDark ? 'text-gray-300 [&_*]:!text-gray-300' : 'text-gray-500'} truncate max-w-xs prose prose-sm mt-1`}
                         dangerouslySetInnerHTML={{ __html: resource.description }}
                       />
                     </div>
                   )
                 },
                 {
-                  header: 'Categories',
-                  accessor: 'categories',
+                  header: 'Category',
+                  accessor: 'category',
                   render: (resource) => (
-                    <div className="flex flex-wrap gap-1">
-                      {resource.categories?.slice(0, 2).map((cat, idx) => (
-                        <span key={idx} className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}>
-                          {cat}
-                        </span>
-                      ))}
-                      {resource.categories?.length > 2 && (
+                    <div className="flex flex-col gap-1">
+                      <span className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}>
+                        {resource.category || (resource.categories && resource.categories[0]) || 'N/A'}
+                      </span>
+                      {resource.subcategory && (
                         <span className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-800'}`}>
-                          +{resource.categories.length - 2}
+                          {resource.subcategory}
                         </span>
                       )}
                     </div>
@@ -361,11 +382,14 @@ export default function ManageFreeResources() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {resource.categories?.map((cat, idx) => (
-                      <span key={idx} className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}>
-                        {cat}
+                    <span className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-800'}`}>
+                      {resource.category || (resource.categories && resource.categories[0]) || 'N/A'}
+                    </span>
+                    {resource.subcategory && (
+                      <span className={`px-2 py-1 text-xs rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-800'}`}>
+                        {resource.subcategory}
                       </span>
-                    ))}
+                    )}
                   </div>
 
                   <div className={`flex items-center justify-between text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-3 pb-3 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -511,24 +535,40 @@ export default function ManageFreeResources() {
 
                   <div>
                     <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                      Categories
+                      Category *
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleCategoryChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                      required
+                    >
+                      <option value="">Select a category</option>
                       {getAvailableCategories().map(cat => (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => handleCategoryToggle(cat)}
-                          className={`px-3 py-1 rounded-lg text-sm transition-colors ${formData.categories.includes(cat)
-                            ? 'bg-blue-600 text-white'
-                            : isDark ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                        >
-                          {cat}
-                        </button>
+                        <option key={cat} value={cat}>{cat}</option>
                       ))}
-                    </div>
+                    </select>
                   </div>
+
+                  {formData.category && getSubcategoriesForCategory(formData.category).length > 0 && (
+                    <div>
+                      <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+                        Subcategory <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(Optional)</span>
+                      </label>
+                      <select
+                        name="subcategory"
+                        value={formData.subcategory}
+                        onChange={handleSubcategoryChange}
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                      >
+                        <option value="">Select a subcategory (Optional)</option>
+                        {getSubcategoriesForCategory(formData.category).map(subcat => (
+                          <option key={subcat} value={subcat}>{subcat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                   <div>
                     <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>

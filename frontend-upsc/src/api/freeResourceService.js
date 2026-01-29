@@ -4,6 +4,7 @@ export const getAllFreeResources = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams();
     if (filters.category) queryParams.append("category", filters.category);
+    if (filters.subcategory) queryParams.append("subcategory", filters.subcategory);
     if (filters.difficulty) queryParams.append("difficulty", filters.difficulty);
     if (filters.search) queryParams.append("search", filters.search);
 
@@ -88,6 +89,70 @@ export const getAvailableCategories = () => {
     "Syllabus",
     "Other"
   ];
+};
+
+export const getCategorySubcategories = () => {
+  return {
+    "NCERT Books": [
+      "Class VI",
+      "Class VII",
+      "Class VIII",
+      "Class IX",
+      "Class X",
+      "Class XI",
+      "Class XII",
+      "Other"
+    ],
+    "Previous Year Papers": [
+      "Prelims",
+      "Mains",
+      "Optional",
+      "Other"
+    ],
+    "Study Notes": [
+      "History",
+      "Geography",
+      "Polity",
+      "Economics",
+      "Science & Technology",
+      "Environment",
+      "Ethics",
+      "Other"
+    ],
+    "Current Affairs": [
+      "Daily News",
+      "Monthly Compilation",
+      "Yearly Review",
+      "Topic-wise",
+      "Other"
+    ],
+    "Reference Books": [
+      "History",
+      "Geography",
+      "Polity",
+      "Economics",
+      "Science & Technology",
+      "Other"
+    ],
+    "Practice Papers": [
+      "Prelims Mock Tests",
+      "Mains Mock Tests",
+      "Sectional Tests",
+      "Other"
+    ],
+    "Syllabus": [
+      "Prelims Syllabus",
+      "Mains Syllabus",
+      "Optional Syllabus",
+      "Other"
+    ],
+    "Other": []
+  };
+};
+
+export const getSubcategoriesForCategory = (category) => {
+  const subcategories = getCategorySubcategories();
+  return subcategories[category] || [];
 };
 
 export const getDifficultyLevels = () => {

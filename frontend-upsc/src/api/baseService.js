@@ -58,7 +58,12 @@ import axios from "axios";
 import { logout } from "../utils/authUtils";
 import { ROUTES } from "../constants/routesEnum";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+
+function buildApiUrl(endpoint) {
+  const path = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  return `${BASE_URL}/${path}`;
+}
 
 export default async function callApi({
   endpoint,
@@ -81,7 +86,7 @@ export default async function callApi({
     const finalHeaders = { ...defaultHeaders, ...headers };
 
     const response = await axios({
-      url: `${BASE_URL}/${endpoint}`,
+      url: buildApiUrl(endpoint),
       method,
       data: body,
       responseType,

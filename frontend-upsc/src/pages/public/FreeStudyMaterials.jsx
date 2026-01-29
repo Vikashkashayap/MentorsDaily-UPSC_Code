@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllFreeResources, getAvailableCategories, getDifficultyLevels } from '../../api/freeResourceService';
+import { getAllFreeResources, getAvailableCategories, getDifficultyLevels, getCategorySubcategories, getSubcategoriesForCategory } from '../../api/freeResourceService';
 
 export default function FreeStudyMaterials() {
   const navigate = useNavigate();
@@ -8,6 +8,7 @@ export default function FreeStudyMaterials() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
+  const [activeSubcategory, setActiveSubcategory] = useState('');
   const [level, setLevel] = useState('');
 
   const categories = ['All', ...getAvailableCategories()];
@@ -18,13 +19,19 @@ export default function FreeStudyMaterials() {
       fetchResources();
     }, searchQuery ? 500 : 0);
     return () => clearTimeout(timer);
-  }, [searchQuery, activeCategory, level]);
+  }, [searchQuery, activeCategory, activeSubcategory, level]);
+
+  // Reset subcategory when category changes
+  useEffect(() => {
+    setActiveSubcategory('');
+  }, [activeCategory]);
 
   const fetchResources = async () => {
     try {
       setLoading(true);
       const filters = {};
       if (activeCategory && activeCategory !== 'All') filters.category = activeCategory;
+      if (activeSubcategory && activeSubcategory !== 'All') filters.subcategory = activeSubcategory;
       if (level && level !== 'All') filters.difficulty = level;
       if (searchQuery.trim()) filters.search = searchQuery.trim();
 
@@ -122,6 +129,37 @@ export default function FreeStudyMaterials() {
           ))}
         </div>
 
+        {activeCategory && getSubcategoriesForCategory(activeCategory).length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2 md:gap-3">
+            <span className="text-sm text-slate-600 font-medium self-center">Subcategory:</span>
+            <button
+              onClick={() => setActiveSubcategory('')}
+              className={
+                'px-3 py-1.5 rounded-full text-sm border transition-colors ' +
+                (!activeSubcategory
+                  ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                  : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300')
+              }
+            >
+              All
+            </button>
+            {getSubcategoriesForCategory(activeCategory).map((subcat) => (
+              <button
+                key={subcat}
+                onClick={() => setActiveSubcategory(subcat)}
+                className={
+                  'px-3 py-1.5 rounded-full text-sm border transition-colors ' +
+                  (activeSubcategory === subcat
+                    ? 'bg-green-600 text-white border-green-600 shadow-sm'
+                    : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300')
+                }
+              >
+                {subcat}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <select
             value={level}
@@ -176,14 +214,12 @@ export default function FreeStudyMaterials() {
                   dangerouslySetInnerHTML={{ __html: resource.description }}
                 />
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {resource.categories?.slice(0, 3).map((cat, idx) => (
-                    <span key={idx} className="px-2 py-1 text-xs rounded-md bg-blue-50 text-blue-700 border border-blue-100">
-                      {cat}
-                    </span>
-                  ))}
-                  {resource.categories?.length > 3 && (
-                    <span className="px-2 py-1 text-xs rounded-md bg-slate-50 text-slate-700 border border-slate-100">
-                      +{resource.categories.length - 3}
+                  <span className="px-2 py-1 text-xs rounded-md bg-blue-50 text-blue-700 border border-blue-100">
+                    {resource.category || (resource.categories && resource.categories[0]) || 'N/A'}
+                  </span>
+                  {resource.subcategory && (
+                    <span className="px-2 py-1 text-xs rounded-md bg-green-50 text-green-700 border border-green-100">
+                      {resource.subcategory}
                     </span>
                   )}
                   {resource.fileSize && (

@@ -78,10 +78,21 @@ const CourseDetails = () => {
 
   const getThumbnailUrl = (thumb) => {
     if (!thumb) return null;
+    
+    // If it's already a URL string
     if (typeof thumb === 'string') return thumb;
+    
+    // If it's a base64 object
     if (thumb.data) {
       return `data:${thumb.contentType || 'image/png'};base64,${thumb.data}`;
     }
+    
+    // If it's an object with _id (from backend populate)
+    if (thumb._id) {
+      const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+      return `${BASE_URL}/api/v1/view/${thumb._id}`;
+    }
+    
     return null;
   };
 

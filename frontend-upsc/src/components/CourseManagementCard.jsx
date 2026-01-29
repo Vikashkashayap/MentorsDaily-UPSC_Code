@@ -20,6 +20,12 @@ const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }
       return `data:${thumb.contentType || 'image/png'};base64,${thumb.data}`;
     }
 
+    // If it's an object with _id (from backend populate)
+    if (thumb && thumb._id) {
+      const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+      return `${BASE_URL}/api/v1/view/${thumb._id}`;
+    }
+
     // If it's a file path
     if (thumb && thumb.path) {
       return thumb.path;
