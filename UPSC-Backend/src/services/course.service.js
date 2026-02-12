@@ -48,6 +48,18 @@ exports.findAllCourse = async () => {
   }
 };
 
+exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
+  try {
+    logger.info(`courseService.js <<findAllPaginated<< Fetching courses page=${page} limit=${limit}`);
+    const result = await courseRepository.findAllCoursePaginated(page, limit);
+    logger.info(`courseService.js <<findAllPaginated<< Fetched ${result.data.length} of ${result.total} courses`);
+    return result;
+  } catch (err) {
+    logger.error(`courseService.js <<findAllPaginated<< Error: ${err.message}`);
+    throw new Error(err.message);
+  }
+};
+
 exports.updateCourse = async (courseId, updateData) => {
   try {
     logger.info(`courseService.js <<updateCourse<< Updating course with ID: ${courseId}`);

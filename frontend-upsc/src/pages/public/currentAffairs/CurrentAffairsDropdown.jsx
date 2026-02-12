@@ -84,19 +84,19 @@ export default function CurrentAffairsDropdown() {
 
 
         const res = await fetchCurrentAffairs(params);
-        
-        const newAffairs = Array.isArray(res.data?.data) ? res.data.data : (Array.isArray(res.data) ? res.data : []);
+        const payload = res?.data ?? res;
+        const newAffairs = Array.isArray(payload?.data) ? payload.data : (Array.isArray(res?.data) ? res.data : []);
         setAffairs(newAffairs);
         setHasNextPage(newAffairs.length === LIMIT);
         
-        // Calculate total pages if total count is available
-        if (res.data?.totalCount) {
-          setTotalPages(Math.ceil(res.data.totalCount / LIMIT));
+        const totalCount = payload?.totalCount ?? res?.totalCount;
+        if (totalCount != null) {
+          setTotalPages(Math.max(1, Math.ceil(totalCount / LIMIT)));
         } else {
           setTotalPages(page + (newAffairs.length === LIMIT ? 1 : 0));
         }
         
-        const msg = res.data?.message || "";
+        const msg = payload?.message || res?.message || "";
         setMessage(msg);
         if (msg) {
           setShowToast(true);
@@ -177,17 +177,14 @@ export default function CurrentAffairsDropdown() {
   };
 
 
-  if (loading && page === 1)
-    return (
-      <div className="p-6 text-center text-gray-600">
-        Loading current affairs...
-      </div>
-    );
   if (error)
     return (
       <div className="p-6 text-center text-red-500 font-medium">{error}</div>
     );
 
+  const showSkeleton = loading && page === 1;
+  const showPageLoader = loading && page > 1;
+  const displayAffairs = showSkeleton ? [] : filteredAffairs;
 
   return (
     <div className="relative min-h-screen w-full py-3 px-3 sm:py-6 sm:px-6 bg-gradient-to-br from-sky-50 via-white to-indigo-50">
@@ -411,7 +408,21 @@ export default function CurrentAffairsDropdown() {
             </div>
 
 
-            {filteredAffairs.length === 0 ? (
+            {showSkeleton ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                {Array.from({ length: LIMIT }).map((_, i) => (
+                  <div key={`skeleton-${i}`} className="bg-white rounded-lg lg:rounded-xl overflow-hidden shadow-sm border border-gray-200 animate-pulse">
+                    <div className="h-28 sm:h-32 lg:h-36 bg-gray-200" />
+                    <div className="p-2 lg:p-3 space-y-2">
+                      <div className="h-3 lg:h-4 bg-gray-200 rounded w-full" />
+                      <div className="h-3 lg:h-4 bg-gray-200 rounded w-3/4" />
+                      <div className="h-2 bg-gray-100 rounded w-1/2 mt-2" />
+                      <div className="h-2 bg-gray-100 rounded w-1/3 mt-1" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : displayAffairs.length === 0 ? (
               <div className="bg-white rounded-xl shadow-lg p-4 lg:p-6 text-center border border-gray-200 min-h-[50vh] flex flex-col justify-center items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 lg:h-12 lg:w-12 mx-auto text-gray-400 mb-2 lg:mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -423,8 +434,19 @@ export default function CurrentAffairsDropdown() {
               </div>
             ) : (
               <>
+                {showPageLoader && (
+                  <div className="flex justify-center py-4 mb-2">
+                    <div className="flex items-center gap-2 text-blue-600 font-medium text-sm">
+                      <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Loading more…
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4" itemScope itemType="https://schema.org/ItemList">
-                  {filteredAffairs.map((item, index) => (
+                  {displayAffairs.map((item, index) => (
                     <article
                       key={item._id}
                       onClick={() => handleCardClick(item)}

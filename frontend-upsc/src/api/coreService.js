@@ -44,11 +44,16 @@ export const getUsers = async () => {
   }
 };
 
-// Fetch all courses
-export const getCourses = async () => {
+// Fetch all courses (optional pagination: { page, limit })
+export const getCourses = async (options = {}) => {
   try {
+    const { page, limit } = options;
+    let endpoint = "api/v1/get-course";
+    if (Number.isInteger(page) && Number.isInteger(limit) && page >= 1 && limit >= 1) {
+      endpoint += `?page=${page}&limit=${limit}`;
+    }
     const response = await callApi({
-      endpoint: "api/v1/get-course",
+      endpoint,
       method: "GET",
     });
     return response.data;
@@ -111,6 +116,9 @@ export const fetchCurrentAffairs = async (filters = {}) => {
     if (filters.q) queryParams.append("q", filters.q);
     if (filters.from) queryParams.append("startDate", filters.from);
     if (filters.to) queryParams.append("endDate", filters.to);
+    if (filters.startDate) queryParams.append("startDate", filters.startDate);
+    if (filters.endDate) queryParams.append("endDate", filters.endDate);
+    if (filters.paperName) queryParams.append("paperName", filters.paperName);
     if (filters.subject) queryParams.append("subject", filters.subject);
     const queryString = queryParams.toString();
     const endpoint = queryString

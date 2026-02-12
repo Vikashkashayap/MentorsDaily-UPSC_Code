@@ -30,10 +30,12 @@ const listAffairs = async (filters = {}) => {
   try {
     logger.info('currentAffairsService.js <<listAffairs<< Fetching all current affairs');
     
-    const result = await repo.getAllAffairs(filters); 
+    const result = await repo.getAllAffairs(filters);
+    const data = result.data || result;
+    const totalCount = result.totalCount ?? (Array.isArray(data) ? data.length : 0);
     
     logger.info('currentAffairsService.js <<listAffairs<< Successfully fetched all current affairs in service');
-    return result;
+    return { data, totalCount };
   } catch (error) {
     logger.error(`currentAffairsService.js <<listAffairs<< Error in service fetching current affairs: ${error.message}`);
     throw error;

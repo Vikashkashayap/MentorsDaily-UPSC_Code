@@ -32,6 +32,24 @@ exports.findAllCourse = async () => {
     throw new Error(err.message);
   }
 };
+
+exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
+  try {
+    const skip = (Math.max(1, page) - 1) * limit;
+    const [data, total] = await Promise.all([
+      Course.find({})
+        .populate('thumbnail', '_id filename contentType')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Course.countDocuments({}),
+    ]);
+    return { data, total, page: Math.max(1, page), limit, totalPages: Math.ceil(total / limit) };
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
 // exports.updateCourse = async (id, updateData) => {
 //   try {
 //     return await Course.findByIdAndUpdate(id, updateData, { new: true }).populate('thumbnail');

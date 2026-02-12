@@ -30,12 +30,15 @@ exports.listAffairs = async (req, res) => {
     
     const filters = req.query; 
     
-    const affairs = await currentAffairsService.listAffairs(filters);
+    const result = await currentAffairsService.listAffairs(filters);
+    const affairs = result.data || result;
+    const totalCount = result.totalCount ?? affairs.length;
     
     logger.info(`currentAffairsController.js <<listAffairs<< Successfully fetched ${affairs.length} current affairs`);
     setSuccess(res, {
       message: 'Current affairs fetched successfully',
-      data: affairs
+      data: affairs,
+      totalCount
     });
   } catch (err) {
     logger.error(`currentAffairsController.js <<listAffairs<< Error fetching current affairs: ${err.message}`);

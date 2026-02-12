@@ -34,15 +34,32 @@ exports.createCourse = async (req, res) => {
 
 exports.findAllCourse = async (req, res) => {
   try {
-    logger.info('courseController.js <<findAllCourse<< Fetching all courses');
-    
-    const courses = await courseService.findAllCourse();
-    
-    logger.info(`courseController.js <<findAllCourse<< Successfully fetched ${courses.length} courses`);
-    setSuccess(res, {
-      message: 'Courses fetched successfully',
-      data: courses
-    });
+    const page = parseInt(req.query.page, 10);
+    const limit = parseInt(req.query.limit, 10);
+    const usePagination = Number.isInteger(page) && Number.isInteger(limit) && page >= 1 && limit >= 1;
+
+    if (usePagination) {
+      logger.info(`courseController.js <<findAllCourse<< Fetching courses (paginated) page=${page} limit=${limit}`);
+      const result = await courseService.findAllCoursePaginated(page, limit);
+      setSuccess(res, {
+        message: 'Courses fetched successfully',
+        data: result.data,
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit,
+          totalPages: result.totalPages,
+        },
+      });
+    } else {
+      logger.info('courseController.js <<findAllCourse<< Fetching all courses');
+      const courses = await courseService.findAllCourse();
+      logger.info(`courseController.js <<findAllCourse<< Successfully fetched ${courses.length} courses`);
+      setSuccess(res, {
+        message: 'Courses fetched successfully',
+        data: courses,
+      });
+    }
   } catch (err) {
     logger.error(`courseController.js <<findAllCourse<< Error fetching courses: ${err.message}`);
     setServerError(res, { message: err.message || 'Internal server error' });

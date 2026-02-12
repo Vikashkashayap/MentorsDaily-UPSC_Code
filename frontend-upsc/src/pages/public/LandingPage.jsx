@@ -447,10 +447,10 @@ const LandingPage = () => {
                 </span>
               </h2>
               <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto rounded-full mb-4 md:mb-6"></div>
-              <p className="mt-4 md:mt-6 text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-4">
+              {/* <p className="mt-4 md:mt-6 text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-4">
                 Comprehensive courses designed by experts to help you excel in
                 your UPSC preparation journey
-              </p>
+              </p> */}
             </div>
 
             {loading ? (
