@@ -28,13 +28,16 @@ const createAffair = async (payload) => {
 
 const listAffairs = async (filters = {}) => {
   try {
-    logger.info('currentAffairsService.js <<listAffairs<< Fetching all current affairs');
-    
+    if (filters.slug) {
+      logger.info('currentAffairsService.js <<listAffairs<< Fetching single affair by slug');
+      const affair = await repo.getAffairBySlug(filters.slug);
+      return { data: affair ? [affair] : [], totalCount: affair ? 1 : 0 };
+    }
+    logger.info('currentAffairsService.js <<listAffairs<< Fetching current affairs list');
     const result = await repo.getAllAffairs(filters);
     const data = result.data || result;
     const totalCount = result.totalCount ?? (Array.isArray(data) ? data.length : 0);
-    
-    logger.info('currentAffairsService.js <<listAffairs<< Successfully fetched all current affairs in service');
+    logger.info('currentAffairsService.js <<listAffairs<< Successfully fetched current affairs in service');
     return { data, totalCount };
   } catch (error) {
     logger.error(`currentAffairsService.js <<listAffairs<< Error in service fetching current affairs: ${error.message}`);

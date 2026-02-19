@@ -49,4 +49,7 @@ courseSchema.pre("save", function (next) {
   }
   next();
 });
+
+courseSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Course", courseSchema);

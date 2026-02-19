@@ -135,6 +135,21 @@ export const fetchCurrentAffairs = async (filters = {}) => {
   }
 };
 
+/** Fetch a single current affair by slug (optimized for detail page; returns one record). */
+export const fetchCurrentAffairBySlug = async (slug) => {
+  try {
+    if (!slug) throw new Error("Slug is required");
+    const response = await callApi({
+      endpoint: `api/v1/get-affairs?slug=${encodeURIComponent(slug)}`,
+      method: "GET",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching current affair by slug:", error);
+    throw error;
+  }
+};
+
 // Update a current affair by ID
 export const updateCurrentAffair = async (id, payload) => {
   try {

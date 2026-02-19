@@ -6,6 +6,12 @@ const CurrentAffairSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  slug: {
+    type: String,
+    trim: true,
+    sparse: true,
+    index: true
+  },
   content: String,
   description: String,
   date: {
@@ -29,5 +35,7 @@ const CurrentAffairSchema = new mongoose.Schema({
 });
 
 CurrentAffairSchema.index({ paperName: 1, subject: 1 });
+CurrentAffairSchema.index({ slug: 1 });
+CurrentAffairSchema.index({ date: -1 });
 
 module.exports = mongoose.model('CurrentAffair', CurrentAffairSchema);

@@ -26,14 +26,25 @@ exports.createAffair = async (req, res) => {
 
 exports.listAffairs = async (req, res) => {
   try {
-    logger.info('currentAffairsController.js <<listAffairs<< Fetching all current affairs');
-    
-    const filters = req.query; 
-    
+    const filters = req.query;
+    if (filters.slug) {
+      logger.info('currentAffairsController.js <<listAffairs<< Fetching single affair by slug');
+      const result = await currentAffairsService.listAffairs(filters);
+      const affair = result.data && result.data[0];
+      if (!affair) {
+        return setNotFoundError(res, { message: 'Current affair not found' });
+      }
+      setSuccess(res, {
+        message: 'Current affair fetched successfully',
+        data: affair,
+        totalCount: 1
+      });
+      return;
+    }
+    logger.info('currentAffairsController.js <<listAffairs<< Fetching current affairs list');
     const result = await currentAffairsService.listAffairs(filters);
     const affairs = result.data || result;
     const totalCount = result.totalCount ?? affairs.length;
-    
     logger.info(`currentAffairsController.js <<listAffairs<< Successfully fetched ${affairs.length} current affairs`);
     setSuccess(res, {
       message: 'Current affairs fetched successfully',

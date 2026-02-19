@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { fetchCurrentAffairs, fetchCurrentAffairById } from "../../../api/coreService";
+import { fetchCurrentAffairs, fetchCurrentAffairById, fetchCurrentAffairBySlug } from "../../../api/coreService";
 import SEOHead from "../../../components/SEO/SEOHead";
 import { slugify, decodeHtmlEntities } from "../../../utils/seoUtils";
 import { formatDate } from "../../../utils/dateUtils";
@@ -74,15 +74,25 @@ const CurrentAffairDetail = () => {
         setLoading(true);
         setError(null);
 
-        // If we received only slug in the URL
+        // If we received only slug in the URL: fetch single record by slug (optimized)
         if (!id && slug) {
-          const listRes = await fetchCurrentAffairs();
+          const slugRes = await fetchCurrentAffairBySlug(slug);
+          const single = slugRes?.data?.data;
+          if (single) {
+            setPost(single);
+            const canonical = `/currentAffairs/${slugify(single.title)}`;
+            if (location.pathname !== canonical) {
+              navigate(canonical, { replace: true });
+            }
+            setAffairs([single]);
+            return;
+          }
+          const listRes = await fetchCurrentAffairs({ limit: 50 });
           const all = Array.isArray(listRes?.data?.data) ? listRes.data.data : [];
           setAffairs(all);
           const match = all.find((a) => slugify(a.title) === slug);
           if (match) {
             setPost(match);
-            // Ensure canonical slug-only URL
             const canonical = `/currentAffairs/${slugify(match.title)}`;
             if (location.pathname !== canonical) {
               navigate(canonical, { replace: true });
@@ -95,9 +105,8 @@ const CurrentAffairDetail = () => {
 
         // Back-compat: id + slug in URL
         if (id) {
-          // also load list for sidebar
           try {
-            const listRes = await fetchCurrentAffairs();
+            const listRes = await fetchCurrentAffairs({ limit: 50 });
             setAffairs(Array.isArray(listRes?.data?.data) ? listRes.data.data : []);
           } catch {}
           const res = await fetchCurrentAffairById(id);

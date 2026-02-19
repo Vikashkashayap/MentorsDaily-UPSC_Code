@@ -1,9 +1,12 @@
 const Course = require("../models/course.model");
 
+/** Thumbnail populate: only _id (for view URL), filename, contentType. Never include base64 `data`. */
+const THUMB_POPULATE = { path: 'thumbnail', select: '_id filename contentType' };
+
 exports.createCourse = async (courseData) => {
   try {
     const newCourse = await Course.create(courseData);
-    return await Course.findById(newCourse._id).populate('thumbnail', '_id filename contentType');
+    return await Course.findById(newCourse._id).populate(THUMB_POPULATE).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -11,7 +14,7 @@ exports.createCourse = async (courseData) => {
 
 exports.findCourseById = async (id) => {
   try {
-    return await Course.findById(id).populate('thumbnail', '_id filename contentType');
+    return await Course.findById(id).populate(THUMB_POPULATE).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -19,7 +22,7 @@ exports.findCourseById = async (id) => {
 
 exports.findBy = async (query) => {
   try {
-    return await Course.findOne(query).populate('thumbnail', '_id filename contentType');
+    return await Course.findOne(query).populate(THUMB_POPULATE).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -27,7 +30,10 @@ exports.findBy = async (query) => {
 
 exports.findAllCourse = async () => {
   try {
-    return await Course.find({}).populate('thumbnail', '_id filename contentType');
+    return await Course.find({})
+      .populate(THUMB_POPULATE)
+      .sort({ createdAt: -1 })
+      .lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -35,17 +41,25 @@ exports.findAllCourse = async () => {
 
 exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
   try {
-    const skip = (Math.max(1, page) - 1) * limit;
+    const safePage = Math.max(1, parseInt(page, 10) || 1);
+    const safeLimit = Math.min(100, Math.max(1, parseInt(limit, 10) || 12));
+    const skip = (safePage - 1) * safeLimit;
     const [data, total] = await Promise.all([
       Course.find({})
-        .populate('thumbnail', '_id filename contentType')
+        .populate(THUMB_POPULATE)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(safeLimit)
         .lean(),
       Course.countDocuments({}),
     ]);
-    return { data, total, page: Math.max(1, page), limit, totalPages: Math.ceil(total / limit) };
+    return {
+      data,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit) || 1,
+    };
   } catch (err) {
     throw new Error(err.message);
   }
@@ -70,7 +84,7 @@ exports.updateCourse = async (id, updateData) => {
     });
 
     const updatedCourse = await course.save();
-    return await Course.findById(updatedCourse._id).populate("thumbnail", '_id filename contentType');
+    return await Course.findById(updatedCourse._id).populate(THUMB_POPULATE).lean();
   } catch (err) {
     throw new Error(err.message);
   }

@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const dotenv = require("dotenv");
 const connectDB = require("./src/config/db.js");
 const userRoutes = require("./src/routes/user.routes.js");
@@ -21,6 +22,7 @@ connectDB();
 
 const app = express();
 
+app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
