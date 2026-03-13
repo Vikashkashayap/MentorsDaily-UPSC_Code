@@ -12,7 +12,7 @@ import TodaysCurrentAffairs from "./currentAffairs/TodaysCurrentAffairs";
 import ScholarshipAnnouncement from "./Announcement";
 import DiwaliOfferBanner from "../../components/DiwaliOfferBanner";
 import MentorshipBanner from "../../components/MentorshipBanner";
-import AIStudentDashboardBanner from "../../components/AIStudentDashboardBanner";
+// import AIStudentDashboardBanner from "../../components/AIStudentDashboardBanner";
 import ContactForm from "../../pages/public/components/Form.jsx";
 
 const EnhancedHorizontalCourseScroller = ({
@@ -549,7 +549,7 @@ const LandingPage = () => {
         </div>
 
  {/* AI Student Dashboard Banner */}
- <AIStudentDashboardBanner />
+ {/* <AIStudentDashboardBanner /> */}
         <Reviews />
         <Blog />
         <Faq />

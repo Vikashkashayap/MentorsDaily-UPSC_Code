@@ -348,12 +348,21 @@ export default function Navbar() {
               )}
             </div>
 
-            <Link
-              to="/uppcs-mentorship"
-              className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap"
-            >
-               UPPCS Mentorship
-            </Link>
+            <div className="flex items-stretch gap-1.5 flex-shrink-0 pl-1">
+              <Link
+                to="/uppcs-mentorship"
+                className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+              >
+                UPPCS Mentorship
+              </Link>
+              {/* Same tab → browser Back returns to this site */}
+              <a
+                href="https://studentportal.mentorsdaily.com"
+                className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+              >
+                Student Portal
+              </a>
+            </div>
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -597,10 +606,17 @@ export default function Navbar() {
               <Link
                 to="/uppcs-mentorship"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center px-4 py-3 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg"
+                className="flex items-center justify-center px-4 py-3 text-base font-medium leading-snug text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md"
               >
                 🚀 UPPCS Mentorship 2025
               </Link>
+              <a
+                href="https://studentportal.mentorsdaily.com"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-center px-4 py-2.5 text-base font-medium leading-snug text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md mt-1.5"
+              >
+                🎓 Student Portal
+              </a>
             </div>
 
             {/* Mobile Auth Section */}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import AIStudentDashboardBanner from "../AIStudentDashboardBanner";
+// import AIStudentDashboardBanner from "../AIStudentDashboardBanner";
 import WatsupWidget from "../../../src/pages/public/components/WatsupWidget";
 import EnquiryWidget from "../../pages/public/EnquiryWidget";
 import MessageDisplay from "../utility/MessageDisplay";
@@ -59,7 +59,7 @@ export default function PublicLayout({
       <MessageDisplay />
 
       {/* AI Student Dashboard Announcement Banner - Above Navbar */}
-      {showNavbar && location.pathname === "/" && <AIStudentDashboardBanner />}
+      {/* {showNavbar && location.pathname === "/" && <AIStudentDashboardBanner />} */}
 
       {/* Top Navbar */}
       {showNavbar && <Navbar />}
