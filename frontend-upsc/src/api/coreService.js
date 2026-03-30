@@ -375,3 +375,17 @@ export const deletePreparationBlog = async (id) => {
     throw error;
   }
 };
+
+// Increment preparation blog views
+export const incrementPreparationBlogViews = async (id) => {
+  try {
+    const response = await callApi({
+      endpoint: `api/v1/preparation/${id}/increment-views`,
+      method: 'PUT',
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error incrementing preparation blog views:', error);
+    throw error;
+  }
+};

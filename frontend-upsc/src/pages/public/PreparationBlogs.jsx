@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, Calendar, User, Search, ArrowRight } from 'lucide-react';
+import { BookOpen, Calendar, User, Search, ArrowRight, Eye } from 'lucide-react';
 import { getPreparationBlogs } from '../../api/coreService';
 
 const PreparationBlogs = () => {
@@ -201,10 +201,12 @@ const PreparationBlogs = () => {
                     {stripHtml(blog.title)}
                   </h3>
                   
-                  {/* Content Preview */}
-                  {blog.content && (
+                  {/* Short Description / Content Preview */}
+                  {(blog.shortDescription || blog.content) && (
                     <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                      {stripHtml(blog.content)}
+                      {blog.shortDescription
+                        ? blog.shortDescription
+                        : stripHtml(blog.content).slice(0, 120) + (stripHtml(blog.content).length > 120 ? '…' : '')}
                     </p>
                   )}
 
@@ -217,6 +219,10 @@ const PreparationBlogs = () => {
                     <div className="flex items-center gap-1">
                       <User className="w-3 h-3" />
                       <span>Team MentorsDaily</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      <span>{blog.views || 0}</span>
                     </div>
                   </div>
 

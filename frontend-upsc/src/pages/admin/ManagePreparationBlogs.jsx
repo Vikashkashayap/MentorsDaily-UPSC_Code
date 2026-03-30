@@ -21,6 +21,7 @@ const ManagePreparationBlogs = () => {
   const [blogToDelete, setBlogToDelete] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
+    shortDescription: '',
     content: '',
     author: 'Team MentorsDaily',
     category: '',
@@ -108,6 +109,7 @@ const ManagePreparationBlogs = () => {
     setEditingBlog(null);
     setFormData({
       title: '',
+      shortDescription: '',
       content: '',
       author: 'Team MentorsDaily',
       category: '',
@@ -122,6 +124,7 @@ const ManagePreparationBlogs = () => {
     setEditingBlog(blog);
     setFormData({
       title: blog.title || '',
+      shortDescription: blog.shortDescription || '',
       content: blog.content || '',
       author: blog.author || blog.user?.name || 'Team MentorsDaily',
       category: blog.category || '',
@@ -185,6 +188,7 @@ const ManagePreparationBlogs = () => {
     const formDataToSend = new FormData();
     formDataToSend.append('title', formData.title);
     formDataToSend.append('content', formData.content);
+    formDataToSend.append('shortDescription', formData.shortDescription || '');
     if (formData.author) formDataToSend.append('author', formData.author);
     if (formData.category) formDataToSend.append('category', formData.category);
     formDataToSend.append('slug', finalSlug);
@@ -421,6 +425,30 @@ const ManagePreparationBlogs = () => {
                     multiline={false}
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Short Description
+                    <span className="ml-1 text-xs text-gray-400 font-normal">(SEO meta description — ideal 120–160 chars)</span>
+                  </label>
+                  <textarea
+                    value={formData.shortDescription}
+                    onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                    onFocus={() => handleFieldFocus('shortDescription')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                    placeholder="Write a short compelling summary of this blog (shown in search results and blog cards)..."
+                    rows={3}
+                    maxLength={300}
+                  />
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-xs text-gray-500">Used as the SEO meta description and card preview text.</p>
+                    <span className={`text-xs font-medium ${
+                      formData.shortDescription.length > 160 ? 'text-orange-500' : 'text-gray-400'
+                    }`}>
+                      {formData.shortDescription.length}/160
+                    </span>
+                  </div>
                 </div>
 
                 <div>

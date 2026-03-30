@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Calendar, User, ArrowLeft, Share2, BookOpen } from 'lucide-react';
-import { getPreparationBlogs } from '../../api/coreService';
+import { Calendar, User, ArrowLeft, Share2, BookOpen, Eye } from 'lucide-react';
+import { getPreparationBlogs, incrementPreparationBlogViews } from '../../api/coreService';
 
 const PreparationBlogDetail = () => {
   const { slug } = useParams();
@@ -63,6 +63,44 @@ const PreparationBlogDetail = () => {
     fetchBlogDetail();
   }, [slug]);
 
+  // Inject SEO meta tags dynamically when blog loads
+  useEffect(() => {
+    if (!blog) return;
+
+    const plainTitle = stripHtml(blog.title);
+    const metaDesc = blog.shortDescription || stripHtml(blog.content).slice(0, 160);
+    const canonicalUrl = window.location.href;
+
+    // Update document title
+    document.title = `${plainTitle} | MentorsDaily`;
+
+    // Helper to set or create meta tag
+    const setMeta = (selector, attr, value) => {
+      let el = document.querySelector(selector);
+      if (!el) {
+        el = document.createElement('meta');
+        const [key, val] = attr.split('=');
+        el.setAttribute(key, val?.replace(/"/g, '') || attr);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', value);
+    };
+
+    setMeta('meta[name="description"]', 'name=description', metaDesc);
+    setMeta('meta[property="og:title"]', 'property=og:title', plainTitle);
+    setMeta('meta[property="og:description"]', 'property=og:description', metaDesc);
+    setMeta('meta[property="og:url"]', 'property=og:url', canonicalUrl);
+    setMeta('meta[property="og:type"]', 'property=og:type', 'article');
+    setMeta('meta[name="twitter:card"]', 'name=twitter:card', 'summary_large_image');
+    setMeta('meta[name="twitter:title"]', 'name=twitter:title', plainTitle);
+    setMeta('meta[name="twitter:description"]', 'name=twitter:description', metaDesc);
+
+    // Cleanup on unmount
+    return () => {
+      document.title = 'MentorsDaily';
+    };
+  }, [blog]);
+
   const fetchBlogDetail = async () => {
     try {
       setLoading(true);
@@ -95,6 +133,12 @@ const PreparationBlogDetail = () => {
 
       if (foundBlog) {
         setBlog(foundBlog);
+        // Increment view count when blog is found and loaded
+        if (foundBlog._id) {
+          incrementPreparationBlogViews(foundBlog._id).catch(err => 
+            console.error('Error incrementing views:', err)
+          );
+        }
       } else {
         setError('Blog not found');
       }
@@ -117,10 +161,11 @@ const PreparationBlogDetail = () => {
   };
 
   const handleShare = () => {
+    const shareText = blog?.shortDescription || stripHtml(blog?.content || '').slice(0, 120);
     if (navigator.share) {
       navigator.share({
         title: stripHtml(blog?.title || ''),
-        text: stripHtml(blog?.description || ''),
+        text: shareText,
         url: window.location.href,
       }).catch(err => console.log('Error sharing:', err));
     } else {
@@ -242,6 +287,11 @@ const PreparationBlogDetail = () => {
                 <span>By Team MentorsDaily</span>
               </div>
               
+              <div className="flex items-center space-x-2">
+                <Eye className="w-4 h-4 text-blue-600" />
+                <span>{blog.views || 0} views</span>
+              </div>
+              
               <button
                 onClick={handleShare}
                 className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition ml-auto"
@@ -250,6 +300,15 @@ const PreparationBlogDetail = () => {
                 <span>Share</span>
               </button>
             </div>
+
+            {/* Short Description - Lead Paragraph */}
+            {blog.shortDescription && (
+              <div className="mb-8 pl-4 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg py-4 pr-4">
+                <p className="text-lg text-gray-700 leading-relaxed font-medium italic">
+                  {blog.shortDescription}
+                </p>
+              </div>
+            )}
 
             {/* Blog Content */}
             {blog.content && (
