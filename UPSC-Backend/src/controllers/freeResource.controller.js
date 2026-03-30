@@ -17,7 +17,7 @@ const {
 exports.createFreeResource = async (req, res) => {
     try {
         const file = req.file;
-        const { title, description, fileSize, category, subcategory, categories, difficulty } = req.body;
+        const { title, description, fileSize, category, subcategory, categories, subject } = req.body;
 
         if (!title || !description) {
             return setBadRequest(res, { message: 'Title and description are required' });
@@ -38,7 +38,7 @@ exports.createFreeResource = async (req, res) => {
             subcategory: subcategory || null,
             // Keep categories for backward compatibility
             categories: categories ? JSON.parse(categories) : [category],
-            difficulty: difficulty || 'Intermediate'
+            subject: subject || null
         };
 
         const result = await createFreeResourceService(resourceData, file, req.user.id);
@@ -54,8 +54,8 @@ exports.createFreeResource = async (req, res) => {
 
 exports.getAllFreeResources = async (req, res) => {
     try {
-        const { category, subcategory, difficulty, search } = req.query;
-        const filters = { category, subcategory, difficulty, search };
+        const { category, subcategory, subject, search } = req.query;
+        const filters = { category, subcategory, subject, search };
 
         const resources = await getAllFreeResourcesService(filters);
         return setSuccess(res, {
@@ -83,7 +83,7 @@ exports.getFreeResourceById = async (req, res) => {
 
 exports.updateFreeResource = async (req, res) => {
     try {
-        const { title, description, fileSize, category, subcategory, categories, difficulty, isActive } = req.body;
+        const { title, description, fileSize, category, subcategory, categories, subject, isActive } = req.body;
         const file = req.file;
 
         const updateData = {};
@@ -93,7 +93,7 @@ exports.updateFreeResource = async (req, res) => {
         if (category) updateData.category = category;
         if (subcategory !== undefined) updateData.subcategory = subcategory || null;
         if (categories) updateData.categories = JSON.parse(categories);
-        if (difficulty) updateData.difficulty = difficulty;
+        if (subject) updateData.subject = subject;
         if (isActive !== undefined) updateData.isActive = isActive;
 
         const result = await updateFreeResourceService(req.params.id, updateData, file, req.user.id);

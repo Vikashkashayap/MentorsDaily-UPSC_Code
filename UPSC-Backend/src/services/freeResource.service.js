@@ -42,8 +42,8 @@ exports.getAllFreeResourcesService = async (filters = {}) => {
         if (filters.subcategory) {
             query.subcategory = filters.subcategory;
         }
-        if (filters.difficulty) {
-            query.difficulty = filters.difficulty;
+        if (filters.subject) {
+            query.subject = filters.subject;
         }
         if (filters.search) {
             andConditions.push({

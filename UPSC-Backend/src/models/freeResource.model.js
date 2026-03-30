@@ -33,10 +33,9 @@ const freeResourceSchema = new mongoose.Schema({
         type: String,
         trim: true
     }],
-    difficulty: {
+    subject: {
         type: String,
-        enum: ['Beginner', 'Intermediate', 'Advanced'],
-        default: 'Intermediate'
+        trim: true
     },
     uploadedBy: {
         type: mongoose.Schema.Types.ObjectId,
