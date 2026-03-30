@@ -7,7 +7,8 @@ const {
   getBlogController,
   deleteBlogController,
   updateBlogController,
-  getBlogByIdController
+  getBlogByIdController,
+  incrementBlogViewController,
 } = require('../controllers/preparationBlog.controller.js');
 
 
@@ -16,6 +17,7 @@ router.get('/preparation/get-blog',getBlogController)
 router.delete('/preparation/:id/delete-blog',verifyTokenAndAdmin,deleteBlogController)
 router.put('/preparation/:id/update-blog', verifyTokenAndAdmin, uploadSingleWithContext('file'),updateBlogController);
 router.get('/preparation/:id/get-blog',getBlogByIdController)
+router.put('/preparation/:id/increment-views', incrementBlogViewController);
 
 
 module.exports = router;

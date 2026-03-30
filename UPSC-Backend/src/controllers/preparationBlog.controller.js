@@ -6,6 +6,7 @@ const {
   deleteBlogService,
   updateBlogService,
   getBlogByIdService,
+  incrementBlogViewsService,
 } = require("../services/preparationBlog.service.js");
 const {
   setCreateSuccess,
@@ -21,7 +22,7 @@ exports.createBlogController = async (req, res) => {
       return setBadRequest(res, { message: "No file uploaded" });
     }
 
-    const { title, content, category, tags } = req.body;
+    const { title, content, category, tags, shortDescription, slug } = req.body;
     if (!title || !content) {
       return setBadRequest(res, { message: "Title and content are required" });
     }
@@ -31,6 +32,8 @@ exports.createBlogController = async (req, res) => {
       content,
       category: category || "General",
       tags: tags ? (typeof tags === "string" ? JSON.parse(tags) : tags) : [],
+      shortDescription: shortDescription || "",
+      slug: slug || undefined,
     };
 
     const result = await createBlogService(blogData, file, req.user.id);
@@ -87,10 +90,9 @@ exports.updateBlogController = async (req, res) => {
     const { id } = req.params;
     const file = req.file;
 
-    const { title, content, category, tags } = req.body || {};
+    const { title, content, category, tags, shortDescription, slug } = req.body || {};
 
-
-    if (!title && !content && !category && !tags && !file) {
+    if (!title && !content && !category && !tags && !file && shortDescription === undefined && !slug) {
       return setBadRequest(res, { message: "No data provided for update" });
     }
 
@@ -101,6 +103,8 @@ exports.updateBlogController = async (req, res) => {
     if (tags) {
       blogData.tags = typeof tags === "string" ? JSON.parse(tags) : tags;
     }
+    if (shortDescription !== undefined) blogData.shortDescription = shortDescription;
+    if (slug) blogData.slug = slug;
 
     const result = await updateBlogService(id, blogData, file, req.user.id);
 
@@ -136,5 +140,24 @@ exports.getBlogByIdController = async (req, res) => {
     return setServerError(res, {
       message: error.message || "Failed to find blog",
     });
+  }
+};
+
+exports.incrementBlogViewController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await incrementBlogViewsService(id);
+
+    if (!blog) {
+      return setBadRequest(res, { message: "Blog not found" });
+    }
+
+    return setSuccess(res, {
+      message: "Blog views incremented successfully",
+      data: blog,
+    });
+  } catch (err) {
+    logger.error(`preparationBlog.controller.js << incrementBlogViewController << ${err.message}`);
+    return setServerError(res, { message: err.message || "Failed to increment blog views" });
   }
 };

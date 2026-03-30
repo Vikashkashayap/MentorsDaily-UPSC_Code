@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const logger = require("../utility/logger.js");
-const { createBlogRepo, getBlogRepo, deleteBlogRepo, updateBlogRepo, getBlogFileIdRepo, getBlogByIdRepo } = require("../repositories/preparationBlog.repository.js");
+const { createBlogRepo, getBlogRepo, deleteBlogRepo, updateBlogRepo, getBlogFileIdRepo, getBlogByIdRepo, incrementBlogViewsRepo } = require("../repositories/preparationBlog.repository.js");
 const { uploadFileService } = require("./uploadFiles.service.js");
 const preparationBlogModel = require("../models/preparationBlog.model.js");
 
@@ -84,3 +84,12 @@ exports.getBlogByIdService = async(id) => {
   }
 }
 
+exports.incrementBlogViewsService = async (id) => {
+  logger.info(`preparationBlog.service.js << incrementBlogViewsService << Incrementing views for blog ID: ${id}`);
+  try {
+    return await incrementBlogViewsRepo(id);
+  } catch (err) {
+    logger.error(`preparationBlog.service.js << incrementBlogViewsService << Error: ${err.message}`);
+    throw err;
+  }
+}

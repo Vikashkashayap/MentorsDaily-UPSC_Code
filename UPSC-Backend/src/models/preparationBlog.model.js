@@ -7,6 +7,19 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
 
+    shortDescription: {
+      type: String,
+      maxlength: 300,
+      default: "",
+    },
+
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+
     content: {
       type: String,
       required: true,
@@ -32,6 +45,11 @@ const blogSchema = new mongoose.Schema(
     file: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UploadedDocuments",
+    },
+
+    views: {
+      type: Number,
+      default: 0,
     },
   },
   {

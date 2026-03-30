@@ -79,4 +79,18 @@ exports.getBlogByIdRepo = async (id) => {
     throw err; 
   }
 };
-  
+
+exports.incrementBlogViewsRepo = async (id) => {
+  try {
+    logger.info(`preparationBlog.repository.js << incrementBlogViewsRepo << Incrementing views for blog: ${id}`);
+    const updatedBlog = await PreparationBlog.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+    return updatedBlog;
+  } catch (err) {
+    logger.error(`preparationBlog.repository.js << incrementBlogViewsRepo << ${err.message}`);
+    throw err;
+  }
+};
