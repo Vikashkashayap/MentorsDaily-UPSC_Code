@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllFreeResources, getAvailableCategories, getDifficultyLevels, getCategorySubcategories, getSubcategoriesForCategory } from '../../api/freeResourceService';
+import { getAllFreeResources, getAvailableCategories, getSubjects, getCategorySubcategories, getSubcategoriesForCategory } from '../../api/freeResourceService';
 
 export default function FreeStudyMaterials() {
   const navigate = useNavigate();
@@ -9,17 +9,17 @@ export default function FreeStudyMaterials() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
   const [activeSubcategory, setActiveSubcategory] = useState('');
-  const [level, setLevel] = useState('');
+  const [subject, setSubject] = useState('');
 
   const categories = ['All', ...getAvailableCategories()];
-  const levels = ['All', ...getDifficultyLevels()];
+  const subjectsList = ['All', ...getSubjects()];
 
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchResources();
     }, searchQuery ? 500 : 0);
     return () => clearTimeout(timer);
-  }, [searchQuery, activeCategory, activeSubcategory, level]);
+  }, [searchQuery, activeCategory, activeSubcategory, subject]);
 
   // Reset subcategory when category changes
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function FreeStudyMaterials() {
       const filters = {};
       if (activeCategory && activeCategory !== 'All') filters.category = activeCategory;
       if (activeSubcategory && activeSubcategory !== 'All') filters.subcategory = activeSubcategory;
-      if (level && level !== 'All') filters.difficulty = level;
+      if (subject && subject !== 'All') filters.subject = subject;
       if (searchQuery.trim()) filters.search = searchQuery.trim();
 
       const response = await getAllFreeResources(filters);
@@ -162,13 +162,13 @@ export default function FreeStudyMaterials() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <select
-            value={level}
-            onChange={(e) => setLevel(e.target.value)}
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {levels.map((l) => (
-              <option key={l} value={l === 'All' ? '' : l}>
-                {l}
+            {subjectsList.map((s) => (
+              <option key={s} value={s === 'All' ? '' : s}>
+                {s === 'All' ? 'All Subjects' : s}
               </option>
             ))}
           </select>
@@ -201,13 +201,11 @@ export default function FreeStudyMaterials() {
                     className="text-lg font-semibold text-slate-900 leading-snug prose max-w-none prose-sm"
                     dangerouslySetInnerHTML={{ __html: resource.title }}
                   />
-                  <span className={`text-[10px] uppercase tracking-wide px-2 py-1 rounded-full border ${
-                    resource.difficulty === 'Beginner' ? 'bg-green-50 text-green-700 border-green-200' :
-                    resource.difficulty === 'Intermediate' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                    'bg-red-50 text-red-700 border-red-200'
-                  }`}>
-                    {resource.difficulty}
-                  </span>
+                  {resource.subject && (
+                    <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full border bg-purple-50 text-purple-700 border-purple-200">
+                      {resource.subject}
+                    </span>
+                  )}
                 </div>
                 <p 
                   className="mt-2 text-sm text-slate-600 min-h-[44px] line-clamp-2 prose max-w-none prose-sm"

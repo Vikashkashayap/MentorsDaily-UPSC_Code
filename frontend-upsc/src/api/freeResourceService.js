@@ -5,7 +5,7 @@ export const getAllFreeResources = async (filters = {}) => {
     const queryParams = new URLSearchParams();
     if (filters.category) queryParams.append("category", filters.category);
     if (filters.subcategory) queryParams.append("subcategory", filters.subcategory);
-    if (filters.difficulty) queryParams.append("difficulty", filters.difficulty);
+    if (filters.subject) queryParams.append("subject", filters.subject);
     if (filters.search) queryParams.append("search", filters.search);
 
     const queryString = queryParams.toString();
@@ -155,6 +155,15 @@ export const getSubcategoriesForCategory = (category) => {
   return subcategories[category] || [];
 };
 
-export const getDifficultyLevels = () => {
-  return ["Beginner", "Intermediate", "Advanced"];
+export const getSubjects = () => {
+  return [
+    "History",
+    "Geography",
+    "Polity",
+    "Economics",
+    "Science & Technology",
+    "Environment/Ecology",
+    "Art & Culture",
+    "Other"
+  ];
 };

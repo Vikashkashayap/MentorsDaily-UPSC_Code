@@ -7,7 +7,7 @@ import {
   updateFreeResource,
   deleteFreeResource,
   getAvailableCategories,
-  getDifficultyLevels,
+  getSubjects,
   getCategorySubcategories,
   getSubcategoriesForCategory
 } from '../../api/freeResourceService';
@@ -31,7 +31,7 @@ export default function ManageFreeResources() {
     category: '',
     subcategory: '',
     categories: [],
-    difficulty: 'Intermediate'
+    subject: ''
   });
   const [file, setFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -78,7 +78,7 @@ export default function ManageFreeResources() {
         category: resource.category || (resource.categories && resource.categories[0]) || '',
         subcategory: resource.subcategory || '',
         categories: resource.categories || [],
-        difficulty: resource.difficulty
+        subject: resource.subject || ''
       });
     } else {
       setEditingResource(null);
@@ -89,7 +89,7 @@ export default function ManageFreeResources() {
         category: '',
         subcategory: '',
         categories: [],
-        difficulty: 'Intermediate'
+        subject: ''
       });
     }
     setFile(null);
@@ -106,7 +106,7 @@ export default function ManageFreeResources() {
       category: '',
       subcategory: '',
       categories: [],
-      difficulty: 'Intermediate'
+      subject: ''
     });
     setFile(null);
   };
@@ -171,7 +171,9 @@ export default function ManageFreeResources() {
         data.append('subcategory', formData.subcategory);
       }
       data.append('categories', JSON.stringify(formData.categories));
-      data.append('difficulty', formData.difficulty);
+      if (formData.subject) {
+        data.append('subject', formData.subject);
+      }
 
       if (file) {
         data.append('file', file);
@@ -301,7 +303,7 @@ export default function ManageFreeResources() {
                     </div>
                   )
                 },
-                { header: 'Difficulty', accessor: 'difficulty' },
+                { header: 'Subject', accessor: 'subject' },
                 { header: 'Size', accessor: 'fileSize' },
                 {
                   header: 'Downloads',
@@ -373,12 +375,11 @@ export default function ManageFreeResources() {
                         dangerouslySetInnerHTML={{ __html: resource.description }}
                       />
                     </div>
-                    <span className={`flex-shrink-0 ml-2 px-2 py-1 text-xs rounded whitespace-nowrap ${resource.difficulty === 'Beginner' ? (isDark ? 'bg-green-900 text-green-200' : 'bg-green-100 text-green-800') :
-                      resource.difficulty === 'Intermediate' ? (isDark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-100 text-yellow-800') :
-                        (isDark ? 'bg-red-900 text-red-200' : 'bg-red-100 text-red-800')
-                      }`}>
-                      {resource.difficulty}
-                    </span>
+                    {resource.subject && (
+                      <span className={`flex-shrink-0 ml-2 px-2 py-1 text-xs rounded whitespace-nowrap ${isDark ? 'bg-purple-900 text-purple-200' : 'bg-purple-100 text-purple-800'}`}>
+                        {resource.subject}
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -572,16 +573,17 @@ export default function ManageFreeResources() {
 
                   <div>
                     <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                      Difficulty Level
+                      Subject <span className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(Optional)</span>
                     </label>
                     <select
-                      name="difficulty"
-                      value={formData.difficulty}
+                      name="subject"
+                      value={formData.subject}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                     >
-                      {getDifficultyLevels().map(level => (
-                        <option key={level} value={level}>{level}</option>
+                      <option value="">Select a subject (Optional)</option>
+                      {getSubjects().map(subj => (
+                        <option key={subj} value={subj}>{subj}</option>
                       ))}
                     </select>
                   </div>
