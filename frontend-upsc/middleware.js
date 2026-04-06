@@ -4,10 +4,12 @@ const SITE_URL = (process.env.SITE_URL || process.env.VITE_SITE_URL || 'https://
   /\/$/,
   '',
 );
-const API_BASE = (process.env.VITE_API_URL || process.env.PUBLIC_API_URL || 'https://api.mentorsdaily.com').replace(
-  /\/$/,
-  '',
-);
+const API_BASE = (
+  process.env.VITE_PUBLIC_API_URL ||
+  process.env.VITE_API_URL ||
+  process.env.PUBLIC_API_URL ||
+  'https://api.mentorsdaily.com'
+).replace(/\/$/, '');
 
 const BOT_UA =
   /facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|Discordbot|WhatsApp|TelegramBot|Pinterest|vkShare|redditbot|Applebot|Googlebot|bingbot|YandexBot|Baiduspider/i;
@@ -18,16 +20,6 @@ function stripHtml(html) {
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-function generateSlugFromTitle(text) {
-  const plain = stripHtml(text);
-  return plain
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 function escapeAttr(s) {
@@ -53,64 +45,63 @@ export default async function middleware(request) {
   const slug = decodeURIComponent(match[1]);
 
   try {
-    const res = await fetch(`${API_BASE}/api/v1/preparation/get-blog`, {
-      headers: { Accept: 'application/json' },
-    });
+    const metaRes = await fetch(
+      `${API_BASE}/api/v1/preparation/meta/${encodeURIComponent(slug)}`,
+      { headers: { Accept: 'application/json' } },
+    );
 
-    if (!res.ok) {
+    if (!metaRes.ok) {
       return next();
     }
 
-    const body = await res.json();
-    const payload = body?.data;
-    const blogsData = payload?.data ?? payload;
-    const blogsArray = Array.isArray(blogsData) ? blogsData : [];
-
-    const blog = blogsArray.find((b) => {
-      if (b.slug === slug) return true;
-      const generated = generateSlugFromTitle(b.title);
-      return generated === slug || String(b._id) === slug;
-    });
-
-    if (!blog) {
+    const body = await metaRes.json();
+    const meta = body?.data?.data;
+    if (!meta || typeof meta.title !== 'string') {
       return next();
     }
 
-    const title = stripHtml(blog.title) || 'Blog | MentorsDaily';
-    const rawDesc = blog.shortDescription || stripHtml(blog.content).slice(0, 160);
-    const desc = rawDesc.trim() || title;
-    const canonical = `${SITE_URL}/preparation-blog/${encodeURIComponent(slug)}`;
+    const desc =
+      (meta.description && String(meta.description).trim()) ||
+      stripHtml(meta.title);
+    const canonical = meta.url || `${SITE_URL}/preparation-blog/${encodeURIComponent(slug)}`;
 
-    let imageUrl = `${SITE_URL}/images/hero.png`;
-    if (blog.file?._id && blog.file.contentType?.startsWith('image/')) {
-      imageUrl = `${API_BASE}/api/v1/download/${blog.file._id}`;
+    let imageUrl = meta.image || `${SITE_URL}/images/hero.png`;
+    if (/^http:\/\//i.test(imageUrl)) {
+      imageUrl = `https://${imageUrl.slice(7)}`;
     }
+
+    const docTitle = escapeAttr(meta.title);
+    const plainForAlt = escapeAttr(
+      meta.plainTitle || stripHtml(meta.title).replace(/\s*\|\s*MentorsDaily\s*$/i, ''),
+    );
 
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>${escapeAttr(title)} | MentorsDaily</title>
+  <title>${docTitle}</title>
   <meta name="description" content="${escapeAttr(desc)}" />
   <link rel="canonical" href="${escapeAttr(canonical)}" />
-  <meta property="og:title" content="${escapeAttr(title)}" />
+  <meta property="og:title" content="${docTitle}" />
   <meta property="og:description" content="${escapeAttr(desc)}" />
   <meta property="og:url" content="${escapeAttr(canonical)}" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="MentorsDaily" />
   <meta property="og:image" content="${escapeAttr(imageUrl)}" />
+  ${/^https:\/\//i.test(imageUrl) ? `<meta property="og:image:secure_url" content="${escapeAttr(imageUrl)}" />` : ''}
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="${escapeAttr(title)}" />
+  <meta property="og:image:alt" content="${plainForAlt}" />
   <meta property="og:locale" content="en_IN" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@mentorsdaily" />
-  <meta name="twitter:title" content="${escapeAttr(title)}" />
+  <meta name="twitter:title" content="${docTitle}" />
   <meta name="twitter:description" content="${escapeAttr(desc)}" />
   <meta name="twitter:image" content="${escapeAttr(imageUrl)}" />
+  <meta name="twitter:image:alt" content="${plainForAlt}" />
 </head>
 <body>
-  <p><a href="${escapeAttr(canonical)}">${escapeAttr(title)}</a> — MentorsDaily</p>
+  <p><a href="${escapeAttr(canonical)}">${docTitle}</a> — MentorsDaily</p>
 </body>
 </html>`;
 

@@ -6,6 +6,10 @@ import {
   optimizeDescription,
   SEO_LENGTHS,
 } from "../../utils/seoUtils";
+import {
+  toAbsoluteOgUrl,
+  DEFAULT_OG_IMAGE_PATH,
+} from "../../utils/ogImageUrl";
 
 function resolveSiteUrl() {
   const env = import.meta.env.VITE_SITE_URL;
@@ -18,8 +22,12 @@ function isAbsoluteUrl(u) {
 }
 
 /**
- * Core Open Graph + Twitter meta for any page (SPA). Bots that execute JS see updates;
- * use backend HTML injection for crawlers that do not.
+ * Core Open Graph + Twitter meta for any page.
+ *
+ * Props: title, description, image (path or absolute URL), url (path or absolute).
+ * `image` falls back to {@link DEFAULT_OG_IMAGE_PATH} when empty.
+ * For blog links, crawlers that do not run JS should still receive tags via
+ * server middleware (Vercel) or Node `spaBotPrepBlog` when serving the built SPA.
  */
 export default function SEO({
   title,
@@ -31,7 +39,7 @@ export default function SEO({
   noindex = false,
 }) {
   const baseUrl = resolveSiteUrl();
-  const fallbackImage = `${baseUrl}/images/hero.png`;
+  const fallbackImage = toAbsoluteOgUrl(DEFAULT_OG_IMAGE_PATH);
 
   const safeTitle = optimizeTitle(
     title && String(title).trim() ? title : SEO_CONFIG.defaultTitle,
@@ -44,16 +52,10 @@ export default function SEO({
     SEO_LENGTHS.DESCRIPTION_MAX
   );
 
-  let imageUrl = fallbackImage;
-  if (image != null && String(image).trim()) {
-    const raw = String(image).trim();
-    imageUrl = isAbsoluteUrl(raw)
-      ? raw
-      : `${baseUrl}${raw.startsWith("/") ? "" : "/"}${raw}`;
-  }
-  if (/^http:\/\//i.test(imageUrl)) {
-    imageUrl = `https://${imageUrl.slice(7)}`;
-  }
+  let imageUrl =
+    image != null && String(image).trim()
+      ? toAbsoluteOgUrl(image)
+      : fallbackImage;
 
   let pageUrl = baseUrl;
   if (url != null && String(url).trim()) {

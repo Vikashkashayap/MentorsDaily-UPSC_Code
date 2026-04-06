@@ -20,9 +20,17 @@ exports.downloadFile = async (req, res) => {
   try {
     const file = await downloadFileService(req.params.id);
     const buffer = Buffer.from(file.data, 'base64');
+    const isImage = file.contentType && String(file.contentType).startsWith('image/');
     res.set({
       'Content-Type': file.contentType,
-      'Content-Disposition': `attachment; filename="${file.filename}"`,
+      ...(isImage
+        ? {
+            'Content-Disposition': `inline; filename="${file.filename}"`,
+            'Cache-Control': 'public, max-age=604800, immutable',
+          }
+        : {
+            'Content-Disposition': `attachment; filename="${file.filename}"`,
+          }),
     });
     return res.send(buffer);
   } catch (err) {
@@ -34,9 +42,13 @@ exports.viewFile = async (req, res) => {
   try {
     const file = await downloadFileService(req.params.id);
     const buffer = Buffer.from(file.data, 'base64');
-    
+    const isImage = file.contentType && String(file.contentType).startsWith('image/');
     res.set({
       'Content-Type': file.contentType,
+      ...(isImage && {
+        'Content-Disposition': `inline; filename="${file.filename}"`,
+        'Cache-Control': 'public, max-age=604800, immutable',
+      }),
     });
 
     return res.send(buffer);

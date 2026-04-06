@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import SEO from "./SEO";
-import { SEO_CONFIG } from "../../utils/seoUtils";
+import { getSiteOrigin } from "../../utils/ogImageUrl";
 
 const BlogSEO = ({
   title,
@@ -15,7 +15,7 @@ const BlogSEO = ({
   category = "UPSC Preparation",
   readingTime = "5 min read",
 }) => {
-  const baseUrl = SEO_CONFIG.siteUrl.replace(/\/$/, "");
+  const baseUrl = getSiteOrigin();
   const fullArticleUrl = (() => {
     if (articleUrl == null || articleUrl === "") {
       return typeof window !== "undefined" ? window.location.href.split("#")[0] : baseUrl;
@@ -113,11 +113,6 @@ const BlogSEO = ({
             content={modifiedDate || publishDate}
           />
         )}
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content={title} />
-        <meta name="twitter:site" content="@mentorsdaily" />
-        <meta name="twitter:image:alt" content={title} />
         <meta name="twitter:creator" content="@mentorsdaily" />
         <script
           type="application/ld+json"

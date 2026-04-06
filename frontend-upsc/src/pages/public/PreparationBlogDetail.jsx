@@ -3,7 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Share2, BookOpen } from 'lucide-react';
 import { getPreparationBlogBySlug, incrementPreparationBlogViews } from '../../api/coreService';
 import BlogSEO from '../../components/SEO/BlogSEO';
-import { SEO_CONFIG } from '../../utils/seoUtils';
+import {
+  getPublicApiOrigin,
+  getPreparationBlogOgImageUrl,
+} from '../../utils/ogImageUrl';
 
 const PreparationBlogDetail = () => {
   const { slug } = useParams();
@@ -144,16 +147,8 @@ const PreparationBlogDetail = () => {
 
   const plainTitle = stripHtml(blog.title);
   const metaDesc = (blog.shortDescription || stripHtml(blog.content).slice(0, 160)).trim();
-  const publicApiBase = (
-    import.meta.env.VITE_PUBLIC_API_URL ||
-    import.meta.env.VITE_API_URL ||
-    ''
-  ).replace(/\/$/, '');
-  const shareImageAbsolute =
-    blog.file?._id && blog.file.contentType?.startsWith('image/') && publicApiBase
-      ? `${publicApiBase}/api/v1/download/${blog.file._id}`
-      : `${String(SEO_CONFIG.siteUrl).replace(/\/$/, '')}/images/hero.png`;
-  const fileDownloadBase = publicApiBase || import.meta.env.VITE_API_URL || '';
+  const shareImageAbsolute = getPreparationBlogOgImageUrl(blog);
+  const fileBase = getPublicApiOrigin();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -193,19 +188,19 @@ const PreparationBlogDetail = () => {
         <article className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Featured Image/File - Full Width */}
           <div className="w-full aspect-[21/9] overflow-hidden relative bg-gray-100">
-            {blog.file?._id ? (
+            {blog.file?._id && fileBase ? (
               <>
                 {/* If file is image, show it directly */}
                 {blog.file.contentType?.startsWith('image/') ? (
                   <img
-                    src={`${fileDownloadBase}/api/v1/download/${blog.file._id}`}
+                    src={`${fileBase}/api/v1/view/${blog.file._id}`}
                     alt={stripHtml(blog.title)}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   /* If file is PDF or other, show iframe preview */
                   <iframe
-                    src={`${fileDownloadBase}/api/v1/download/${blog.file._id}`}
+                    src={`${fileBase}/api/v1/view/${blog.file._id}`}
                     className="w-full h-full border-0"
                     title="File Preview"
                   />

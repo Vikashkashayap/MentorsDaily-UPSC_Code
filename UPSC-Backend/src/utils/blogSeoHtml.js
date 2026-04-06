@@ -32,6 +32,32 @@ function ensureHttps(url) {
   return url;
 }
 
+function isLikelyBlogCoverImage(file) {
+  if (!file) return false;
+  const ct = file.contentType && String(file.contentType);
+  if (ct && /^image\//i.test(ct)) return true;
+  const name = (file.filename && String(file.filename).toLowerCase()) || "";
+  return /\.(jpe?g|png|gif|webp|avif|bmp|svg)(\?|$)/i.test(name);
+}
+
+/**
+ * Public origin for uploaded files in OG/Twitter previews (same rules as Vercel middleware).
+ */
+function resolvePublicApiOrigin(env, siteUrl) {
+  const trimmed = (s) => String(s || "").trim().replace(/\/$/, "");
+  const fromEnv = trimmed(
+    env.PUBLIC_API_BASE_URL ||
+      env.API_PUBLIC_URL ||
+      env.PUBLIC_API_URL ||
+      env.VITE_PUBLIC_API_URL ||
+      env.VITE_API_URL ||
+      ""
+  );
+  if (fromEnv) return fromEnv;
+  if (/mentorsdaily\.com$/i.test(siteUrl)) return "https://api.mentorsdaily.com";
+  return trimmed(siteUrl);
+}
+
 /**
  * Build absolute meta fields for a preparation blog (server-side).
  * @param {object} blog — mongoose doc or plain object with title, content, shortDescription, slug, file
@@ -40,12 +66,7 @@ function ensureHttps(url) {
  */
 function buildBlogMeta(blog, requestSlug, env = process.env) {
   const siteUrl = (env.SITE_URL || env.FRONTEND_URL || "https://mentorsdaily.com").replace(/\/$/, "");
-  const apiPublic = (
-    env.PUBLIC_API_BASE_URL ||
-    env.API_PUBLIC_URL ||
-    env.VITE_API_URL ||
-    siteUrl
-  ).replace(/\/$/, "");
+  const apiPublic = resolvePublicApiOrigin(env, siteUrl);
 
   const plainTitle = stripHtmlTags(blog.title) || "UPSC Preparation Blog";
   const title = `${plainTitle} | MentorsDaily`;
@@ -58,9 +79,9 @@ function buildBlogMeta(blog, requestSlug, env = process.env) {
   let image = ensureHttps(`${siteUrl}/images/hero.png`);
   const file = blog.file;
   const fileId = file && (file._id || file);
-  const contentType = file && file.contentType;
-  if (fileId && contentType && String(contentType).startsWith("image/")) {
-    image = ensureHttps(`${apiPublic}/api/v1/download/${fileId}`);
+  if (fileId && isLikelyBlogCoverImage(file) && apiPublic) {
+    // Use /view/ so responses are inline; link previews must fetch a real image URL on the API host.
+    image = ensureHttps(`${apiPublic}/api/v1/view/${fileId}`);
   }
 
   const slugPath = requestSlug || blog.slug || generateSlugFromTitle(blog.title) || String(blog._id || "");
@@ -148,6 +169,8 @@ module.exports = {
   generateSlugFromTitle,
   escapeHtmlAttr,
   ensureHttps,
+  isLikelyBlogCoverImage,
+  resolvePublicApiOrigin,
   buildBlogMeta,
   stripHeadSocialDefaults,
   buildInjectedHeadFragment,
