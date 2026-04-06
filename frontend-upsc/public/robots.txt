@@ -3,6 +3,7 @@ Allow: /
 
 # Sitemap
 Sitemap: https://mentorsdaily.com/sitemap.xml
+Sitemap: https://mentorsdaily.com/sitemap-preparation-blogs.xml
 
 # Crawl-delay
 Crawl-delay: 1
@@ -37,6 +38,8 @@ Allow: /free-study-materials
 Allow: /upsc-syllabus
 Allow: /download-ncerts
 Allow: /upsc-preparation-blog
+Allow: /preparation-blogs
+Allow: /preparation-blog/
 Allow: /currentAffairs
 Allow: /MentorshipCourses
 Allow: /blogs/

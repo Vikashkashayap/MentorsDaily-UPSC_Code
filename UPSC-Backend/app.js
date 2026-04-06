@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const compression = require("compression");
 const dotenv = require("dotenv");
 const connectDB = require("./src/config/db.js");
@@ -15,6 +16,7 @@ const cron = require('node-cron');
 const axios = require('axios');
 const preparationBlogRoutes = require('./src/routes/preparationBlog.routes.js')
 const previousYearPaperRoutes = require('./src/routes/previousYearPaper.routes.js')
+const { getPreparationBlogsSitemapXml } = require('./src/controllers/preparationBlog.controller.js')
 
 dotenv.config();
 
@@ -27,6 +29,15 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
+try {
+  const prerender = require("./src/config/prerender.middleware.js");
+  app.use(prerender);
+} catch (e) {
+  console.warn("prerender-node failed to load.", e.message);
+}
+
+app.get("/sitemap-preparation-blogs.xml", getPreparationBlogsSitemapXml);
+
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", courseRoute);
 app.use('/api/v1', currentAffairsRoutes);
@@ -38,10 +49,34 @@ app.use('/api/v1', freeResourceRoutes);
 app.use('/api/v1', preparationBlogRoutes);
 app.use('/api/v1', previousYearPaperRoutes)
 
+const FRONTEND_DIST = process.env.FRONTEND_DIST;
 
-app.get("/", (req, res) => {
-  res.send("Welcome to UPSC backend...");
-});
+if (!FRONTEND_DIST) {
+  app.get("/", (req, res) => {
+    res.send("Welcome to UPSC backend...");
+  });
+}
+
+if (FRONTEND_DIST) {
+  const distResolved = path.resolve(FRONTEND_DIST);
+  const { createPrepBlogBotHtmlMiddleware } = require("./src/middleware/spaBotPrepBlog.middleware.js");
+  const prepBlogBotHtml = createPrepBlogBotHtmlMiddleware(distResolved);
+
+  app.use(
+    express.static(distResolved, {
+      index: false,
+      fallthrough: true,
+    })
+  );
+  app.use(prepBlogBotHtml);
+  app.use((req, res, next) => {
+    if (req.method !== "GET" && req.method !== "HEAD") return next();
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(distResolved, "index.html"), (err) => {
+      if (err) next(err);
+    });
+  });
+}
 
 // cron.schedule('*/14 * * * *', async () => {
 //     const urlsToPing = [

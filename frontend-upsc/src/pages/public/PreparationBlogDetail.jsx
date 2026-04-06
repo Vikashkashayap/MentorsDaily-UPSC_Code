@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, User, ArrowLeft, Share2, BookOpen } from 'lucide-react';
-import { getPreparationBlogs, incrementPreparationBlogViews } from '../../api/coreService';
+import { getPreparationBlogBySlug, incrementPreparationBlogViews } from '../../api/coreService';
 import BlogSEO from '../../components/SEO/BlogSEO';
 import { SEO_CONFIG } from '../../utils/seoUtils';
 
@@ -18,18 +18,6 @@ const PreparationBlogDetail = () => {
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || '';
-  };
-
-  // Helper function to generate slug from text
-  const generateSlug = (text) => {
-    if (!text) return '';
-    const plainText = stripHtml(text);
-    return plainText
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
-      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
   };
 
   // Helper function to clean HTML content for rich display
@@ -70,36 +58,19 @@ const PreparationBlogDetail = () => {
       setLoading(true);
       setError(null);
 
-      // Validate slug before fetching
       if (!slug || slug === 'undefined') {
         setError('Invalid blog URL');
         setLoading(false);
         return;
       }
 
-      // Fetch all blogs since get by slug endpoint is not available yet
-      const response = await getPreparationBlogs();
-
-      // Response structure: { success: true, data: { message: "...", data: [...] } }
-      const blogsData = response?.data?.data || response?.data || [];
-
-      // Ensure it's always an array
-      const blogsArray = Array.isArray(blogsData) ? blogsData : [];
-
-      // Find the blog by slug from the array
-      // Also check if slug matches generated slug from title (for backward compatibility)
-      const foundBlog = blogsArray.find(blog => {
-        if (blog.slug === slug) return true;
-        // Fallback: check if slug matches generated slug from title
-        const generatedSlug = generateSlug(blog.title);
-        return generatedSlug === slug || blog._id === slug;
-      });
+      const response = await getPreparationBlogBySlug(slug);
+      const foundBlog = response?.data?.data;
 
       if (foundBlog) {
         setBlog(foundBlog);
-        // Increment view count when blog is found and loaded
         if (foundBlog._id) {
-          incrementPreparationBlogViews(foundBlog._id).catch(err => 
+          incrementPreparationBlogViews(foundBlog._id).catch((err) =>
             console.error('Error incrementing views:', err)
           );
         }
@@ -108,7 +79,12 @@ const PreparationBlogDetail = () => {
       }
     } catch (error) {
       console.error('Error fetching blog detail:', error);
-      setError('Failed to load blog. Please try again later.');
+      const status = error?.response?.status;
+      if (status === 404) {
+        setError('Blog not found');
+      } else {
+        setError('Failed to load blog. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
@@ -168,11 +144,16 @@ const PreparationBlogDetail = () => {
 
   const plainTitle = stripHtml(blog.title);
   const metaDesc = (blog.shortDescription || stripHtml(blog.content).slice(0, 160)).trim();
-  const apiBase = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const publicApiBase = (
+    import.meta.env.VITE_PUBLIC_API_URL ||
+    import.meta.env.VITE_API_URL ||
+    ''
+  ).replace(/\/$/, '');
   const shareImageAbsolute =
-    blog.file?._id && blog.file.contentType?.startsWith('image/') && apiBase
-      ? `${apiBase}/api/v1/download/${blog.file._id}`
-      : `${SEO_CONFIG.siteUrl}/images/hero.png`;
+    blog.file?._id && blog.file.contentType?.startsWith('image/') && publicApiBase
+      ? `${publicApiBase}/api/v1/download/${blog.file._id}`
+      : `${String(SEO_CONFIG.siteUrl).replace(/\/$/, '')}/images/hero.png`;
+  const fileDownloadBase = publicApiBase || import.meta.env.VITE_API_URL || '';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -217,14 +198,14 @@ const PreparationBlogDetail = () => {
                 {/* If file is image, show it directly */}
                 {blog.file.contentType?.startsWith('image/') ? (
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
+                    src={`${fileDownloadBase}/api/v1/download/${blog.file._id}`}
                     alt={stripHtml(blog.title)}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   /* If file is PDF or other, show iframe preview */
                   <iframe
-                    src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
+                    src={`${fileDownloadBase}/api/v1/download/${blog.file._id}`}
                     className="w-full h-full border-0"
                     title="File Preview"
                   />

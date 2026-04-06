@@ -11,7 +11,7 @@
     "start": "vite preview --host 0.0.0.0",
     "seo:analyze": "lighthouse --chrome-flags=\"--headless\" --output=html --output-path=./seo-report.html https://mentorsdaily.com",
     "seo:test": "lighthouse --chrome-flags=\"--headless\" --output=json --output-path=./seo-report.json https://mentorsdaily.com",
-    "seo:sitemap": "node scripts/generate-sitemap.js"
+    "seo:sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
     "@vercel/functions": "^3.4.3",

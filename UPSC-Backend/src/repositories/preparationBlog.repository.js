@@ -127,3 +127,33 @@ exports.incrementBlogViewsRepo = async (id) => {
     throw err;
   }
 };
+
+function popBlog(q) {
+  return q.populate("file", "filename contentType size").populate("user", "name");
+}
+
+exports.getBlogBySlugFlexibleRepo = async (slug) => {
+  try {
+    if (!slug || slug === "undefined") return null;
+    logger.info(`preparationBlog.repository.js << getBlogBySlugFlexibleRepo << ${slug}`);
+
+    let blog = await popBlog(PreparationBlog.findOne({ slug }));
+    if (blog) return blog;
+
+    if (mongoose.Types.ObjectId.isValid(slug)) {
+      blog = await popBlog(PreparationBlog.findById(slug));
+      if (blog) return blog;
+    }
+
+    const { generateSlugFromTitle } = require("../utils/blogSeoHtml.js");
+    const blogs = await popBlog(PreparationBlog.find());
+    const found = blogs.find((b) => {
+      if (b.slug && b.slug === slug) return true;
+      return generateSlugFromTitle(b.title) === slug;
+    });
+    return found || null;
+  } catch (err) {
+    logger.error(`preparationBlog.repository.js << getBlogBySlugFlexibleRepo << ${err.message}`);
+    throw new Error(err.message);
+  }
+};

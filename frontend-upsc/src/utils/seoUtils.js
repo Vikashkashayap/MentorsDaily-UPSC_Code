@@ -1,7 +1,12 @@
 // SEO utility functions for MentorsDaily
+const viteSiteUrl =
+  typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL
+    ? String(import.meta.env.VITE_SITE_URL).replace(/\/$/, '')
+    : '';
+
 export const SEO_CONFIG = {
   siteName: 'MentorsDaily',
-  siteUrl: 'https://mentorsdaily.com',
+  siteUrl: viteSiteUrl || 'https://mentorsdaily.com',
   defaultTitle: 'MentorsDaily - UPSC Preparation & Mentorship Platform',
   defaultDescription: 'Comprehensive UPSC preparation platform with expert mentorship, courses, study materials, and personalized guidance for civil services aspirants.',
   defaultKeywords: 'UPSC, civil services, IAS preparation, mentorship, study materials, current affairs, prelims, mains, interview',
@@ -309,6 +314,17 @@ export const BLOG_SEO_DATA = {
 
 // Function to get SEO data for a specific page
 export const getPageSEO = (pathname) => {
+  if (pathname.startsWith('/preparation-blog/')) {
+    return {
+      title: 'UPSC Preparation Blog | MentorsDaily',
+      description:
+        'Expert UPSC preparation articles, strategies, and guidance from MentorsDaily.',
+      keywords: 'UPSC preparation blog, civil services, IAS, MentorsDaily',
+      canonical: pathname,
+      ogImage: '/images/hero.png',
+    };
+  }
+
   // Check blog pages first
   if (pathname.startsWith('/blogs/')) {
     return BLOG_SEO_DATA[pathname] || {

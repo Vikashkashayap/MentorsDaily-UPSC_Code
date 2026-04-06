@@ -8,12 +8,15 @@ const {
   updateBlogService,
   getBlogByIdService,
   incrementBlogViewsService,
+  getBlogBySlugFlexibleService,
 } = require("../services/preparationBlog.service.js");
+const { buildBlogMeta, generateSlugFromTitle } = require("../utils/blogSeoHtml.js");
 const {
   setCreateSuccess,
   setBadRequest,
   setSuccess,
   setServerError,
+  setNotFoundError,
 } = require("../utility/responseHelper.js");
 
 exports.createBlogController = async (req, res) => {
@@ -180,5 +183,118 @@ exports.incrementBlogViewController = async (req, res) => {
   } catch (err) {
     logger.error(`preparationBlog.controller.js << incrementBlogViewController << ${err.message}`);
     return setServerError(res, { message: err.message || "Failed to increment blog views" });
+  }
+};
+
+exports.getBlogBySlugPublicController = async (req, res) => {
+  try {
+    let { slug } = req.params;
+    try {
+      slug = decodeURIComponent(String(slug || ""));
+    } catch {
+      return setBadRequest(res, { message: "Invalid blog URL" });
+    }
+    if (!slug || slug === "undefined") {
+      return setBadRequest(res, { message: "Invalid blog URL" });
+    }
+
+    const blog = await getBlogBySlugFlexibleService(slug);
+    if (!blog) {
+      return setNotFoundError(res, { message: "Blog not found" });
+    }
+
+    return setSuccess(res, {
+      message: "Blog fetched successfully",
+      data: blog,
+    });
+  } catch (error) {
+    logger.error(`preparationBlog.controller.js << getBlogBySlugPublicController << ${error.message}`);
+    return setServerError(res, { message: error.message || "Failed to fetch blog" });
+  }
+};
+
+exports.getBlogMetaBySlugController = async (req, res) => {
+  try {
+    let { slug } = req.params;
+    try {
+      slug = decodeURIComponent(String(slug || ""));
+    } catch {
+      return setBadRequest(res, { message: "Invalid blog URL" });
+    }
+    if (!slug || slug === "undefined") {
+      return setBadRequest(res, { message: "Invalid blog URL" });
+    }
+
+    const blog = await getBlogBySlugFlexibleService(slug);
+    if (!blog) {
+      return setNotFoundError(res, { message: "Blog not found" });
+    }
+
+    const meta = buildBlogMeta(blog, slug);
+    return setSuccess(res, {
+      message: "Meta fetched successfully",
+      data: meta,
+    });
+  } catch (error) {
+    logger.error(`preparationBlog.controller.js << getBlogMetaBySlugController << ${error.message}`);
+    return setServerError(res, { message: error.message || "Failed to fetch meta" });
+  }
+};
+
+function escapeXmlSitemap(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+exports.getPreparationBlogsSitemapXml = async (req, res) => {
+  try {
+    const blogs = await getBlogService();
+    const list = Array.isArray(blogs) ? blogs : [];
+    const siteUrl = (process.env.SITE_URL || process.env.FRONTEND_URL || "https://mentorsdaily.com").replace(
+      /\/$/,
+      ""
+    );
+    const today = new Date().toISOString().slice(0, 10);
+    const lines = [
+      `<?xml version="1.0" encoding="UTF-8"?>`,
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+      `  <url>`,
+      `    <loc>${escapeXmlSitemap(`${siteUrl}/preparation-blogs`)}</loc>`,
+      `    <lastmod>${today}</lastmod>`,
+      `    <changefreq>daily</changefreq>`,
+      `    <priority>0.85</priority>`,
+      `  </url>`,
+    ];
+
+    for (const b of list) {
+      const slug =
+        b.slug && String(b.slug).trim()
+          ? String(b.slug).trim()
+          : generateSlugFromTitle(b.title);
+      if (!slug) continue;
+      const loc = `${siteUrl}/preparation-blog/${encodeURIComponent(slug)}`;
+      const last = b.updatedAt || b.createdAt;
+      const lastmod = last ? new Date(last).toISOString().slice(0, 10) : today;
+      lines.push(`  <url>`);
+      lines.push(`    <loc>${escapeXmlSitemap(loc)}</loc>`);
+      lines.push(`    <lastmod>${lastmod}</lastmod>`);
+      lines.push(`    <changefreq>weekly</changefreq>`);
+      lines.push(`    <priority>0.8</priority>`);
+      lines.push(`  </url>`);
+    }
+
+    lines.push(`</urlset>`);
+
+    res.set({
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=300, s-maxage=600",
+    });
+    return res.send(lines.join("\n"));
+  } catch (error) {
+    logger.error(`preparationBlog.controller.js << getPreparationBlogsSitemapXml << ${error.message}`);
+    return res.status(500).type("text/plain").send("Sitemap error");
   }
 };

@@ -351,6 +351,20 @@ export const getPreparationBlogs = async (options = {}) => {
   }
 };
 
+/** Single preparation blog by URL slug (public). */
+export const getPreparationBlogBySlug = async (slug) => {
+  if (slug == null || String(slug).trim() === '' || String(slug) === 'undefined') {
+    throw new Error('Invalid blog slug');
+  }
+  const encoded = encodeURIComponent(String(slug));
+  const response = await callApi({
+    endpoint: `api/v1/preparation/by-slug/${encoded}`,
+    method: 'GET',
+    requiresAuth: false,
+  });
+  return response.data;
+};
+
 // Create a new preparation blog
 export const createPreparationBlog = async (formData) => {
   try {

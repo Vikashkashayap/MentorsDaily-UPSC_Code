@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const logger = require("../utility/logger.js");
-const { createBlogRepo, getBlogRepo, getBlogPagedRepo, deleteBlogRepo, updateBlogRepo, getBlogFileIdRepo, getBlogByIdRepo, incrementBlogViewsRepo } = require("../repositories/preparationBlog.repository.js");
+const { createBlogRepo, getBlogRepo, getBlogPagedRepo, deleteBlogRepo, updateBlogRepo, getBlogFileIdRepo, getBlogByIdRepo, incrementBlogViewsRepo, getBlogBySlugFlexibleRepo } = require("../repositories/preparationBlog.repository.js");
 const { uploadFileService } = require("./uploadFiles.service.js");
 const preparationBlogModel = require("../models/preparationBlog.model.js");
 
@@ -102,4 +102,14 @@ exports.incrementBlogViewsService = async (id) => {
     logger.error(`preparationBlog.service.js << incrementBlogViewsService << Error: ${err.message}`);
     throw err;
   }
-}
+};
+
+exports.getBlogBySlugFlexibleService = async (slug) => {
+  logger.info(`preparationBlog.service.js << getBlogBySlugFlexibleService << ${slug}`);
+  try {
+    return await getBlogBySlugFlexibleRepo(slug);
+  } catch (err) {
+    logger.error(`preparationBlog.service.js << getBlogBySlugFlexibleService << ${err.message}`);
+    throw err;
+  }
+};
