@@ -20,10 +20,43 @@ exports.getBlogRepo = async () => {
   try {
     logger.info("preparationBlog.repository.js << getBlogRepo << Fetching all blogs");
     return await PreparationBlog.find()
+      .sort({ createdAt: -1 })
       .populate("file", "filename contentType size")
       .populate("user", "name");
   } catch (err) {
     logger.error(`preparationBlog.repository.js << getBlogRepo << ${err.message}`);
+    throw new Error(err.message);
+  }
+};
+
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+exports.getBlogPagedRepo = async ({ page, limit, search }) => {
+  try {
+    logger.info("preparationBlog.repository.js << getBlogPagedRepo << Fetching paged blogs");
+    const skip = (page - 1) * limit;
+    const filter = {};
+    if (search && String(search).trim()) {
+      const q = escapeRegex(String(search).trim());
+      filter.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { content: { $regex: q, $options: "i" } },
+        { category: { $regex: q, $options: "i" } },
+        { shortDescription: { $regex: q, $options: "i" } },
+      ];
+    }
+    const [blogs, total] = await Promise.all([
+      PreparationBlog.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("file", "filename contentType size")
+        .populate("user", "name"),
+      PreparationBlog.countDocuments(filter),
+    ]);
+    return { blogs, total };
+  } catch (err) {
+    logger.error(`preparationBlog.repository.js << getBlogPagedRepo << ${err.message}`);
     throw new Error(err.message);
   }
 };

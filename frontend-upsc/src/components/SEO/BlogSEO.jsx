@@ -15,8 +15,19 @@ const BlogSEO = ({
   readingTime = "5 min read"
 }) => {
   const baseUrl = SEO_CONFIG.siteUrl;
-  const fullImageUrl = imageUrl ? `${baseUrl}${imageUrl}` : `${baseUrl}/images/blog-hero.png`;
-  const fullArticleUrl = articleUrl ? `${baseUrl}${articleUrl}` : window.location.href;
+  const isAbsoluteUrl = (u) => typeof u === 'string' && /^https?:\/\//i.test(u);
+  const fullImageUrl = imageUrl
+    ? (isAbsoluteUrl(imageUrl)
+        ? imageUrl
+        : `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
+    : `${baseUrl}/images/blog-hero.png`;
+  const fullArticleUrl = (() => {
+    if (articleUrl == null || articleUrl === '') {
+      return typeof window !== 'undefined' ? window.location.href : baseUrl;
+    }
+    if (isAbsoluteUrl(articleUrl)) return articleUrl;
+    return `${baseUrl}${articleUrl.startsWith('/') ? articleUrl : `/${articleUrl}`}`;
+  })();
 
   // Article Schema
   const articleSchema = {

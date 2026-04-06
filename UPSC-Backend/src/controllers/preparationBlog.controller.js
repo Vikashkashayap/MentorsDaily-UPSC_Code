@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const {
   createBlogService,
   getBlogService,
+  getBlogPagedService,
   deleteBlogService,
   updateBlogService,
   getBlogByIdService,
@@ -50,6 +51,26 @@ exports.createBlogController = async (req, res) => {
 
 exports.getBlogController = async (req, res) => {
   try {
+    const page = parseInt(req.query.page, 10);
+    const limitRaw = parseInt(req.query.limit, 10);
+    const search = typeof req.query.search === "string" ? req.query.search : "";
+
+    if (Number.isFinite(page) && page > 0 && Number.isFinite(limitRaw) && limitRaw > 0) {
+      const limit = Math.min(limitRaw, 50);
+      const { blogs, total } = await getBlogPagedService({ page, limit, search });
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+      return setSuccess(res, {
+        message: "Blogs fetched successfully",
+        data: {
+          blogs,
+          total,
+          page,
+          limit,
+          totalPages,
+        },
+      });
+    }
+
     const blog = await getBlogService();
     return setSuccess(res, {
       message: "All blogs fetched successfully",

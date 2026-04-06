@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Calendar, User, ArrowLeft, Share2, BookOpen, Eye } from 'lucide-react';
+import { Calendar, User, ArrowLeft, Share2, BookOpen } from 'lucide-react';
 import { getPreparationBlogs, incrementPreparationBlogViews } from '../../api/coreService';
+import BlogSEO from '../../components/SEO/BlogSEO';
+import { SEO_CONFIG } from '../../utils/seoUtils';
 
 const PreparationBlogDetail = () => {
   const { slug } = useParams();
@@ -62,44 +64,6 @@ const PreparationBlogDetail = () => {
     }
     fetchBlogDetail();
   }, [slug]);
-
-  // Inject SEO meta tags dynamically when blog loads
-  useEffect(() => {
-    if (!blog) return;
-
-    const plainTitle = stripHtml(blog.title);
-    const metaDesc = blog.shortDescription || stripHtml(blog.content).slice(0, 160);
-    const canonicalUrl = window.location.href;
-
-    // Update document title
-    document.title = `${plainTitle} | MentorsDaily`;
-
-    // Helper to set or create meta tag
-    const setMeta = (selector, attr, value) => {
-      let el = document.querySelector(selector);
-      if (!el) {
-        el = document.createElement('meta');
-        const [key, val] = attr.split('=');
-        el.setAttribute(key, val?.replace(/"/g, '') || attr);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', value);
-    };
-
-    setMeta('meta[name="description"]', 'name=description', metaDesc);
-    setMeta('meta[property="og:title"]', 'property=og:title', plainTitle);
-    setMeta('meta[property="og:description"]', 'property=og:description', metaDesc);
-    setMeta('meta[property="og:url"]', 'property=og:url', canonicalUrl);
-    setMeta('meta[property="og:type"]', 'property=og:type', 'article');
-    setMeta('meta[name="twitter:card"]', 'name=twitter:card', 'summary_large_image');
-    setMeta('meta[name="twitter:title"]', 'name=twitter:title', plainTitle);
-    setMeta('meta[name="twitter:description"]', 'name=twitter:description', metaDesc);
-
-    // Cleanup on unmount
-    return () => {
-      document.title = 'MentorsDaily';
-    };
-  }, [blog]);
 
   const fetchBlogDetail = async () => {
     try {
@@ -202,8 +166,27 @@ const PreparationBlogDetail = () => {
     );
   }
 
+  const plainTitle = stripHtml(blog.title);
+  const metaDesc = (blog.shortDescription || stripHtml(blog.content).slice(0, 160)).trim();
+  const apiBase = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+  const shareImageAbsolute =
+    blog.file?._id && blog.file.contentType?.startsWith('image/') && apiBase
+      ? `${apiBase}/api/v1/download/${blog.file._id}`
+      : `${SEO_CONFIG.siteUrl}/images/hero.png`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <BlogSEO
+        title={`${plainTitle} | MentorsDaily`}
+        description={metaDesc}
+        keywords={(blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : 'UPSC, preparation, MentorsDaily')}
+        author="Team MentorsDaily"
+        publishDate={blog.createdAt ? new Date(blog.createdAt).toISOString() : undefined}
+        modifiedDate={blog.updatedAt ? new Date(blog.updatedAt).toISOString() : undefined}
+        imageUrl={shareImageAbsolute}
+        articleUrl={`/preparation-blog/${slug}`}
+        category={blog.category || 'Preparation'}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumb */}
         <nav className="mb-8">
@@ -286,12 +269,7 @@ const PreparationBlogDetail = () => {
                 <User className="w-4 h-4 text-blue-600" />
                 <span>By Team MentorsDaily</span>
               </div>
-              
-              <div className="flex items-center space-x-2">
-                <Eye className="w-4 h-4 text-blue-600" />
-                <span>{blog.views || 0} views</span>
-              </div>
-              
+
               <button
                 onClick={handleShare}
                 className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition ml-auto"

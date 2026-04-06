@@ -14,6 +14,7 @@
     "seo:sitemap": "node scripts/generate-sitemap.js"
   },
   "dependencies": {
+    "@vercel/functions": "^3.4.3",
     "axios": "^1.12.1",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",

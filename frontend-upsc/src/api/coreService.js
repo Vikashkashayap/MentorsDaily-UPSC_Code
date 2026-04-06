@@ -318,12 +318,31 @@ export const getAllPayments = async () => {
 // PREPARATION BLOGS
 // ============================================
 
-// Get all preparation blogs
-export const getPreparationBlogs = async () => {
+/**
+ * @param {Object} [options]
+ * @param {number} [options.page] — if set with limit, uses server pagination (faster payload)
+ * @param {number} [options.limit]
+ * @param {string} [options.search]
+ */
+export const getPreparationBlogs = async (options = {}) => {
   try {
+    const { page, limit, search } = options;
+    const params = new URLSearchParams();
+    if (page != null && limit != null) {
+      params.set('page', String(page));
+      params.set('limit', String(limit));
+    }
+    if (search != null && String(search).trim()) {
+      params.set('search', String(search).trim());
+    }
+    const qs = params.toString();
+    const endpoint = qs
+      ? `api/v1/preparation/get-blog?${qs}`
+      : 'api/v1/preparation/get-blog';
     const response = await callApi({
-      endpoint: 'api/v1/preparation/get-blog',
+      endpoint,
       method: 'GET',
+      requiresAuth: false,
     });
     return response.data;
   } catch (error) {
