@@ -217,6 +217,11 @@ const PublicRoutes = () => {
           <PreparationBlogDetail />
         </PublicLayout>
       } />
+      <Route path="/blog/:slug" element={
+        <PublicLayout>
+          <PreparationBlogDetail />
+        </PublicLayout>
+      } />
 
       {/* 404 Route */}
       <Route path="*" element={<NotFound />} />

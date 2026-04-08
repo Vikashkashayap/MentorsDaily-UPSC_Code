@@ -44,6 +44,8 @@ exports.createBlogController = async (req, res) => {
       slug,
       seoKeyword,
       metaTitle,
+      metaDescription,
+      metaImage,
       imageAlt,
       template,
       ctaText,
@@ -77,6 +79,8 @@ exports.createBlogController = async (req, res) => {
       slug: slug || undefined,
       seoKeyword: seoKeyword || "",
       metaTitle: metaTitle || "",
+      metaDescription: metaDescription || "",
+      metaImage: metaImage || "",
       imageAlt: imageAlt || "",
       template: normalizedTemplate,
       ctaText: ctaText || "",
@@ -172,6 +176,8 @@ exports.updateBlogController = async (req, res) => {
       slug,
       seoKeyword,
       metaTitle,
+      metaDescription,
+      metaImage,
       imageAlt,
       template,
       ctaText,
@@ -190,6 +196,8 @@ exports.updateBlogController = async (req, res) => {
       !slug &&
       seoKeyword === undefined &&
       metaTitle === undefined &&
+      metaDescription === undefined &&
+      metaImage === undefined &&
       imageAlt === undefined &&
       template === undefined &&
       ctaText === undefined &&
@@ -211,6 +219,8 @@ exports.updateBlogController = async (req, res) => {
     if (slug) blogData.slug = slug;
     if (seoKeyword !== undefined) blogData.seoKeyword = seoKeyword;
     if (metaTitle !== undefined) blogData.metaTitle = metaTitle;
+    if (metaDescription !== undefined) blogData.metaDescription = metaDescription;
+    if (metaImage !== undefined) blogData.metaImage = metaImage;
     if (imageAlt !== undefined) blogData.imageAlt = imageAlt;
     if (template !== undefined) {
       if (!BLOG_TEMPLATES.has(template)) {

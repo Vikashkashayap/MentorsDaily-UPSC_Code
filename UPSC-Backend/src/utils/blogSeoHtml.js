@@ -32,6 +32,10 @@ function ensureHttps(url) {
   return url;
 }
 
+function isAbsoluteHttpUrl(url) {
+  return /^https?:\/\//i.test(String(url || "").trim());
+}
+
 function isLikelyBlogCoverImage(file) {
   if (!file) return false;
   const ct = file.contentType && String(file.contentType);
@@ -64,7 +68,7 @@ function resolvePublicApiOrigin(env, siteUrl) {
  * @param {string} requestSlug — slug from URL (for canonical path)
  * @param {object} env — process.env
  */
-function buildBlogMeta(blog, requestSlug, env = process.env) {
+function buildBlogMeta(blog, requestSlug, env = process.env, routeBase = "/preparation-blog") {
   const siteUrl = (env.SITE_URL || env.FRONTEND_URL || "https://mentorsdaily.com").replace(/\/$/, "");
   const apiPublic = resolvePublicApiOrigin(env, siteUrl);
 
@@ -72,24 +76,48 @@ function buildBlogMeta(blog, requestSlug, env = process.env) {
   const seoTitle = (blog.metaTitle && String(blog.metaTitle).trim()) || plainTitle;
   const title = `${seoTitle} | MentorsDaily`;
   const rawDesc =
+    (blog.metaDescription && String(blog.metaDescription).trim()) ||
     (blog.shortDescription && String(blog.shortDescription).trim()) ||
     stripHtmlTags(blog.content).slice(0, 160) ||
     "Expert UPSC preparation insights and guidance from MentorsDaily.";
   const description = rawDesc.length > 200 ? `${rawDesc.slice(0, 197)}...` : rawDesc;
 
   let image = ensureHttps(`${siteUrl}/images/hero.png`);
+  if (isAbsoluteHttpUrl(blog.metaImage)) {
+    image = ensureHttps(String(blog.metaImage).trim());
+  }
   const file = blog.file;
   const fileId = file && (file._id || file);
-  if (fileId && isLikelyBlogCoverImage(file) && apiPublic) {
+  if (!isAbsoluteHttpUrl(blog.metaImage) && fileId && isLikelyBlogCoverImage(file) && apiPublic) {
     // Use /view/ so responses are inline; link previews must fetch a real image URL on the API host.
     image = ensureHttps(`${apiPublic}/api/v1/view/${fileId}`);
   }
 
   const slugPath = requestSlug || blog.slug || generateSlugFromTitle(blog.title) || String(blog._id || "");
-  const pathname = `/preparation-blog/${encodeURIComponent(String(slugPath).replace(/\/+/g, ""))}`;
+  const cleanBase = String(routeBase || "/preparation-blog").startsWith("/")
+    ? String(routeBase || "/preparation-blog")
+    : `/${String(routeBase || "preparation-blog")}`;
+  const pathname = `${cleanBase}/${encodeURIComponent(String(slugPath).replace(/\/+/g, ""))}`;
   const url = ensureHttps(`${siteUrl}${pathname}`);
 
   return { title, description, image, url, pathname, plainTitle };
+}
+
+function buildDefaultBlogMeta(requestSlug, env = process.env, routeBase = "/preparation-blog") {
+  const siteUrl = (env.SITE_URL || env.FRONTEND_URL || "https://mentorsdaily.com").replace(/\/$/, "");
+  const safeSlug = encodeURIComponent(String(requestSlug || "blog").replace(/\/+/g, ""));
+  const cleanBase = String(routeBase || "/preparation-blog").startsWith("/")
+    ? String(routeBase || "/preparation-blog")
+    : `/${String(routeBase || "preparation-blog")}`;
+  const url = ensureHttps(`${siteUrl}${cleanBase}/${safeSlug}`);
+  return {
+    title: "Mentors Daily Blog | MentorsDaily",
+    description: "Expert UPSC preparation insights and guidance from MentorsDaily.",
+    image: ensureHttps(`${siteUrl}/images/hero.png`),
+    url,
+    pathname: `${cleanBase}/${safeSlug}`,
+    plainTitle: "Mentors Daily Blog",
+  };
 }
 
 /**
@@ -177,4 +205,5 @@ module.exports = {
   buildInjectedHeadFragment,
   isSocialOrSearchBot,
   isObjectIdString,
+  buildDefaultBlogMeta,
 };

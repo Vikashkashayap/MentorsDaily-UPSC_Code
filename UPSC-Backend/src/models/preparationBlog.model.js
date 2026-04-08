@@ -61,6 +61,17 @@ const blogSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    metaDescription: {
+      type: String,
+      trim: true,
+      maxlength: 320,
+      default: "",
+    },
+    metaImage: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     imageAlt: {
       type: String,
       trim: true,

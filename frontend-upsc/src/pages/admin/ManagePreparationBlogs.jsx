@@ -29,6 +29,8 @@ const ManagePreparationBlogs = () => {
     image: null,
     seoKeyword: '',
     metaTitle: '',
+    metaDescription: '',
+    metaImage: '',
     imageAlt: '',
     template: 'standard',
     ctaText: '',
@@ -125,6 +127,8 @@ const ManagePreparationBlogs = () => {
       image: null,
       seoKeyword: '',
       metaTitle: '',
+      metaDescription: '',
+      metaImage: '',
       imageAlt: '',
       template: 'standard',
       ctaText: '',
@@ -148,6 +152,8 @@ const ManagePreparationBlogs = () => {
       image: null,
       seoKeyword: blog.seoKeyword || '',
       metaTitle: blog.metaTitle || '',
+      metaDescription: blog.metaDescription || '',
+      metaImage: blog.metaImage || '',
       imageAlt: blog.imageAlt || '',
       template: blog.template || 'standard',
       ctaText: blog.ctaText || '',
@@ -222,6 +228,8 @@ const ManagePreparationBlogs = () => {
     formDataToSend.append('slug', finalSlug);
     formDataToSend.append('seoKeyword', formData.seoKeyword || '');
     formDataToSend.append('metaTitle', formData.metaTitle || '');
+    formDataToSend.append('metaDescription', formData.metaDescription || '');
+    formDataToSend.append('metaImage', formData.metaImage || '');
     formDataToSend.append('imageAlt', formData.imageAlt || '');
     formDataToSend.append('template', formData.template || 'standard');
     formDataToSend.append('ctaText', formData.ctaText || '');
@@ -526,6 +534,22 @@ const ManagePreparationBlogs = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Meta Description
+                    <span className="ml-1 text-xs text-gray-400 font-normal">(for OG/Twitter, ideal 120–160 chars)</span>
+                  </label>
+                  <textarea
+                    value={formData.metaDescription}
+                    onChange={(e) => setFormData({ ...formData, metaDescription: e.target.value })}
+                    onFocus={() => handleFieldFocus('metaDescription')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                    placeholder="Optional override for social preview description"
+                    rows={3}
+                    maxLength={320}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Content *
                   </label>
                   <RichTextField
@@ -602,6 +626,24 @@ const ManagePreparationBlogs = () => {
                   {editingBlog?.image && (
                     <p className="text-sm text-gray-500 mt-1">Current image will be replaced if you upload a new one</p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Meta Image URL
+                    <span className="ml-1 text-xs text-gray-400 font-normal">(public HTTPS, recommended 1200x630)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.metaImage}
+                    onChange={(e) => setFormData({ ...formData, metaImage: e.target.value })}
+                    onFocus={() => handleFieldFocus('metaImage')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://cdn.example.com/blog-cover-1200x630.jpg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    If empty, the uploaded featured image is used automatically.
+                  </p>
                 </div>
 
                 <div>
