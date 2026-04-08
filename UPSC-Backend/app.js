@@ -28,6 +28,21 @@ app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
+app.set("etag", "strong");
+
+// Add short-lived cache headers for high-traffic, mostly-read endpoints.
+app.use((req, res, next) => {
+  if (req.method !== "GET") return next();
+  if (
+    req.path.includes("/api/v1/get-course") ||
+    req.path.includes("/api/v1/get-affairs") ||
+    req.path.includes("/api/v1/preparation/get-blog")
+  ) {
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.set("Vary", "Accept-Encoding");
+  }
+  next();
+});
 
 try {
   const prerender = require("./src/config/prerender.middleware.js");
@@ -66,6 +81,17 @@ if (FRONTEND_DIST) {
     express.static(distResolved, {
       index: false,
       fallthrough: true,
+      maxAge: "30d",
+      immutable: true,
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) {
+          res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+          return;
+        }
+        if (/\.(js|css|png|jpg|jpeg|svg|gif|webp|woff2?)$/i.test(filePath)) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      },
     })
   );
   app.use(prepBlogBotHtml);

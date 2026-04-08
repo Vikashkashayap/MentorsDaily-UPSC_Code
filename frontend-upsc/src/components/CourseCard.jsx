@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PaymentForm from "./payment/PaymentForm";
 import { formatDateRange } from "../utils/dateUtils";
+import OptimizedImage from "./utility/OptimizedImage";
 
 const CourseCard = ({
   title,
@@ -226,11 +227,13 @@ const CourseCard = ({
             <div className="lg:w-2/5 relative">
               <div className="bg-gray-100">
                 {thumbnailUrl && !imageError ? (
-                  <img
+                  <OptimizedImage
                     src={thumbnailUrl}
                     onError={() => setImageError(true)}
                     alt={title}
                     className="w-full h-auto object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div className="h-64 lg:h-full">
@@ -378,11 +381,13 @@ const CourseCard = ({
         >
           <div className="relative h-40 overflow-hidden bg-gray-100">
             {thumbnailUrl && !imageError ? (
-              <img
+              <OptimizedImage
                 src={thumbnailUrl}
                 onError={() => setImageError(true)}
                 alt={title}
                 className="w-full h-full object-cover object-center"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div

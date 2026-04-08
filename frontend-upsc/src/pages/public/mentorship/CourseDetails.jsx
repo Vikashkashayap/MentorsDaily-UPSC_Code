@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCourses } from '../../../api/coreService';
+import { getCourseById, getCourses } from '../../../api/coreService';
 import PaymentForm from '../../../components/payment/PaymentForm';
 import { formatDateRange } from '../../../utils/dateUtils';
 import ContactForm from '../components/Form';
+import OptimizedImage from '../../../components/utility/OptimizedImage';
 
 const CourseDetails = () => {
   const { courseId, category, title } = useParams();
@@ -27,17 +28,17 @@ const CourseDetails = () => {
     const fetchCourse = async () => {
       try {
         setLoading(true);
-        const res = await getCourses();
-        const coursesData = Array.isArray(res.data) 
-          ? res.data 
-          : (res.data?.data || []);
-        
         let foundCourse = null;
         
         if (courseId) {
-          foundCourse = coursesData.find(c => c._id === courseId);
+          const res = await getCourseById(courseId);
+          foundCourse = res?.data;
         }
         else if (category && title) {
+          const res = await getCourses({ page: 1, limit: 100 });
+          const coursesData = Array.isArray(res.data)
+            ? res.data
+            : (res.data?.data || []);
           foundCourse = coursesData.find(c => {
             const courseSlug = generateSlug(c.title);
             const categorySlug = c.category ? generateSlug(c.category) : 'course';
@@ -232,10 +233,14 @@ const CourseDetails = () => {
             <div className="mb-8">
               <div className="relative rounded-xl overflow-hidden bg-gray-100">
                 {thumbnailUrl ? (
-                  <img
+                  <OptimizedImage
                     src={thumbnailUrl}
                     alt={course.title}
                     className="w-full h-auto object-cover"
+                    width={1200}
+                    height={675}
+                    loading="eager"
+                    fetchPriority="high"
                   />
                 ) : (
                   <div className="relative h-64 md:h-80">

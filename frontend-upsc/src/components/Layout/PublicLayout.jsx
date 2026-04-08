@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 // import AIStudentDashboardBanner from "../AIStudentDashboardBanner";
-import WatsupWidget from "../../../src/pages/public/components/WatsupWidget";
-import EnquiryWidget from "../../pages/public/EnquiryWidget";
+const WatsupWidget = lazy(() => import("../../../src/pages/public/components/WatsupWidget"));
+const EnquiryWidget = lazy(() => import("../../pages/public/EnquiryWidget"));
 import MessageDisplay from "../utility/MessageDisplay";
-import ContactForm from "../../../src/pages/public/components/Form";
+const ContactForm = lazy(() => import("../../../src/pages/public/components/Form"));
 import SEOHead from "../SEO/SEOHead";
 
 export default function PublicLayout({
@@ -73,14 +73,20 @@ export default function PublicLayout({
       {showFooter && <Footer />}
 
       {/* WhatsApp Widget - visible on all public pages */}
-      <WatsupWidget />
+      <Suspense fallback={null}>
+        <WatsupWidget />
+      </Suspense>
 
       {/* Enquiry Widget - visible on all public pages, vertically centered on right side */}
-      <EnquiryWidget onClick={() => setIsFormOpen(true)} />
+      <Suspense fallback={null}>
+        <EnquiryWidget onClick={() => setIsFormOpen(true)} />
+      </Suspense>
 
       {/* Contact Form Modal - opened from widget or delayed popup */}
       {isFormOpen && (
-        <ContactForm onClose={() => setIsFormOpen(false)} />
+        <Suspense fallback={null}>
+          <ContactForm onClose={() => setIsFormOpen(false)} />
+        </Suspense>
       )}
     </div>
   );

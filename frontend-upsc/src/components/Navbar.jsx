@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import OptimizedImage from "./utility/OptimizedImage";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -105,10 +106,14 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center flex-shrink-0 z-50">
-            <img
+            <OptimizedImage
               src="/Logo/logo.png"
               alt="MentorsDaily Logo"
               className="h-10 w-auto transition-transform duration-300 hover:scale-105"
+              width={160}
+              height={40}
+              loading="eager"
+              fetchPriority="high"
             />
           </Link>
 
@@ -492,7 +497,14 @@ export default function Navbar() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <Link to="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
-                <img src="/Logo/logo.png" alt="MentorsDaily Logo" className="h-8 w-auto" />
+                <OptimizedImage
+                  src="/Logo/logo.png"
+                  alt="MentorsDaily Logo"
+                  className="h-8 w-auto"
+                  width={128}
+                  height={32}
+                  loading="eager"
+                />
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}

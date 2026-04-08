@@ -1,5 +1,40 @@
 import callApi from "./baseService.js";
 
+const CLIENT_CACHE_TTL_MS = 5 * 60 * 1000;
+const memoryCache = new Map();
+
+const makeCacheKey = (prefix, input = "") => `${prefix}:${String(input)}`;
+
+const getCachedValue = (key, ttl = CLIENT_CACHE_TTL_MS) => {
+  const now = Date.now();
+  const mem = memoryCache.get(key);
+  if (mem && now - mem.ts < ttl) return mem.value;
+
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.ts || now - parsed.ts >= ttl) {
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    memoryCache.set(key, parsed);
+    return parsed.value;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedValue = (key, value) => {
+  const payload = { ts: Date.now(), value };
+  memoryCache.set(key, payload);
+  try {
+    sessionStorage.setItem(key, JSON.stringify(payload));
+  } catch {
+    // ignore storage quota/private mode failures
+  }
+};
+
 export const register = async (payload) => {
   try {
     const response = await callApi({
@@ -52,10 +87,14 @@ export const getCourses = async (options = {}) => {
     if (Number.isInteger(page) && Number.isInteger(limit) && page >= 1 && limit >= 1) {
       endpoint += `?page=${page}&limit=${limit}`;
     }
+    const cacheKey = makeCacheKey("courses", endpoint);
+    const cached = getCachedValue(cacheKey);
+    if (cached) return cached;
     const response = await callApi({
       endpoint,
       method: "GET",
     });
+    setCachedValue(cacheKey, response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching courses:", error);
@@ -124,10 +163,14 @@ export const fetchCurrentAffairs = async (filters = {}) => {
     const endpoint = queryString
       ? `api/v1/get-affairs?${queryString}`
       : "api/v1/get-affairs";
+    const cacheKey = makeCacheKey("currentAffairs", endpoint);
+    const cached = getCachedValue(cacheKey, 2 * 60 * 1000);
+    if (cached) return cached;
     const response = await callApi({
       endpoint,
       method: "GET",
     });
+    setCachedValue(cacheKey, response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching current affairs:", error);
@@ -343,11 +386,15 @@ export const getPreparationBlogs = async (options = {}) => {
     const endpoint = qs
       ? `api/v1/preparation/get-blog?${qs}`
       : 'api/v1/preparation/get-blog';
+    const cacheKey = makeCacheKey("prepBlogs", endpoint);
+    const cached = getCachedValue(cacheKey, 2 * 60 * 1000);
+    if (cached) return cached;
     const response = await callApi({
       endpoint,
       method: 'GET',
       requiresAuth: false,
     });
+    setCachedValue(cacheKey, response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching preparation blogs:', error);

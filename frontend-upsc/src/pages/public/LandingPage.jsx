@@ -1,19 +1,20 @@
-import { useEffect, useState, useRef } from "react";
+import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCourses } from "../../api/coreService";
 import HeroSection from "./components/HeroSection";
-import WhyMentorsDaily from "./utils/WhyMentorsDaily.jsx";
-import Faq from "./utils/Faq.jsx";
-import Reviews from "./components/Reviews";
-import Blog from "./Blog";
-import PaymentForm from "../../components/payment/PaymentForm.jsx";
+const WhyMentorsDaily = lazy(() => import("./utils/WhyMentorsDaily.jsx"));
+const Faq = lazy(() => import("./utils/Faq.jsx"));
+const Reviews = lazy(() => import("./components/Reviews"));
+const Blog = lazy(() => import("./Blog"));
+const PaymentForm = lazy(() => import("../../components/payment/PaymentForm.jsx"));
 import CourseCard from "../../components/CourseCard";
-import TodaysCurrentAffairs from "./currentAffairs/TodaysCurrentAffairs";
+const TodaysCurrentAffairs = lazy(() => import("./currentAffairs/TodaysCurrentAffairs"));
 import ScholarshipAnnouncement from "./Announcement";
 import DiwaliOfferBanner from "../../components/DiwaliOfferBanner";
 import MentorshipBanner from "../../components/MentorshipBanner";
 // import AIStudentDashboardBanner from "../../components/AIStudentDashboardBanner";
 import ContactForm from "../../pages/public/components/Form.jsx";
+import DeferredSection from "../../components/utility/DeferredSection.jsx";
 
 const EnhancedHorizontalCourseScroller = ({
   courses,
@@ -431,7 +432,11 @@ const LandingPage = () => {
        
 
         {/* Today's Current Affairs Section */}
-        <TodaysCurrentAffairs />
+        <DeferredSection fallback={<div className="min-h-[200px]" />}>
+          <Suspense fallback={<div className="min-h-[200px]" />}>
+            <TodaysCurrentAffairs />
+          </Suspense>
+        </DeferredSection>
         {/* Scholarship Announcement Banner */}
         <ScholarshipAnnouncement />
 
@@ -544,15 +549,31 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <div className="mt-4">
-          <WhyMentorsDaily />
-        </div>
+        <DeferredSection fallback={<div className="min-h-[220px]" />}>
+          <Suspense fallback={<div className="min-h-[220px]" />}>
+            <div className="mt-4">
+              <WhyMentorsDaily />
+            </div>
+          </Suspense>
+        </DeferredSection>
 
  {/* AI Student Dashboard Banner */}
  {/* <AIStudentDashboardBanner /> */}
-        <Reviews />
-        <Blog />
-        <Faq />
+        <DeferredSection fallback={<div className="min-h-[240px]" />}>
+          <Suspense fallback={<div className="min-h-[240px]" />}>
+            <Reviews />
+          </Suspense>
+        </DeferredSection>
+        <DeferredSection fallback={<div className="min-h-[240px]" />}>
+          <Suspense fallback={<div className="min-h-[240px]" />}>
+            <Blog />
+          </Suspense>
+        </DeferredSection>
+        <DeferredSection fallback={<div className="min-h-[240px]" />}>
+          <Suspense fallback={<div className="min-h-[240px]" />}>
+            <Faq />
+          </Suspense>
+        </DeferredSection>
       </div>
 
       {showPaymentForm && selectedCourse && (
@@ -570,11 +591,13 @@ const LandingPage = () => {
             >
               &times;
             </button>
-            <PaymentForm
-              course={selectedCourse}
-              onPaymentSuccess={handlePaymentSuccess}
-              onClose={handleClosePayment}
-            />
+            <Suspense fallback={<div className="p-6 text-center">Loading payment form...</div>}>
+              <PaymentForm
+                course={selectedCourse}
+                onPaymentSuccess={handlePaymentSuccess}
+                onClose={handleClosePayment}
+              />
+            </Suspense>
           </div>
         </div>
       )}
