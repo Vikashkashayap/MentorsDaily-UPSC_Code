@@ -11,6 +11,7 @@ const BlogSEO = ({
   publishDate,
   modifiedDate,
   imageUrl,
+  imageAlt,
   articleUrl,
   category = "UPSC Preparation",
   readingTime = "5 min read",
@@ -103,6 +104,7 @@ const BlogSEO = ({
           />
         )}
         <meta property="article:author" content={author} />
+        {imageAlt ? <meta property="og:image:alt" content={imageAlt} /> : null}
         <meta property="article:section" content={category} />
         {publishDate && (
           <meta property="article:published_time" content={publishDate} />

@@ -27,6 +27,14 @@ const ManagePreparationBlogs = () => {
     category: '',
     slug: '',
     image: null,
+    seoKeyword: '',
+    metaTitle: '',
+    imageAlt: '',
+    template: 'standard',
+    ctaText: '',
+    ctaLink: '',
+    publishDate: '',
+    status: 'published',
   });
 
   // Helper function to strip HTML tags and get plain text
@@ -115,6 +123,14 @@ const ManagePreparationBlogs = () => {
       category: '',
       slug: '',
       image: null,
+      seoKeyword: '',
+      metaTitle: '',
+      imageAlt: '',
+      template: 'standard',
+      ctaText: '',
+      ctaLink: '',
+      publishDate: '',
+      status: 'published',
     });
     setActiveField('title');
     setShowModal(true);
@@ -130,6 +146,14 @@ const ManagePreparationBlogs = () => {
       category: blog.category || '',
       slug: blog.slug || generateSlug(blog.title || ''),
       image: null,
+      seoKeyword: blog.seoKeyword || '',
+      metaTitle: blog.metaTitle || '',
+      imageAlt: blog.imageAlt || '',
+      template: blog.template || 'standard',
+      ctaText: blog.ctaText || '',
+      ctaLink: blog.ctaLink || '',
+      publishDate: blog.publishDate ? new Date(blog.publishDate).toISOString().slice(0, 16) : '',
+      status: blog.status || 'published',
     });
     setActiveField('title');
     setShowModal(true);
@@ -184,6 +208,10 @@ const ManagePreparationBlogs = () => {
         return;
       }
     }
+    if (formData.status === 'scheduled' && !formData.publishDate) {
+      alert('Please select publish date/time for scheduled blogs.');
+      return;
+    }
 
     const formDataToSend = new FormData();
     formDataToSend.append('title', formData.title);
@@ -192,6 +220,16 @@ const ManagePreparationBlogs = () => {
     if (formData.author) formDataToSend.append('author', formData.author);
     if (formData.category) formDataToSend.append('category', formData.category);
     formDataToSend.append('slug', finalSlug);
+    formDataToSend.append('seoKeyword', formData.seoKeyword || '');
+    formDataToSend.append('metaTitle', formData.metaTitle || '');
+    formDataToSend.append('imageAlt', formData.imageAlt || '');
+    formDataToSend.append('template', formData.template || 'standard');
+    formDataToSend.append('ctaText', formData.ctaText || '');
+    formDataToSend.append('ctaLink', formData.ctaLink || '');
+    formDataToSend.append('status', formData.status || 'published');
+    if (formData.publishDate) {
+      formDataToSend.append('publishDate', new Date(formData.publishDate).toISOString());
+    }
     
     if (formData.image) {
       formDataToSend.append('file', formData.image);
@@ -300,7 +338,7 @@ const ManagePreparationBlogs = () => {
                   blog.file.contentType?.startsWith('image/') ? (
                     <img
                       src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
-                      alt={blog.title}
+                      alt={blog.imageAlt || stripHtml(blog.title)}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
@@ -429,6 +467,41 @@ const ManagePreparationBlogs = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    SEO Focus Keyword
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.seoKeyword}
+                    onChange={(e) => setFormData({ ...formData, seoKeyword: e.target.value })}
+                    onFocus={() => handleFieldFocus('seoKeyword')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., UPSC preparation strategy"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Meta Title
+                    <span className="ml-1 text-xs text-gray-400 font-normal">(ideal 50–60 chars)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.metaTitle}
+                    onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
+                    onFocus={() => handleFieldFocus('metaTitle')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Google title for this blog"
+                    maxLength={120}
+                  />
+                  <div className="text-right mt-1">
+                    <span className={`text-xs ${formData.metaTitle.length > 60 ? 'text-orange-500' : 'text-gray-400'}`}>
+                      {formData.metaTitle.length}/60
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Short Description
                     <span className="ml-1 text-xs text-gray-400 font-normal">(SEO meta description — ideal 120–160 chars)</span>
                   </label>
@@ -529,6 +602,96 @@ const ManagePreparationBlogs = () => {
                   {editingBlog?.image && (
                     <p className="text-sm text-gray-500 mt-1">Current image will be replaced if you upload a new one</p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Image Alt Text
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.imageAlt}
+                    onChange={(e) => setFormData({ ...formData, imageAlt: e.target.value })}
+                    onFocus={() => handleFieldFocus('imageAlt')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe the featured image for SEO/accessibility"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Template
+                  </label>
+                  <select
+                    value={formData.template}
+                    onChange={(e) => setFormData({ ...formData, template: e.target.value })}
+                    onFocus={() => handleFieldFocus('template')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="standard">Standard Blog</option>
+                    <option value="listicle">Listicle</option>
+                    <option value="comparison">Comparison</option>
+                    <option value="landing">Landing Page</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      CTA Text
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.ctaText}
+                      onChange={(e) => setFormData({ ...formData, ctaText: e.target.value })}
+                      onFocus={() => handleFieldFocus('ctaText')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Join Mentorship Program"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      CTA Link
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.ctaLink}
+                      onChange={(e) => setFormData({ ...formData, ctaLink: e.target.value })}
+                      onFocus={() => handleFieldFocus('ctaLink')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Status
+                    </label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      onFocus={() => handleFieldFocus('status')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="scheduled">Scheduled</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Publish Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={formData.publishDate}
+                      onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })}
+                      onFocus={() => handleFieldFocus('publishDate')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
 
                     <div className="flex justify-end space-x-3 pt-4">

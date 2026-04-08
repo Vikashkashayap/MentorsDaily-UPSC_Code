@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPreparationBlogs } from "../../api/coreService";
 
-const BlogCard = ({ title, subtitle, image, to, category }) => {
+const BlogCard = ({ title, subtitle, image, to, category, imageAlt }) => {
   return (
     <div className="group h-full">
-      <Link to={to} className="block h-full flex flex-col">
+      <Link to={to} className="h-full flex flex-col">
         <div className="relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-[1.02] bg-white flex-1 flex flex-col">
-          <div className="aspect-[16/9] w-full relative overflow-hidden bg-gray-100">
+          <div className="aspect-[1200/630] w-full relative overflow-hidden bg-gray-100">
             {image ? (
               <img 
                 src={image} 
-                alt={title} 
+                alt={imageAlt || title} 
                 className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105" 
               />
             ) : (
@@ -51,7 +51,7 @@ const Blog = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await getPreparationBlogs();
+        const response = await getPreparationBlogs({ visibility: 'public' });
         const blogsData = response?.data?.data || response?.data || [];
         const blogsArray = Array.isArray(blogsData) ? blogsData : [];
         // Sort by date if needed, assuming API returns sorted or we take latest
@@ -132,6 +132,7 @@ const Blog = () => {
                 subtitle={blog.category} // Using category as subtitle equivalent
                 category={blog.category}
                 image={getBlogImage(blog)}
+                imageAlt={blog.imageAlt}
                 to={getBlogLink(blog)}
             />
           ))}

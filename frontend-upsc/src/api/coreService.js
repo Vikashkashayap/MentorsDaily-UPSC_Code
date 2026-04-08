@@ -323,10 +323,11 @@ export const getAllPayments = async () => {
  * @param {number} [options.page] — if set with limit, uses server pagination (faster payload)
  * @param {number} [options.limit]
  * @param {string} [options.search]
+ * @param {"public"} [options.visibility] — fetch only publicly visible blogs
  */
 export const getPreparationBlogs = async (options = {}) => {
   try {
-    const { page, limit, search } = options;
+    const { page, limit, search, visibility } = options;
     const params = new URLSearchParams();
     if (page != null && limit != null) {
       params.set('page', String(page));
@@ -334,6 +335,9 @@ export const getPreparationBlogs = async (options = {}) => {
     }
     if (search != null && String(search).trim()) {
       params.set('search', String(search).trim());
+    }
+    if (visibility === 'public') {
+      params.set('visibility', 'public');
     }
     const qs = params.toString();
     const endpoint = qs

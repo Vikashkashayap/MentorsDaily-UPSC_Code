@@ -8,6 +8,25 @@ import {
   getPreparationBlogOgImageUrl,
 } from '../../utils/ogImageUrl';
 
+const parseComparisonRows = (html = '') => {
+  if (!html) return [];
+  const text = html.replace(/<[^>]*>/g, '\n');
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split(':');
+      if (parts.length < 2) return null;
+      const left = parts.shift()?.trim();
+      const right = parts.join(':').trim();
+      if (!left || !right) return null;
+      return { left, right };
+    })
+    .filter(Boolean)
+    .slice(0, 8);
+};
+
 const PreparationBlogDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -146,20 +165,28 @@ const PreparationBlogDetail = () => {
   }
 
   const plainTitle = stripHtml(blog.title);
+  const effectiveTemplate = blog.template || 'standard';
   const metaDesc = (blog.shortDescription || stripHtml(blog.content).slice(0, 160)).trim();
+  const effectiveMetaTitle = (blog.metaTitle || plainTitle || '').trim();
+  const effectiveKeywords =
+    blog.seoKeyword ||
+    (blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : 'UPSC, preparation, MentorsDaily');
   const shareImageAbsolute = getPreparationBlogOgImageUrl(blog);
   const fileBase = getPublicApiOrigin();
+  const comparisonRows = parseComparisonRows(blog.content);
+  const showCta = Boolean((blog.ctaText || '').trim() && (blog.ctaLink || '').trim());
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <BlogSEO
-        title={`${plainTitle} | MentorsDaily`}
+        title={`${effectiveMetaTitle || plainTitle} | MentorsDaily`}
         description={metaDesc}
-        keywords={(blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : 'UPSC, preparation, MentorsDaily')}
+        keywords={effectiveKeywords}
         author="Team MentorsDaily"
-        publishDate={blog.createdAt ? new Date(blog.createdAt).toISOString() : undefined}
+        publishDate={blog.publishDate ? new Date(blog.publishDate).toISOString() : (blog.createdAt ? new Date(blog.createdAt).toISOString() : undefined)}
         modifiedDate={blog.updatedAt ? new Date(blog.updatedAt).toISOString() : undefined}
         imageUrl={shareImageAbsolute}
+        imageAlt={blog.imageAlt || plainTitle}
         articleUrl={`/preparation-blog/${slug}`}
         category={blog.category || 'Preparation'}
       />
@@ -187,14 +214,14 @@ const PreparationBlogDetail = () => {
         {/* Blog Content */}
         <article className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Featured Image/File - Full Width */}
-          <div className="w-full aspect-[21/9] overflow-hidden relative bg-gray-100">
+          <div className="w-full aspect-[1200/630] overflow-hidden relative bg-gray-100">
             {blog.file?._id && fileBase ? (
               <>
                 {/* If file is image, show it directly */}
                 {blog.file.contentType?.startsWith('image/') ? (
                   <img
                     src={`${fileBase}/api/v1/view/${blog.file._id}`}
-                    alt={stripHtml(blog.title)}
+                    alt={blog.imageAlt || stripHtml(blog.title)}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -238,7 +265,7 @@ const PreparationBlogDetail = () => {
               {blog.createdAt && (
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4 text-blue-600" />
-                  <span>Published on: {formatDate(blog.createdAt)}</span>
+                  <span>Published on: {formatDate(blog.publishDate || blog.createdAt)}</span>
                 </div>
               )}
               <div className="flex items-center space-x-2">
@@ -267,14 +294,62 @@ const PreparationBlogDetail = () => {
             {/* Blog Content */}
             {blog.content && (
               <div className="prose prose-lg max-w-none">
+                {effectiveTemplate === 'comparison' && comparisonRows.length > 0 && (
+                  <div className="mb-8 overflow-hidden rounded-xl border border-blue-100">
+                    <table className="w-full text-sm">
+                      <thead className="bg-blue-600 text-white">
+                        <tr>
+                          <th className="px-4 py-2 text-left">Topic</th>
+                          <th className="px-4 py-2 text-left">Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comparisonRows.map((row, index) => (
+                          <tr key={`${row.left}-${index}`} className={index % 2 === 0 ? 'bg-white' : 'bg-blue-50'}>
+                            <td className="px-4 py-2 font-semibold text-gray-800">{row.left}</td>
+                            <td className="px-4 py-2 text-gray-700">{row.right}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
                 <div 
-                  className="text-gray-700 leading-relaxed blog-content"
+                  className={`text-gray-700 leading-relaxed blog-content ${
+                    effectiveTemplate === 'listicle' ? 'listicle-content' : ''
+                  } ${effectiveTemplate === 'landing' ? 'landing-content' : ''}`}
                   dangerouslySetInnerHTML={{ __html: cleanHtml(blog.content) }}
                   style={{
                     wordBreak: 'break-word',
                     overflowWrap: 'break-word'
                   }}
                 />
+              </div>
+            )}
+
+            {showCta && (
+              <div
+                className={`mt-8 rounded-xl p-5 border ${
+                  effectiveTemplate === 'landing'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-transparent'
+                    : 'bg-blue-50 border-blue-100'
+                }`}
+              >
+                <h3 className={`text-lg font-bold mb-2 ${effectiveTemplate === 'landing' ? 'text-white' : 'text-gray-900'}`}>
+                  Ready for the next step?
+                </h3>
+                <a
+                  href={blog.ctaLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`inline-flex items-center px-5 py-2.5 rounded-lg font-semibold transition ${
+                    effectiveTemplate === 'landing'
+                      ? 'bg-white text-blue-700 hover:bg-blue-50'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {blog.ctaText}
+                </a>
               </div>
             )}
 
@@ -307,6 +382,21 @@ const PreparationBlogDetail = () => {
           </Link>
         </div>
       </div>
+      <style>{`
+        .listicle-content ol {
+          list-style: decimal;
+          padding-left: 1.25rem;
+        }
+        .listicle-content li {
+          margin-bottom: 0.5rem;
+          padding-left: 0.25rem;
+          font-weight: 500;
+        }
+        .landing-content h2,
+        .landing-content h3 {
+          color: #1d4ed8;
+        }
+      `}</style>
     </div>
   );
 };

@@ -65,6 +65,7 @@ const PreparationBlogs = () => {
         page: currentPage,
         limit: PAGE_SIZE,
         search: debouncedSearch,
+        visibility: 'public',
       });
 
       const envelope = response?.data;
@@ -196,11 +197,11 @@ const PreparationBlogs = () => {
                   className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer"
                 >
                   {blog.file?._id && (
-                    <div className="aspect-video w-full overflow-hidden bg-gray-100 relative">
+                    <div className="aspect-[1200/630] w-full overflow-hidden bg-gray-100 relative">
                       {blog.file.contentType?.startsWith('image/') ? (
                         <img
                           src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
-                          alt={blog.title}
+                          alt={blog.imageAlt || stripHtml(blog.title)}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
@@ -232,7 +233,7 @@ const PreparationBlogs = () => {
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mb-3 pb-3 border-b border-gray-100">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3 shrink-0" />
-                        <span>{formatDate(blog.createdAt)}</span>
+                        <span>{formatDate(blog.publishDate || blog.createdAt)}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <User className="w-3 h-3 shrink-0" />
