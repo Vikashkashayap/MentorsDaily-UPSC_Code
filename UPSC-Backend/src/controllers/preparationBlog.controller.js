@@ -19,6 +19,15 @@ const {
   setNotFoundError,
 } = require("../utility/responseHelper.js");
 
+const BLOG_TEMPLATES = new Set(["standard", "listicle", "comparison", "landing"]);
+const BLOG_STATUS = new Set(["draft", "published", "scheduled"]);
+
+function parseOptionalDate(value) {
+  if (value == null || String(value).trim() === "") return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 exports.createBlogController = async (req, res) => {
   try {
     const file = req.file;
@@ -26,9 +35,37 @@ exports.createBlogController = async (req, res) => {
       return setBadRequest(res, { message: "No file uploaded" });
     }
 
-    const { title, content, category, tags, shortDescription, slug } = req.body;
+    const {
+      title,
+      content,
+      category,
+      tags,
+      shortDescription,
+      slug,
+      seoKeyword,
+      metaTitle,
+      imageAlt,
+      template,
+      ctaText,
+      ctaLink,
+      publishDate,
+      status,
+    } = req.body;
     if (!title || !content) {
       return setBadRequest(res, { message: "Title and content are required" });
+    }
+
+    const normalizedTemplate = template && BLOG_TEMPLATES.has(template) ? template : "standard";
+    const normalizedStatus = status && BLOG_STATUS.has(status) ? status : "published";
+    const parsedPublishDate = parseOptionalDate(publishDate);
+    if (status && !BLOG_STATUS.has(status)) {
+      return setBadRequest(res, { message: "Invalid status value" });
+    }
+    if (template && !BLOG_TEMPLATES.has(template)) {
+      return setBadRequest(res, { message: "Invalid template value" });
+    }
+    if (normalizedStatus === "scheduled" && !parsedPublishDate) {
+      return setBadRequest(res, { message: "publishDate is required for scheduled blogs" });
     }
 
     const blogData = {
@@ -38,6 +75,17 @@ exports.createBlogController = async (req, res) => {
       tags: tags ? (typeof tags === "string" ? JSON.parse(tags) : tags) : [],
       shortDescription: shortDescription || "",
       slug: slug || undefined,
+      seoKeyword: seoKeyword || "",
+      metaTitle: metaTitle || "",
+      imageAlt: imageAlt || "",
+      template: normalizedTemplate,
+      ctaText: ctaText || "",
+      ctaLink: ctaLink || "",
+      status: normalizedStatus,
+      publishDate:
+        normalizedStatus === "published"
+          ? parsedPublishDate || new Date()
+          : parsedPublishDate,
     };
 
     const result = await createBlogService(blogData, file, req.user.id);
@@ -57,10 +105,11 @@ exports.getBlogController = async (req, res) => {
     const page = parseInt(req.query.page, 10);
     const limitRaw = parseInt(req.query.limit, 10);
     const search = typeof req.query.search === "string" ? req.query.search : "";
+    const onlyPublic = req.query.visibility === "public";
 
     if (Number.isFinite(page) && page > 0 && Number.isFinite(limitRaw) && limitRaw > 0) {
       const limit = Math.min(limitRaw, 50);
-      const { blogs, total } = await getBlogPagedService({ page, limit, search });
+      const { blogs, total } = await getBlogPagedService({ page, limit, search, onlyPublic });
       const totalPages = Math.max(1, Math.ceil(total / limit));
       return setSuccess(res, {
         message: "Blogs fetched successfully",
@@ -74,7 +123,7 @@ exports.getBlogController = async (req, res) => {
       });
     }
 
-    const blog = await getBlogService();
+    const blog = await getBlogService({ onlyPublic });
     return setSuccess(res, {
       message: "All blogs fetched successfully",
       data: blog,
@@ -114,9 +163,40 @@ exports.updateBlogController = async (req, res) => {
     const { id } = req.params;
     const file = req.file;
 
-    const { title, content, category, tags, shortDescription, slug } = req.body || {};
+    const {
+      title,
+      content,
+      category,
+      tags,
+      shortDescription,
+      slug,
+      seoKeyword,
+      metaTitle,
+      imageAlt,
+      template,
+      ctaText,
+      ctaLink,
+      publishDate,
+      status,
+    } = req.body || {};
 
-    if (!title && !content && !category && !tags && !file && shortDescription === undefined && !slug) {
+    if (
+      !title &&
+      !content &&
+      !category &&
+      !tags &&
+      !file &&
+      shortDescription === undefined &&
+      !slug &&
+      seoKeyword === undefined &&
+      metaTitle === undefined &&
+      imageAlt === undefined &&
+      template === undefined &&
+      ctaText === undefined &&
+      ctaLink === undefined &&
+      publishDate === undefined &&
+      status === undefined
+    ) {
       return setBadRequest(res, { message: "No data provided for update" });
     }
 
@@ -129,6 +209,36 @@ exports.updateBlogController = async (req, res) => {
     }
     if (shortDescription !== undefined) blogData.shortDescription = shortDescription;
     if (slug) blogData.slug = slug;
+    if (seoKeyword !== undefined) blogData.seoKeyword = seoKeyword;
+    if (metaTitle !== undefined) blogData.metaTitle = metaTitle;
+    if (imageAlt !== undefined) blogData.imageAlt = imageAlt;
+    if (template !== undefined) {
+      if (!BLOG_TEMPLATES.has(template)) {
+        return setBadRequest(res, { message: "Invalid template value" });
+      }
+      blogData.template = template;
+    }
+    if (ctaText !== undefined) blogData.ctaText = ctaText;
+    if (ctaLink !== undefined) blogData.ctaLink = ctaLink;
+    if (status !== undefined) {
+      if (!BLOG_STATUS.has(status)) {
+        return setBadRequest(res, { message: "Invalid status value" });
+      }
+      blogData.status = status;
+    }
+    if (publishDate !== undefined) {
+      const parsed = parseOptionalDate(publishDate);
+      if (publishDate && !parsed) {
+        return setBadRequest(res, { message: "Invalid publishDate" });
+      }
+      blogData.publishDate = parsed;
+    }
+    if (blogData.status === "scheduled" && !blogData.publishDate) {
+      return setBadRequest(res, { message: "publishDate is required for scheduled blogs" });
+    }
+    if (blogData.status === "published" && blogData.publishDate == null) {
+      blogData.publishDate = new Date();
+    }
 
     const result = await updateBlogService(id, blogData, file, req.user.id);
 
@@ -198,7 +308,7 @@ exports.getBlogBySlugPublicController = async (req, res) => {
       return setBadRequest(res, { message: "Invalid blog URL" });
     }
 
-    const blog = await getBlogBySlugFlexibleService(slug);
+    const blog = await getBlogBySlugFlexibleService(slug, { onlyPublic: true });
     if (!blog) {
       return setNotFoundError(res, { message: "Blog not found" });
     }
@@ -225,7 +335,7 @@ exports.getBlogMetaBySlugController = async (req, res) => {
       return setBadRequest(res, { message: "Invalid blog URL" });
     }
 
-    const blog = await getBlogBySlugFlexibleService(slug);
+    const blog = await getBlogBySlugFlexibleService(slug, { onlyPublic: true });
     if (!blog) {
       return setNotFoundError(res, { message: "Blog not found" });
     }
@@ -251,7 +361,7 @@ function escapeXmlSitemap(s) {
 
 exports.getPreparationBlogsSitemapXml = async (req, res) => {
   try {
-    const blogs = await getBlogService();
+    const blogs = await getBlogService({ onlyPublic: true });
     const list = Array.isArray(blogs) ? blogs : [];
     const siteUrl = (process.env.SITE_URL || process.env.FRONTEND_URL || "https://mentorsdaily.com").replace(
       /\/$/,

@@ -51,6 +51,45 @@ const blogSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    seoKeyword: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    metaTitle: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    imageAlt: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    template: {
+      type: String,
+      enum: ["standard", "listicle", "comparison", "landing"],
+      default: "standard",
+    },
+    ctaText: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    ctaLink: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    publishDate: {
+      type: Date,
+      default: null,
+    },
+    status: {
+      type: String,
+      enum: ["draft", "published", "scheduled"],
+      default: "published",
+    },
   },
   {
     timestamps: true, // ✅ Correct place & spelling

@@ -2,6 +2,25 @@ const mongoose = require("mongoose");
 const logger = require("../utility/logger.js");
 const PreparationBlog = require("../models/preparationBlog.model.js");
 
+const PUBLIC_STATUS_FILTER = {
+  $or: [
+    { status: { $exists: false } }, // backward compatibility for old blogs
+    { status: "published" },
+    { $and: [{ status: "scheduled" }, { publishDate: { $lte: new Date() } }] },
+  ],
+};
+
+async function autoPublishDueScheduledBlogs() {
+  try {
+    await PreparationBlog.updateMany(
+      { status: "scheduled", publishDate: { $lte: new Date() } },
+      { $set: { status: "published" } }
+    );
+  } catch (err) {
+    logger.error(`preparationBlog.repository.js << autoPublishDueScheduledBlogs << ${err.message}`);
+  }
+}
+
 exports.createBlogRepo = async (blogData) => {
   try {
     logger.info("preparationBlog.repository.js << createBlogRepo << Creating new blog");
@@ -16,10 +35,14 @@ exports.createBlogRepo = async (blogData) => {
   }
 };
 
-exports.getBlogRepo = async () => {
+exports.getBlogRepo = async ({ onlyPublic = false } = {}) => {
   try {
     logger.info("preparationBlog.repository.js << getBlogRepo << Fetching all blogs");
-    return await PreparationBlog.find()
+    if (onlyPublic) {
+      await autoPublishDueScheduledBlogs();
+    }
+    const filter = onlyPublic ? PUBLIC_STATUS_FILTER : {};
+    return await PreparationBlog.find(filter)
       .sort({ createdAt: -1 })
       .populate("file", "filename contentType size")
       .populate("user", "name");
@@ -31,11 +54,14 @@ exports.getBlogRepo = async () => {
 
 const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-exports.getBlogPagedRepo = async ({ page, limit, search }) => {
+exports.getBlogPagedRepo = async ({ page, limit, search, onlyPublic = false }) => {
   try {
     logger.info("preparationBlog.repository.js << getBlogPagedRepo << Fetching paged blogs");
+    if (onlyPublic) {
+      await autoPublishDueScheduledBlogs();
+    }
     const skip = (page - 1) * limit;
-    const filter = {};
+    const filter = onlyPublic ? { ...PUBLIC_STATUS_FILTER } : {};
     if (search && String(search).trim()) {
       const q = escapeRegex(String(search).trim());
       filter.$or = [
@@ -132,21 +158,29 @@ function popBlog(q) {
   return q.populate("file", "filename contentType size").populate("user", "name");
 }
 
-exports.getBlogBySlugFlexibleRepo = async (slug) => {
+exports.getBlogBySlugFlexibleRepo = async (slug, { onlyPublic = false } = {}) => {
   try {
     if (!slug || slug === "undefined") return null;
     logger.info(`preparationBlog.repository.js << getBlogBySlugFlexibleRepo << ${slug}`);
+    if (onlyPublic) {
+      await autoPublishDueScheduledBlogs();
+    }
 
-    let blog = await popBlog(PreparationBlog.findOne({ slug }));
+    let blog = await popBlog(
+      PreparationBlog.findOne({
+        slug,
+        ...(onlyPublic ? PUBLIC_STATUS_FILTER : {}),
+      })
+    );
     if (blog) return blog;
 
     if (mongoose.Types.ObjectId.isValid(slug)) {
-      blog = await popBlog(PreparationBlog.findById(slug));
+      blog = await popBlog(PreparationBlog.findOne({ _id: slug, ...(onlyPublic ? PUBLIC_STATUS_FILTER : {}) }));
       if (blog) return blog;
     }
 
     const { generateSlugFromTitle } = require("../utils/blogSeoHtml.js");
-    const blogs = await popBlog(PreparationBlog.find());
+    const blogs = await popBlog(PreparationBlog.find(onlyPublic ? PUBLIC_STATUS_FILTER : {}));
     const found = blogs.find((b) => {
       if (b.slug && b.slug === slug) return true;
       return generateSlugFromTitle(b.title) === slug;

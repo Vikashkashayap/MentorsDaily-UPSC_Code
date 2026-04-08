@@ -69,7 +69,8 @@ function buildBlogMeta(blog, requestSlug, env = process.env) {
   const apiPublic = resolvePublicApiOrigin(env, siteUrl);
 
   const plainTitle = stripHtmlTags(blog.title) || "UPSC Preparation Blog";
-  const title = `${plainTitle} | MentorsDaily`;
+  const seoTitle = (blog.metaTitle && String(blog.metaTitle).trim()) || plainTitle;
+  const title = `${seoTitle} | MentorsDaily`;
   const rawDesc =
     (blog.shortDescription && String(blog.shortDescription).trim()) ||
     stripHtmlTags(blog.content).slice(0, 160) ||

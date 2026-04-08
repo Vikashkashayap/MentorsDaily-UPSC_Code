@@ -22,20 +22,20 @@ exports.createBlogService = async (blogData, file, userId) => {
   }
 };
 
-exports.getBlogService = async () => {
+exports.getBlogService = async ({ onlyPublic = false } = {}) => {
   logger.info("preparationBlog.service.js << getBlogService << Fetching all blogs");
   try {
-    return await getBlogRepo();
+    return await getBlogRepo({ onlyPublic });
   } catch (error) {
     logger.error(`preparationBlog.service.js << getBlogService << ${error.message}`);
     throw new Error(error.message);
   }
 };
 
-exports.getBlogPagedService = async ({ page, limit, search }) => {
+exports.getBlogPagedService = async ({ page, limit, search, onlyPublic = false }) => {
   logger.info("preparationBlog.service.js << getBlogPagedService << Fetching paged blogs");
   try {
-    return await getBlogPagedRepo({ page, limit, search });
+    return await getBlogPagedRepo({ page, limit, search, onlyPublic });
   } catch (error) {
     logger.error(`preparationBlog.service.js << getBlogPagedService << ${error.message}`);
     throw new Error(error.message);
@@ -104,10 +104,10 @@ exports.incrementBlogViewsService = async (id) => {
   }
 };
 
-exports.getBlogBySlugFlexibleService = async (slug) => {
+exports.getBlogBySlugFlexibleService = async (slug, { onlyPublic = false } = {}) => {
   logger.info(`preparationBlog.service.js << getBlogBySlugFlexibleService << ${slug}`);
   try {
-    return await getBlogBySlugFlexibleRepo(slug);
+    return await getBlogBySlugFlexibleRepo(slug, { onlyPublic });
   } catch (err) {
     logger.error(`preparationBlog.service.js << getBlogBySlugFlexibleService << ${err.message}`);
     throw err;
