@@ -74,8 +74,20 @@ if (!FRONTEND_DIST) {
 
 if (FRONTEND_DIST) {
   const distResolved = path.resolve(FRONTEND_DIST);
-  const { createPrepBlogBotHtmlMiddleware } = require("./src/middleware/spaBotPrepBlog.middleware.js");
+  const {
+    createPrepBlogBotHtmlMiddleware,
+    createPreparationBlogHtmlRouteHandler,
+  } = require("./src/middleware/spaBotPrepBlog.middleware.js");
   const prepBlogBotHtml = createPrepBlogBotHtmlMiddleware(distResolved);
+  const preparationBlogHtmlRoute = createPreparationBlogHtmlRouteHandler(
+    distResolved,
+    "/preparation-blog"
+  );
+  const legacyBlogHtmlRoute = createPreparationBlogHtmlRouteHandler(distResolved, "/blog");
+
+  // Explicit SSR-like entry route for social crawlers and first-page hits.
+  app.get("/preparation-blog/:slug", preparationBlogHtmlRoute);
+  app.get("/blog/:slug", legacyBlogHtmlRoute);
 
   app.use(
     express.static(distResolved, {

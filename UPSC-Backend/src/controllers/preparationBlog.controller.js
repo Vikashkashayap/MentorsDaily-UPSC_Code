@@ -46,6 +46,7 @@ exports.createBlogController = async (req, res) => {
       metaTitle,
       metaDescription,
       metaImage,
+      thumbnail,
       imageAlt,
       template,
       ctaText,
@@ -81,6 +82,7 @@ exports.createBlogController = async (req, res) => {
       metaTitle: metaTitle || "",
       metaDescription: metaDescription || "",
       metaImage: metaImage || "",
+      thumbnail: thumbnail || "",
       imageAlt: imageAlt || "",
       template: normalizedTemplate,
       ctaText: ctaText || "",
@@ -178,6 +180,7 @@ exports.updateBlogController = async (req, res) => {
       metaTitle,
       metaDescription,
       metaImage,
+      thumbnail,
       imageAlt,
       template,
       ctaText,
@@ -198,6 +201,7 @@ exports.updateBlogController = async (req, res) => {
       metaTitle === undefined &&
       metaDescription === undefined &&
       metaImage === undefined &&
+      thumbnail === undefined &&
       imageAlt === undefined &&
       template === undefined &&
       ctaText === undefined &&
@@ -221,6 +225,7 @@ exports.updateBlogController = async (req, res) => {
     if (metaTitle !== undefined) blogData.metaTitle = metaTitle;
     if (metaDescription !== undefined) blogData.metaDescription = metaDescription;
     if (metaImage !== undefined) blogData.metaImage = metaImage;
+    if (thumbnail !== undefined) blogData.thumbnail = thumbnail;
     if (imageAlt !== undefined) blogData.imageAlt = imageAlt;
     if (template !== undefined) {
       if (!BLOG_TEMPLATES.has(template)) {

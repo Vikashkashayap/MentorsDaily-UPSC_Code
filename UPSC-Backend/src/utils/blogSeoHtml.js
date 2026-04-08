@@ -82,13 +82,22 @@ function buildBlogMeta(blog, requestSlug, env = process.env, routeBase = "/prepa
     "Expert UPSC preparation insights and guidance from MentorsDaily.";
   const description = rawDesc.length > 200 ? `${rawDesc.slice(0, 197)}...` : rawDesc;
 
-  let image = ensureHttps(`${siteUrl}/images/hero.png`);
+  const defaultImage = ensureHttps(`${siteUrl}/images/default-blog.png`);
+  let image = defaultImage;
   if (isAbsoluteHttpUrl(blog.metaImage)) {
     image = ensureHttps(String(blog.metaImage).trim());
+  } else if (isAbsoluteHttpUrl(blog.thumbnail)) {
+    image = ensureHttps(String(blog.thumbnail).trim());
   }
   const file = blog.file;
   const fileId = file && (file._id || file);
-  if (!isAbsoluteHttpUrl(blog.metaImage) && fileId && isLikelyBlogCoverImage(file) && apiPublic) {
+  if (
+    !isAbsoluteHttpUrl(blog.metaImage) &&
+    !isAbsoluteHttpUrl(blog.thumbnail) &&
+    fileId &&
+    isLikelyBlogCoverImage(file) &&
+    apiPublic
+  ) {
     // Use /view/ so responses are inline; link previews must fetch a real image URL on the API host.
     image = ensureHttps(`${apiPublic}/api/v1/view/${fileId}`);
   }
@@ -111,9 +120,9 @@ function buildDefaultBlogMeta(requestSlug, env = process.env, routeBase = "/prep
     : `/${String(routeBase || "preparation-blog")}`;
   const url = ensureHttps(`${siteUrl}${cleanBase}/${safeSlug}`);
   return {
-    title: "Mentors Daily Blog | MentorsDaily",
+    title: "Mentors Daily Blog | Mentors Daily",
     description: "Expert UPSC preparation insights and guidance from MentorsDaily.",
-    image: ensureHttps(`${siteUrl}/images/hero.png`),
+    image: ensureHttps(`${siteUrl}/images/default-blog.png`),
     url,
     pathname: `${cleanBase}/${safeSlug}`,
     plainTitle: "Mentors Daily Blog",
@@ -153,7 +162,7 @@ function buildInjectedHeadFragment(meta) {
     `<meta property="og:image:alt" content="${plain}" />`,
     `<meta property="og:url" content="${u}" />`,
     `<meta property="og:type" content="article" />`,
-    `<meta property="og:site_name" content="MentorsDaily" />`,
+    `<meta property="og:site_name" content="Mentors Daily" />`,
     `<meta property="og:locale" content="en_IN" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:site" content="@mentorsdaily" />`,

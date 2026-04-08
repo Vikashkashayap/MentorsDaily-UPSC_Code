@@ -1,7 +1,7 @@
 import { SEO_CONFIG } from "./seoUtils";
 
 /** Default OG image under `public/images/` (served at `/images/...` in production). */
-export const DEFAULT_OG_IMAGE_PATH = "/images/hero.png";
+export const DEFAULT_OG_IMAGE_PATH = "/images/default-blog.png";
 
 export function getSiteOrigin() {
   const env =
@@ -75,6 +75,12 @@ export function uploadedBlogImageUrl(fileId, apiOrigin) {
  */
 export function getPreparationBlogOgImageUrl(blog) {
   const base = getSiteOrigin();
+  if (blog?.metaImage && String(blog.metaImage).trim()) {
+    return toAbsoluteOgUrl(blog.metaImage);
+  }
+  if (blog?.thumbnail && String(blog.thumbnail).trim()) {
+    return toAbsoluteOgUrl(blog.thumbnail);
+  }
   const file = blog?.file;
   const fileId = file && (file._id ?? file);
   const api = getPublicApiOrigin();

@@ -72,6 +72,11 @@ const blogSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    thumbnail: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     imageAlt: {
       type: String,
       trim: true,
