@@ -15,16 +15,37 @@ export default defineConfig({
     },
   },
   build: {
-    // Optimize chunk splitting to reduce number of chunks
+    minify: 'esbuild',
+    sourcemap: false,
+    cssCodeSplit: true,
+    cssMinify: true,
+    target: ['es2018', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    reportCompressedSize: true,
+    modulePreload: {
+      polyfill: false,
+    },
+    // Optimize chunk splitting to reduce initial JS payload
     rollupOptions: {
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false,
+      },
       output: {
-        manualChunks: {
-          // Vendor chunks - separate large libraries
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'editor-vendor': ['react-draft-wysiwyg', 'draft-js', 'draftjs-to-html', 'html-to-draftjs'],
-          'ui-vendor': ['framer-motion', 'lucide-react'],
-          'chart-vendor': ['recharts'],
-          'seo-vendor': ['react-helmet-async'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-draft-wysiwyg') || id.includes('draft-js') || id.includes('draftjs-to-html') || id.includes('html-to-draftjs')) {
+              return 'editor-vendor';
+            }
+            if (id.includes('recharts')) {
+              return 'chart-vendor';
+            }
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'react-vendor';
+            }
+            return 'vendor';
+          }
+          return undefined;
         },
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
@@ -40,17 +61,6 @@ export default defineConfig({
         },
       },
     },
-    // Optimize build performance
-    minify: 'esbuild',
-    // Reduce sourcemap size for production
-    sourcemap: false,
-    // Optimize CSS
-    cssCodeSplit: true,
-    cssMinify: true,
-    // Target modern browsers for smaller bundles
-    target: ['es2015', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-    // Compression
-    reportCompressedSize: true,
   },
   server: {
     host: true, // 0.0.0.0

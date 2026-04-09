@@ -71,6 +71,9 @@ export const getUsers = async () => {
       endpoint: "api/v1/users",
       method: "GET",
       requiresAuth: true,
+      dedupe: true,
+      useCache: true,
+      cacheTtl: 2 * 60 * 1000,
     });
     return response.data;
   } catch (error) {
@@ -349,6 +352,9 @@ export const getAllPayments = async () => {
     const response = await callApi({
       endpoint: 'api/v1/recent-payment',
       method: 'GET',
+      dedupe: true,
+      useCache: true,
+      cacheTtl: 60 * 1000,
     });
     return response.data;
   } catch (error) {

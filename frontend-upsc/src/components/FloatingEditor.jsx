@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useTheme } from '../contexts/ThemeContext';
+
+const Editor = lazy(() =>
+    import('react-draft-wysiwyg').then((module) => ({ default: module.Editor }))
+);
 
 const FloatingEditor = ({
     isOpen,
@@ -154,25 +157,27 @@ const FloatingEditor = ({
 
                     {/* Editor */}
                     <div className="flex-1 overflow-hidden">
-                        <Editor
-                            editorState={editorState}
-                            onEditorStateChange={handleEditorStateChange}
-                            wrapperClassName="h-full flex flex-col"
-                            toolbarClassName={`rdw-editor-toolbar ${isDark ? 'rdw-editor-toolbar-dark' : ''} border-b ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'
-                                }`}
-                            editorClassName="flex-1 overflow-auto"
-                            editorStyle={{
-                                padding: '16px 20px',
-                                fontSize: '15px',
-                                lineHeight: '1.6',
-                                color: isDark ? '#f9fafb' : '#111827',
-                                backgroundColor: isDark ? '#374151' : '#ffffff',
-                                fontFamily: "'Inter', system-ui, sans-serif",
-                                minHeight: '200px'
-                            }}
-                            toolbar={toolbarConfig}
-                            placeholder={`Enter ${currentField?.toLowerCase() || 'content'}...`}
-                        />
+                        <Suspense fallback={<div className="h-full animate-pulse bg-gray-100" />}>
+                            <Editor
+                                editorState={editorState}
+                                onEditorStateChange={handleEditorStateChange}
+                                wrapperClassName="h-full flex flex-col"
+                                toolbarClassName={`rdw-editor-toolbar ${isDark ? 'rdw-editor-toolbar-dark' : ''} border-b ${isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'
+                                    }`}
+                                editorClassName="flex-1 overflow-auto"
+                                editorStyle={{
+                                    padding: '16px 20px',
+                                    fontSize: '15px',
+                                    lineHeight: '1.6',
+                                    color: isDark ? '#f9fafb' : '#111827',
+                                    backgroundColor: isDark ? '#374151' : '#ffffff',
+                                    fontFamily: "'Inter', system-ui, sans-serif",
+                                    minHeight: '200px'
+                                }}
+                                toolbar={toolbarConfig}
+                                placeholder={`Enter ${currentField?.toLowerCase() || 'content'}...`}
+                            />
+                        </Suspense>
                     </div>
 
                     {/* Footer */}
