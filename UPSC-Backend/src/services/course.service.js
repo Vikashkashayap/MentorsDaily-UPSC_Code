@@ -34,6 +34,15 @@ exports.findCourseById = async (courseId) => {
   }
 };
 
+exports.findCourseBySlug = async (slug) => {
+  try {
+    return await courseRepository.findCourseBySlug(slug);
+  } catch (err) {
+    logger.error(`courseService.js <<findCourseBySlug<< ${err.message}`);
+    throw new Error(err.message);
+  }
+};
+
 exports.findAllCourse = async () => {
   try {
     logger.info('courseService.js <<findAll<< Fetching all courses');

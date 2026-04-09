@@ -35,6 +35,22 @@ const setCachedValue = (key, value) => {
   }
 };
 
+/** Clears client-side course list cache so admin/public see fresh data after edits. */
+export const clearCoursesCache = () => {
+  const prefix = "courses:";
+  memoryCache.forEach((_, k) => {
+    if (String(k).startsWith(prefix)) memoryCache.delete(k);
+  });
+  try {
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const k = sessionStorage.key(i);
+      if (k && k.startsWith(prefix)) sessionStorage.removeItem(k);
+    }
+  } catch {
+    /* ignore */
+  }
+};
+
 export const register = async (payload) => {
   try {
     const response = await callApi({
@@ -111,6 +127,23 @@ export const getCourseById = async (courseId) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching course by ID:", error);
+    throw error;
+  }
+};
+
+/** Public landing page: course by URL slug (e.g. integrated-mentorship-2027). No auth. Returns null if not found (no console spam). */
+export const getCourseBySlug = async (slug) => {
+  try {
+    const response = await callApi({
+      endpoint: `api/v1/course/slug/${encodeURIComponent(slug)}`,
+      method: "GET",
+      requiresAuth: false,
+      silentNotFound: true,
+    });
+    return response.data;
+  } catch (error) {
+    if (error?.response?.status === 404) return null;
+    console.error("Error fetching course by slug:", error);
     throw error;
   }
 };

@@ -5,7 +5,7 @@ import {
 } from "../../api/coreService";
 import PaymentReceipt from "./PaymentReceipt";
 
-const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
+const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
   const [studentName, setStudentName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
@@ -44,6 +44,9 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
         email,
         courseId: course._id,
         paymentMethod: "UPI",
+        ...(mentorshipPlan === "weekly" || mentorshipPlan === "daily"
+          ? { mentorshipPlan }
+          : {}),
       });
 
       let orderData;

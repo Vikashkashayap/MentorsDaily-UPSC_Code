@@ -1,0 +1,80 @@
+/* Scoped landing page extras (IMP 2027). Parent must set CSS variables --imp-*. */
+
+.imp2027-root {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--imp-dark-txt);
+  --imp-navy: #1a3c6e;
+  --imp-navy-dk: #0d2240;
+  --imp-navy-lt: #24527a;
+  --imp-orange: #e86b2a;
+  --imp-orange-lt: #fde8d8;
+  --imp-sky: #d5e8f0;
+  --imp-sky-dk: #5b8db8;
+  --imp-green: #2d7d4e;
+  --imp-green-lt: #d1fae5;
+  --imp-gold: #f59e0b;
+  --imp-off-white: #f8f9fb;
+  --imp-grey: #f2f4f7;
+  --imp-dark-txt: #1c2b3a;
+  --imp-muted: #6b7280;
+  --imp-white: #ffffff;
+}
+
+.imp2027-root h1,
+.imp2027-root h2,
+.imp2027-root h3,
+.imp2027-root h4 {
+  font-family: "Poppins", system-ui, sans-serif;
+}
+
+@keyframes imp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.imp-fade-up {
+  animation: imp-fade-up 0.65s ease forwards;
+}
+.imp-fade-up.delay-1 {
+  animation-delay: 0.1s;
+}
+.imp-fade-up.delay-2 {
+  animation-delay: 0.22s;
+}
+.imp-fade-up.delay-3 {
+  animation-delay: 0.34s;
+}
+
+.imp-timeline-track::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--imp-orange) 0%, var(--imp-sky-dk) 50%, var(--imp-green) 100%);
+  z-index: 0;
+}
+
+@media (max-width: 960px) {
+  .imp-timeline-track::before {
+    display: none;
+  }
+}
+
+.imp-a {
+  color: var(--imp-orange);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.imp-html-inline a {
+  color: var(--imp-orange);
+  font-weight: 600;
+}

@@ -72,6 +72,8 @@ export default async function callApi({
   responseType,
   headers = {},
   requiresAuth = true,
+  /** When true, 404 responses are not logged (optional public lookups). */
+  silentNotFound = false,
 }) {
   try {
     const authToken = localStorage.getItem("token");
@@ -100,7 +102,9 @@ export default async function callApi({
 
     return response;
   } catch (e) {
-    console.error("API call failed:", e);
+    if (!(silentNotFound && e.response?.status === 404)) {
+      console.error("API call failed:", e);
+    }
 
     // Handle token expiry or unauthorized access (only for authenticated requests)
     if (e.response?.status === 401 && requiresAuth) {

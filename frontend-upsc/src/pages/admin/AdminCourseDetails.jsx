@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { getCourseById } from "../../api/coreService";
 import EditCourseModal from "../../components/EditCourseModal";
@@ -356,6 +356,58 @@ export default function AdminCourseDetails() {
                     Active
                   </span>
                 </div>
+              </div>
+            </div>
+
+            {/* Public IMP-style landing (slug + JSON edited in Edit Course modal) */}
+            <div className={`${isDark ? 'bg-gray-800 border-amber-900/40' : 'bg-amber-50 border-amber-200'} rounded-xl border p-6`}>
+              <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+                Public landing page
+              </h3>
+              <p className={`text-sm mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                IMP 2027 long-form page uses the API{' '}
+                <code className="text-xs px-1 py-0.5 rounded bg-black/10 dark:bg-white/10">/course/slug/…</code>.
+                Set the fields below in <strong>Edit Course</strong>.
+              </p>
+              <dl className="space-y-2 text-sm mb-4">
+                <div className="flex justify-between gap-2">
+                  <dt className={isDark ? 'text-gray-400' : 'text-gray-600'}>URL slug</dt>
+                  <dd className={`font-mono text-right ${isDark ? 'text-amber-200' : 'text-amber-900'}`}>
+                    {course.slug || "— not set —"}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <dt className={isDark ? 'text-gray-400' : 'text-gray-600'}>Landing JSON</dt>
+                  <dd className={isDark ? 'text-gray-200' : 'text-gray-800'}>
+                    {course.detailPage && typeof course.detailPage === "object"
+                      ? "Custom (merged with defaults)"
+                      : "Default template only"}
+                  </dd>
+                </div>
+              </dl>
+              {!course.slug && (
+                <p className={`text-xs mb-3 p-2 rounded ${isDark ? 'bg-amber-950/50 text-amber-100' : 'bg-white text-amber-900 border border-amber-200'}`}>
+                  To link this course to <strong>/integrated-mentorship-2027</strong>, open{' '}
+                  <strong>Edit Course</strong> and set <strong>URL slug</strong> to:{" "}
+                  <code className="font-mono">integrated-mentorship-2027</code>
+                </p>
+              )}
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={handleEditCourse}
+                  className="w-full px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm font-medium"
+                >
+                  Edit slug &amp; landing JSON
+                </button>
+                <Link
+                  to="/integrated-mentorship-2027"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium border ${isDark ? 'border-gray-600 text-gray-200 hover:bg-gray-700' : 'border-gray-300 text-gray-800 hover:bg-gray-50'}`}
+                >
+                  Open public IMP 2027 page (new tab)
+                </Link>
               </div>
             </div>
 

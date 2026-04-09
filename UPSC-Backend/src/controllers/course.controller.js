@@ -84,11 +84,39 @@ exports.findCourseById = async (req, res) => {
     setServerError(res, { message: err.message || 'Internal server error' });
   }
 };
+
+/** Public: landing page by slug (no auth) */
+exports.findCourseBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const course = await courseService.findCourseBySlug(slug);
+    if (!course) {
+      return setNotFoundError(res, { message: 'Course not found' });
+    }
+    setSuccess(res, { message: 'Course fetched successfully', data: course });
+  } catch (err) {
+    logger.error(`courseController.js <<findCourseBySlug<< ${err.message}`);
+    setServerError(res, { message: err.message || 'Internal server error' });
+  }
+};
 exports.updateCourse = async (req, res) => { 
     logger.info('courseController.js << updateCourse');
     try {
         const { id } = req.params;
         const updateData = { ...req.body };
+
+        if (updateData.detailPage !== undefined && typeof updateData.detailPage === 'string') {
+            const raw = updateData.detailPage.trim();
+            if (raw === '' || raw === 'null') {
+                updateData.detailPage = undefined;
+            } else {
+                try {
+                    updateData.detailPage = JSON.parse(raw);
+                } catch (e) {
+                    return setBadRequest(res, { message: 'detailPage must be valid JSON' });
+                }
+            }
+        }
         
         if (req.file) {
             const uploadedImage = await uploadFileService(req.file, req.user?._id);

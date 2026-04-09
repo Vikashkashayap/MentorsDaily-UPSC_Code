@@ -35,6 +35,18 @@ const courseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "UploadedDocuments",
   },
+  /** Public URL key for landing pages, e.g. integrated-mentorship-2027 */
+  slug: {
+    type: String,
+    trim: true,
+    sparse: true,
+    unique: true,
+  },
+  /** Structured copy for long-form course landing pages (admin-editable JSON) */
+  detailPage: {
+    type: mongoose.Schema.Types.Mixed,
+    default: undefined,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
