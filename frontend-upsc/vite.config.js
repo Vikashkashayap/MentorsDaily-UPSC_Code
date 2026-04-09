@@ -24,23 +24,28 @@ export default defineConfig({
     modulePreload: {
       polyfill: false,
     },
-    // Optimize chunk splitting to reduce initial JS payload
+    // Optimize chunk splitting without breaking React interop
     rollupOptions: {
-      treeshake: {
-        moduleSideEffects: false,
-        propertyReadSideEffects: false,
-        tryCatchDeoptimization: false,
-      },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react-draft-wysiwyg') || id.includes('draft-js') || id.includes('draftjs-to-html') || id.includes('html-to-draftjs')) {
+            if (
+              id.includes('/react-draft-wysiwyg/') ||
+              id.includes('/draft-js/') ||
+              id.includes('/draftjs-to-html/') ||
+              id.includes('/html-to-draftjs/')
+            ) {
               return 'editor-vendor';
             }
-            if (id.includes('recharts')) {
+            if (id.includes('/recharts/')) {
               return 'chart-vendor';
             }
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            if (
+              id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('/react-router/') ||
+              id.includes('/react-router-dom/')
+            ) {
               return 'react-vendor';
             }
             return 'vendor';
