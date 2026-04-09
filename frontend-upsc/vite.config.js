@@ -24,34 +24,9 @@ export default defineConfig({
     modulePreload: {
       polyfill: false,
     },
-    // Optimize chunk splitting without breaking React interop
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (
-              id.includes('/react-draft-wysiwyg/') ||
-              id.includes('/draft-js/') ||
-              id.includes('/draftjs-to-html/') ||
-              id.includes('/html-to-draftjs/')
-            ) {
-              return 'editor-vendor';
-            }
-            if (id.includes('/recharts/')) {
-              return 'chart-vendor';
-            }
-            if (
-              id.includes('/react/') ||
-              id.includes('/react-dom/') ||
-              id.includes('/react-router/') ||
-              id.includes('/react-router-dom/')
-            ) {
-              return 'react-vendor';
-            }
-            return 'vendor';
-          }
-          return undefined;
-        },
+        // Avoid manual vendor chunking to prevent cross-chunk init-order issues.
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
