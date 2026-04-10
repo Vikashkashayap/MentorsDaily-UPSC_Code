@@ -59,10 +59,20 @@ import { logout } from "../utils/authUtils";
 import { ROUTES } from "../constants/routesEnum";
 
 const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+const inFlightRequests = new Map();
+const responseCache = new Map();
+const DEFAULT_GET_CACHE_TTL = 60 * 1000;
 
 function buildApiUrl(endpoint) {
   const path = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
   return `${BASE_URL}/${path}`;
+}
+
+function getRequestKey(url, method, headers = {}, body) {
+  const normalizedMethod = String(method || "GET").toUpperCase();
+  const safeHeaders = headers || {};
+  const bodyKey = body instanceof FormData ? "form-data" : JSON.stringify(body ?? null);
+  return `${normalizedMethod}:${url}:${JSON.stringify(safeHeaders)}:${bodyKey}`;
 }
 
 export default async function callApi({
@@ -87,8 +97,23 @@ export default async function callApi({
 
     const finalHeaders = { ...defaultHeaders, ...headers };
 
-    const response = await axios({
-      url: buildApiUrl(endpoint),
+    const requestUrl = buildApiUrl(endpoint);
+    const normalizedMethod = String(method || "GET").toUpperCase();
+    const requestKey = getRequestKey(requestUrl, normalizedMethod, finalHeaders, body);
+
+    if (useCache && normalizedMethod === "GET") {
+      const cached = responseCache.get(requestKey);
+      if (cached && Date.now() - cached.timestamp < cacheTtl) {
+        return cached.response;
+      }
+    }
+
+    if (dedupe && inFlightRequests.has(requestKey)) {
+      return inFlightRequests.get(requestKey);
+    }
+
+    const requestPromise = axios({
+      url: requestUrl,
       method,
       data: body,
       responseType,
@@ -98,9 +123,23 @@ export default async function callApi({
       // Add flag to indicate if this is a public request
       isPublicRequest: !requiresAuth,
       requiresAuth: requiresAuth,
+    }).then((response) => {
+      if (useCache && normalizedMethod === "GET") {
+        responseCache.set(requestKey, {
+          timestamp: Date.now(),
+          response,
+        });
+      }
+      return response;
+    }).finally(() => {
+      inFlightRequests.delete(requestKey);
     });
 
-    return response;
+    if (dedupe) {
+      inFlightRequests.set(requestKey, requestPromise);
+    }
+
+    return requestPromise;
   } catch (e) {
     if (!(silentNotFound && e.response?.status === 404)) {
       console.error("API call failed:", e);

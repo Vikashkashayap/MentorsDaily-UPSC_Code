@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getUserData } from "../../utils/userData";
 import { getUsers, getAllPayments } from "../../api/coreService";
 import { useTheme } from "../../contexts/ThemeContext";
 import { isUserAdmin, isUserSuperAdmin } from "../../utils/authUtils";
 import { messageHandler } from "../../utils/messageHandler";
-import RegisteredStudentsChart from "../../components/charts/RegisteredStudentsChart";
-import RevenueChart from "../../components/charts/RevenueChart";
-import PaymentsChart from "../../components/charts/PaymentsChart";
-import MonthlyGrowthChart from "../../components/charts/MonthlyGrowthChart";
 import DataTable from "../../components/DataTable";
+import RouteSkeleton from "../../components/utility/RouteSkeleton";
+
+const RegisteredStudentsChart = lazy(() => import("../../components/charts/RegisteredStudentsChart"));
+const RevenueChart = lazy(() => import("../../components/charts/RevenueChart"));
+const PaymentsChart = lazy(() => import("../../components/charts/PaymentsChart"));
+const MonthlyGrowthChart = lazy(() => import("../../components/charts/MonthlyGrowthChart"));
 
 export default function AdminDashboardOverview() {
   const userData = getUserData();
@@ -174,30 +176,33 @@ export default function AdminDashboardOverview() {
     });
   }, [users, payments]);
 
-  // Filter sensitive data based on user permissions
-  const filteredUsers = isSuperAdmin ? users : users.filter(u =>
-    u.role !== "super_admin" && u._id !== userData?._id
-  );
+  // Memoized derived dashboard data to avoid repeated heavy calculations
+  const filteredUsers = useMemo(() => (
+    isSuperAdmin ? users : users.filter((u) => u.role !== "super_admin" && u._id !== userData?._id)
+  ), [isSuperAdmin, users, userData?._id]);
 
   const totalUsers = filteredUsers.length;
-  const adminUsers = filteredUsers.filter(
-    (u) => u.role === "admin" || u.role === "super_admin"
-  ).length;
-
-  // Calculate payment statistics
-  const totalRevenue = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-  const successfulPayments = payments.filter(payment => payment.status === 'SUCCESS');
+  const successfulPayments = useMemo(
+    () => payments.filter((payment) => payment.status === "SUCCESS"),
+    [payments]
+  );
+  const totalRevenue = useMemo(
+    () => payments.reduce((sum, payment) => sum + (payment.amount || 0), 0),
+    [payments]
+  );
   const totalPaidStudents = successfulPayments.length;
 
-  // Calculate today's payments
-  const today = new Date().toDateString();
-  const todayPayments = payments.filter(payment => {
-    const paymentDate = new Date(payment.paymentDate || payment.createdAt).toDateString();
-    return paymentDate === today && payment.status === 'SUCCESS';
-  });
-
-  const todayRevenue = todayPayments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-  const todayPaymentCount = todayPayments.length;
+  const { todayRevenue, todayPaymentCount } = useMemo(() => {
+    const today = new Date().toDateString();
+    const todayPayments = successfulPayments.filter((payment) => {
+      const paymentDate = new Date(payment.paymentDate || payment.createdAt).toDateString();
+      return paymentDate === today;
+    });
+    return {
+      todayRevenue: todayPayments.reduce((sum, payment) => sum + (payment.amount || 0), 0),
+      todayPaymentCount: todayPayments.length,
+    };
+  }, [successfulPayments]);
 
   // Format revenue for display
   const formatRevenue = (amount) => {
@@ -389,15 +394,17 @@ export default function AdminDashboardOverview() {
         )}
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <RegisteredStudentsChart data={chartData.students} />
-          <RevenueChart data={chartData.revenue} />
-        </div>
+        <Suspense fallback={<RouteSkeleton />}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <RegisteredStudentsChart data={chartData.students} />
+            <RevenueChart data={chartData.revenue} />
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <PaymentsChart data={chartData.payments} />
-          <MonthlyGrowthChart data={chartData.growth} />
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <PaymentsChart data={chartData.payments} />
+            <MonthlyGrowthChart data={chartData.growth} />
+          </div>
+        </Suspense>
 
         {/* Recent Registered Students */}
         <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl shadow-lg p-6 border`}>

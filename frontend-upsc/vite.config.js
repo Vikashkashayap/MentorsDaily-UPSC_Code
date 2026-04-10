@@ -15,17 +15,18 @@ export default defineConfig({
     },
   },
   build: {
-    // Optimize chunk splitting to reduce number of chunks
+    minify: 'esbuild',
+    sourcemap: false,
+    cssCodeSplit: true,
+    cssMinify: true,
+    target: ['es2018', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    reportCompressedSize: true,
+    modulePreload: {
+      polyfill: false,
+    },
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunks - separate large libraries
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'editor-vendor': ['react-draft-wysiwyg', 'draft-js', 'draftjs-to-html', 'html-to-draftjs'],
-          'ui-vendor': ['framer-motion', 'lucide-react'],
-          'chart-vendor': ['recharts'],
-          'seo-vendor': ['react-helmet-async'],
-        },
+        // Avoid manual vendor chunking to prevent cross-chunk init-order issues.
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
@@ -40,17 +41,6 @@ export default defineConfig({
         },
       },
     },
-    // Optimize build performance
-    minify: 'esbuild',
-    // Reduce sourcemap size for production
-    sourcemap: false,
-    // Optimize CSS
-    cssCodeSplit: true,
-    cssMinify: true,
-    // Target modern browsers for smaller bundles
-    target: ['es2015', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-    // Compression
-    reportCompressedSize: true,
   },
   server: {
     host: true, // 0.0.0.0

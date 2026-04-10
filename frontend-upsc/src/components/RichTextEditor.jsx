@@ -1,10 +1,13 @@
-﻿import { useState, useEffect } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useTheme } from '../contexts/ThemeContext';
+
+const Editor = lazy(() =>
+    import('react-draft-wysiwyg').then((module) => ({ default: module.Editor }))
+);
 
 const RichTextEditor = ({
     value = '',
@@ -210,30 +213,32 @@ const RichTextEditor = ({
                     ? 'border-gray-600 bg-gradient-to-r from-gray-700 to-gray-800'
                     : 'border-gray-200 bg-gradient-to-r from-gray-50 to-white'
                     } px-4 py-3`}>
-                    <Editor
-                        editorState={editorState}
-                        onEditorStateChange={handleEditorStateChange}
-                        wrapperClassName="rdw-editor-wrapper"
-                        toolbarClassName={`rdw-editor-toolbar ${isDark ? 'rdw-editor-toolbar-dark' : ''}`}
-                        editorClassName="rdw-editor-main"
-                        readOnly={disabled}
-                        editorStyle={{
-                            minHeight: `${minHeight}px`,
-                            maxHeight: `${maxHeight}px`,
-                            overflowY: 'auto',
-                            padding: '16px 20px',
-                            fontSize: '15px',
-                            lineHeight: '1.7',
-                            color: isDark ? '#f9fafb' : '#111827',
-                            backgroundColor: isDark ? '#374151' : '#ffffff',
-                            fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif"
-                        }}
-                        toolbar={getToolbarConfig()}
-                        placeholder={placeholder}
-                        stripPastedStyles={false}
-                        handlePastedText={() => false}
-                        ariaLabel={label || 'Rich text editor'}
-                    />
+                    <Suspense fallback={<div className="h-44 animate-pulse rounded-lg bg-gray-100" />}>
+                        <Editor
+                            editorState={editorState}
+                            onEditorStateChange={handleEditorStateChange}
+                            wrapperClassName="rdw-editor-wrapper"
+                            toolbarClassName={`rdw-editor-toolbar ${isDark ? 'rdw-editor-toolbar-dark' : ''}`}
+                            editorClassName="rdw-editor-main"
+                            readOnly={disabled}
+                            editorStyle={{
+                                minHeight: `${minHeight}px`,
+                                maxHeight: `${maxHeight}px`,
+                                overflowY: 'auto',
+                                padding: '16px 20px',
+                                fontSize: '15px',
+                                lineHeight: '1.7',
+                                color: isDark ? '#f9fafb' : '#111827',
+                                backgroundColor: isDark ? '#374151' : '#ffffff',
+                                fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif"
+                            }}
+                            toolbar={getToolbarConfig()}
+                            placeholder={placeholder}
+                            stripPastedStyles={false}
+                            handlePastedText={() => false}
+                            ariaLabel={label || 'Rich text editor'}
+                        />
+                    </Suspense>
                 </div>
 
                 {/* Enhanced Status Bar */}

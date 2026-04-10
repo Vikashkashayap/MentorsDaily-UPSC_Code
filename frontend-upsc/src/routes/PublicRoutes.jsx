@@ -13,13 +13,12 @@ const NotFound = lazy(() => import("../pages/public/NotFound"));
 const CourseDetails = lazy(() => import("../pages/public/mentorship/CourseDetails"));
 const MentorshipCourses = lazy(() => import("../pages/public/mentorship/MentorshipCourses"));
 const UPPCSMentorshipProgram = lazy(() => import("../pages/public/courses/UPPCSMentorship2025"));
-const IntegratedMentorship = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship"));
-const IntegratedMentorship2026 = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship2026"));
-const IntegratedMentorship2027 = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship2027"));
-const IntegratedMentorship2028 = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship2028"));
-const IntegratedMentorship2029 = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship2029"));
-const IntegratedMentorship2030 = lazy(() => import("../../src/pages/public/courses/IntegratedMentorship2030"));
-const DynamicImpLandingPage = lazy(() => import("../../src/pages/public/courses/DynamicImpLandingPage"));
+const IntegratedMentorship = lazy(() => import("../pages/public/courses/IntegratedMentorship"));
+const IntegratedMentorship2026 = lazy(() => import("../pages/public/courses/IntegratedMentorship2026"));
+const IntegratedMentorship2027 = lazy(() => import("../pages/public/courses/IntegratedMentorship2027"));
+const IntegratedMentorship2028 = lazy(() => import("../pages/public/courses/IntegratedMentorship2028"));
+const IntegratedMentorship2029 = lazy(() => import("../pages/public/courses/IntegratedMentorship2029"));
+const IntegratedMentorship2030 = lazy(() => import("../pages/public/courses/IntegratedMentorship2030"));
 
 // Study Material Pages
 const PreviousYearPapers = lazy(() => import('../pages/public/PreviousYearPapers'));

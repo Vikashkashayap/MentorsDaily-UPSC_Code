@@ -11,6 +11,7 @@ import React, { useState } from 'react';
  */
 const OptimizedImage = ({
   src,
+  webpSrc,
   alt,
   className = '',
   loading = 'lazy',
@@ -59,23 +60,23 @@ const OptimizedImage = ({
           aria-hidden="true"
         />
       )}
-      <img
-        src={src}
-        alt={alt || ''}
-        className={`${isLoading ? 'hidden' : ''} ${className}`}
-        loading={loading}
-        decoding={decoding}
-        width={width}
-        height={height}
-        sizes={sizes}
-        srcSet={srcSet}
-        onError={handleError}
-        onLoad={handleLoad}
-        {...(fetchPriority != null && fetchPriority !== ''
-          ? { fetchpriority: fetchPriority }
-          : {})}
-        {...props}
-      />
+      <picture>
+        {webpSrc ? <source srcSet={webpSrc} type="image/webp" /> : null}
+        <img
+          src={src}
+          alt={alt || ''}
+          className={`${isLoading ? 'hidden' : ''} ${className}`}
+          loading={loading}
+          decoding={decoding}
+          width={width}
+          height={height}
+          sizes={sizes}
+          srcSet={srcSet}
+          onError={handleError}
+          onLoad={handleLoad}
+          {...props}
+        />
+      </picture>
     </>
   );
 };
