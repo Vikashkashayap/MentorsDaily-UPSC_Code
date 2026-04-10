@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { getCourseBySlug, getCourses } from "../../../api/coreService";
+import { getCourses } from "../../../api/coreService";
 import PaymentForm from "../../../components/payment/PaymentForm";
 import Form from "../components/Form";
 import Imp2027View from "./Imp2027View";
 import "./imp2027LandingExtras.css";
 import {
-  IMP_2027_SLUG,
   getDefaultImp2027DetailPage,
   mergeImpDetailPage,
 } from "./imp2027DetailDefaults";
-
-function unwrapCourseResponse(payload) {
-  const inner = payload?.data;
-  if (inner?.data && (inner.data._id || inner.data.title)) return inner.data;
-  if (inner?._id || inner?.title) return inner;
-  return null;
-}
 
 function Imp2027DetailSkeleton() {
   return (
@@ -100,17 +92,13 @@ export default function IntegratedMentorship2027() {
       try {
         setLoading(true);
         let c = null;
-        const res = await getCourseBySlug(IMP_2027_SLUG);
-        if (res) c = unwrapCourseResponse(res);
-        if (!c) {
-          const res2 = await getCourses();
-          const inner = res2?.data;
-          const list = Array.isArray(inner?.data) ? inner.data : [];
-          c = list.find((x) => {
-            const t = (x.title || "").toLowerCase();
-            return t.includes("integrated") && t.includes("2027");
-          });
-        }
+        const res2 = await getCourses();
+        const inner = res2?.data;
+        const list = Array.isArray(inner?.data) ? inner.data : [];
+        c = list.find((x) => {
+          const t = (x.title || "").toLowerCase();
+          return t.includes("integrated") && t.includes("2027");
+        });
         if (cancelled) return;
         const base = getDefaultImp2027DetailPage();
         if (c) {

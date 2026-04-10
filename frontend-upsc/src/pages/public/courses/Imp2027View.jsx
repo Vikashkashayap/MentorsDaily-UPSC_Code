@@ -75,6 +75,70 @@ export default function Imp2027View({
     discountPercentage > 0 && savings > 0
       ? `🎉 ${discountPercentage}% OFF · Early Bird — Save ${fmt(savings)}`
       : "";
+  const dashboardCards = [
+    {
+      title: "Module Roadmap",
+      body: "Visual journey of your entire 36-month syllabus broken into structured, week-by-week modules.",
+      icon: "Map",
+      accent: "border-[#1A3C6E]",
+      iconShell: "bg-[#E8F1FF] text-[#1A3C6E]",
+    },
+    {
+      title: "Weekly Target System",
+      body: "Auto-generated weekly goals based on your progress, pace, and learning milestones.",
+      icon: "Target",
+      accent: "border-[#E86B2A]",
+      iconShell: "bg-[#FDE8D8] text-[#E86B2A]",
+    },
+    {
+      title: "Syllabus Tracker",
+      body: "Track topic-wise learning in progress, or finished. Get a clear view of your coverage ratio.",
+      icon: "ListChecks",
+      accent: "border-[#2D7D4E]",
+      iconShell: "bg-[#D1FAE5] text-[#2D7D4E]",
+    },
+    {
+      title: "UPSC-style Mock Tests",
+      body: "Take full-length tests from your dashboard and get instant scores, solutions, and topic-wise analytics.",
+      icon: "FileCheck2",
+      accent: "border-[#8B5CF6]",
+      iconShell: "bg-[#EDE9FE] text-[#8B5CF6]",
+      note: "Full Access: Daily Plan",
+      noteTone: "text-[#0D9488]",
+    },
+    {
+      title: "Fault Analysis",
+      body: "Identify recurring error patterns across your mock tests by topic, question type, and difficulty.",
+      icon: "CircleAlert",
+      accent: "border-[#F59E0B]",
+      iconShell: "bg-[#FEF3C7] text-[#CA8A04]",
+    },
+    {
+      title: "Practice Hub",
+      body: "Access topic-wise practice questions organised by subject, topic, and difficulty level.",
+      icon: "Crosshair",
+      accent: "border-[#5B8DB8]",
+      iconShell: "bg-[#D5E8F0] text-[#1A3C6E]",
+      note: "Full Access: Daily Part + Weekend Daily Plan",
+      noteTone: "text-[#E86B2A]",
+    },
+    {
+      title: "Live Progress Dashboard",
+      body: "Real-time visual graph of your performance across all modules, answer writing scores, and mock trends.",
+      icon: "BarChart3",
+      accent: "border-[#1A3C6E]",
+      iconShell: "bg-[#E8F1FF] text-[#1A3C6E]",
+    },
+    {
+      title: "AI Mentor",
+      body: "Get instant doubt support, personalized study suggestions, and smart next-step guidance based on your preparation data.",
+      icon: "Bot",
+      accent: "border-[#0D9488]",
+      iconShell: "bg-[#CCFBF1] text-[#0F766E]",
+      note: "24x7 Smart Guidance",
+      noteTone: "text-[#0F766E]",
+    },
+  ];
 
   return (
     <div className="imp2027-root bg-white overflow-x-hidden pb-24 md:pb-0">
@@ -560,6 +624,41 @@ export default function Imp2027View({
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Student Dashboard */}
+      <section className="bg-[#F8F9FB] py-20">
+        <div className="max-w-[1180px] mx-auto px-6">
+          <div className="text-center mb-11">
+            <span className="inline-block bg-[#FDE8D8] text-[#E86B2A] text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3.5">
+              Student Dashboard
+            </span>
+            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.15rem)] text-[#1A3C6E] leading-tight">
+              AI Powered Student Dashboard
+              {/* <br className="hidden sm:block" /> In One Smart Dashboard */}
+            </h2>
+            <p className="text-[#6B7280] max-w-2xl mx-auto mt-3 leading-relaxed text-[0.95rem]">
+              IMP 2027 students get exclusive access to a personalised digital dashboard that tracks every
+              dimension of UPSC preparation in real time.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {dashboardCards.map((card, i) => (
+              <div
+                key={i}
+                className={`bg-white rounded-2xl border border-[#E5E7EB] border-t-[3px] ${card.accent} p-5 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all`}
+              >
+                <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-3 ${card.iconShell}`}>
+                  <DynIcon name={card.icon} size={18} />
+                </div>
+                <h3 className="font-['Poppins'] text-[0.96rem] font-bold text-[#1A3C6E] mb-2">{card.title}</h3>
+                <p className="text-[#6B7280] text-[0.82rem] leading-relaxed">{card.body}</p>
+                {card.note && <p className={`mt-2 text-[0.72rem] font-bold ${card.noteTone}`}>{card.note}</p>}
+              </div>
+            ))}
           </div>
         </div>
       </section>

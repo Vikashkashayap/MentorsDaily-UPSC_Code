@@ -82,6 +82,9 @@ export default async function callApi({
   responseType,
   headers = {},
   requiresAuth = true,
+  dedupe = true,
+  useCache = false,
+  cacheTtl = DEFAULT_GET_CACHE_TTL,
   /** When true, 404 responses are not logged (optional public lookups). */
   silentNotFound = false,
 }) {
@@ -114,7 +117,7 @@ export default async function callApi({
 
     const requestPromise = axios({
       url: requestUrl,
-      method,
+      method: normalizedMethod,
       data: body,
       responseType,
       headers: finalHeaders,

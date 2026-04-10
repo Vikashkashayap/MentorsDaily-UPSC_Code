@@ -19,6 +19,7 @@ const IntegratedMentorship2027 = lazy(() => import("../pages/public/courses/Inte
 const IntegratedMentorship2028 = lazy(() => import("../pages/public/courses/IntegratedMentorship2028"));
 const IntegratedMentorship2029 = lazy(() => import("../pages/public/courses/IntegratedMentorship2029"));
 const IntegratedMentorship2030 = lazy(() => import("../pages/public/courses/IntegratedMentorship2030"));
+const DynamicImpLandingPage = lazy(() => import("../pages/public/courses/DynamicImpLandingPage"));
 
 // Study Material Pages
 const PreviousYearPapers = lazy(() => import('../pages/public/PreviousYearPapers'));
