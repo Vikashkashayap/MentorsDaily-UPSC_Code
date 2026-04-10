@@ -546,6 +546,7 @@ export default function Imp2027View({
                 rose: "bg-[#FFE4E6] text-[#E11D48]",
               };
               return (
+                
                 <div
                   key={i}
                   className="relative border border-[#E5E7EB] rounded-2xl p-7 shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
