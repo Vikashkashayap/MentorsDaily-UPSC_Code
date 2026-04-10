@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Icons from "lucide-react";
 
 function DynIcon({ name, className, size = 18 }) {
@@ -16,6 +16,24 @@ function HtmlLine({ html, className }) {
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
+function renderComparisonValueCell(value) {
+  if (typeof value === "boolean") {
+    return (
+      <span className={`text-lg font-bold ${value ? "text-[#4ADE80]" : "text-[#F87171]"}`}>
+        {value ? "✓" : "✕"}
+      </span>
+    );
+  }
+  if (value == null || value === "") {
+    return <span className="text-white/40">—</span>;
+  }
+  return (
+    <span className="inline-flex min-w-[44px] justify-center px-2 py-1 rounded-md bg-white text-[#0D2240] text-[0.9rem] font-extrabold shadow-sm">
+      {String(value)}
+    </span>
+  );
+}
+
 export default function Imp2027View({
   d,
   sellingPrice,
@@ -25,10 +43,31 @@ export default function Imp2027View({
   onEnroll,
   onEnquire,
 }) {
-  const [tab, setTab] = useState("prelims");
-  const [openFaq, setOpenFaq] = useState(0);
+  const [tab, setTab] = useState("foundation");
+  const [openFaq, setOpenFaq] = useState(-1);
+  const [timelineViewPct, setTimelineViewPct] = useState(100);
+  const timelineScrollRef = useRef(null);
 
   const included = d.includedSection.tabs.find((t) => t.id === tab);
+
+  const updateTimelineScroll = useCallback(() => {
+    const el = timelineScrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    const max = scrollWidth - clientWidth;
+    if (max <= 0) {
+      setTimelineViewPct(100);
+      return;
+    }
+    const p = Math.round((scrollLeft / max) * 100);
+    setTimelineViewPct(Math.min(100, Math.max(4, p || 4)));
+  }, []);
+
+  useEffect(() => {
+    updateTimelineScroll();
+    window.addEventListener("resize", updateTimelineScroll);
+    return () => window.removeEventListener("resize", updateTimelineScroll);
+  }, [updateTimelineScroll, d.timelineSection?.phases?.length]);
 
   const heroPrice = fmt(sellingPrice);
   const heroOld = basePrice > sellingPrice ? fmt(basePrice) : null;
@@ -44,7 +83,7 @@ export default function Imp2027View({
         <strong className="text-[#E86B2A]">{d.announcement.strong}</strong> {d.announcement.text}{" "}
         <button
           type="button"
-          className="text-[#E86B2A] font-bold ml-3 bg-transparent border-0 cursor-pointer p-0 font-inherit"
+          className="text-[#E86B2A] font-bold ml-3 bg-transparent border-0 cursor-pointer p-0 font-inherit underline-offset-2 hover:underline"
           onClick={() => onEnroll?.("daily")}
         >
           {d.announcement.ctaText}
@@ -85,21 +124,21 @@ export default function Imp2027View({
               <button
                 type="button"
                 onClick={() => onEnroll?.("daily")}
-                className="inline-flex items-center gap-2 bg-[#E86B2A] text-white font-['Poppins'] font-bold px-8 py-3.5 rounded-lg shadow-[0_4px_16px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e]"
+                className="inline-flex items-center gap-2 bg-[#E86B2A] text-white font-['Poppins'] font-bold px-8 py-3.5 rounded-lg shadow-[0_4px_16px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e] transition-colors duration-200"
               >
                 Enroll Now — {heroPrice} <DynIcon name="ArrowRight" size={18} />
               </button>
               <a
                 href="#program"
-                className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-['Poppins'] font-semibold px-7 py-3 rounded-lg hover:bg-white/10"
+                className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-['Poppins'] font-semibold px-7 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200"
               >
-                <DynIcon name="PlayCircle" size={18} /> Learn More
+                <DynIcon name="Compass" size={18} /> Explore Program
               </a>
             </div>
             <div className="imp-fade-up delay-3 flex items-center gap-2 text-sm text-white/55">
-              <span className="text-[#F59E0B] tracking-wide">★★★★★</span>
+              {/* <span className="text-[#F59E0B] tracking-wide">★★★★★</span> */}
               <span className="text-white/55">
-                <strong className="text-white/85">4.9/5</strong> from 1,200+ UPSC selections · Trusted by aspirants across India
+                <strong className="text-white/85">1200+ Already enrolled</strong> .98% Student Satisfaction .Trusted by aspirants across India
               </span>
             </div>
           </div>
@@ -136,14 +175,14 @@ export default function Imp2027View({
               <button
                 type="button"
                 onClick={() => onEnroll?.("daily")}
-                className="block w-full text-center bg-[#E86B2A] text-white font-['Poppins'] font-bold py-4 rounded-[10px] shadow-[0_4px_14px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e]"
+                className="block w-full text-center bg-[#E86B2A] text-white font-['Poppins'] font-bold py-4 rounded-[10px] shadow-[0_4px_14px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e] transition-colors duration-200"
               >
                 {d.hero.enrollCta}
               </button>
               <button
                 type="button"
                 onClick={onEnquire}
-                className="block w-full text-center border-2 border-[#5B8DB8] text-[#1A3C6E] font-['Poppins'] font-semibold py-3 rounded-[10px] mt-2.5 hover:bg-[#D5E8F0]"
+                className="block w-full text-center border-2 border-[#5B8DB8] text-[#1A3C6E] font-['Poppins'] font-semibold py-3 rounded-[10px] mt-2.5 hover:bg-[#D5E8F0] transition-colors duration-200"
               >
                 <DynIcon name="Phone" className="inline mr-1" size={16} /> Enquire Before Enrolling
               </button>
@@ -189,9 +228,9 @@ export default function Imp2027View({
             Scroll down for a <strong className="text-[#E86B2A]">feature-by-feature comparison</strong> table ↓
           </p>
 
-          <div className="grid md:grid-cols-2 gap-7 mb-12">
+          <div className="grid md:grid-cols-2 gap-7 mb-12 items-stretch">
             {/* Daily first (left) */}
-            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#E86B2A] shadow-[0_12px_48px_rgba(232,107,42,0.28)] relative hover:-translate-y-1 transition-transform">
+            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#E86B2A] shadow-[0_12px_48px_rgba(232,107,42,0.28)] relative hover:-translate-y-1 transition-transform flex flex-col">
               <div className="absolute top-[18px] -right-7 bg-[#E86B2A] text-white text-[0.72rem] font-extrabold py-1.5 px-9 rotate-[38deg] z-[2] tracking-wide">
                 {d.pricingSection.daily.popularRibbon}
               </div>
@@ -206,7 +245,7 @@ export default function Imp2027View({
                 </div>
                 <p className="text-sm font-semibold text-[#D5E8F0] mt-3">{d.pricingSection.daily.durationLine}</p>
               </div>
-              <div className="px-8 py-6">
+              <div className="px-8 py-6 flex flex-col grow">
                 <ul className="space-y-0 mb-6">
                   {d.pricingSection.daily.features.map((f, i) => (
                     <li key={i} className="flex gap-2.5 py-2 border-b border-[#F2F4F7] text-sm text-[#1C2B3A]">
@@ -225,19 +264,24 @@ export default function Imp2027View({
                     </li>
                   ))}
                 </ul>
-                <button
-                  type="button"
-                  onClick={() => onEnroll?.("daily")}
-                  className="block w-full text-center bg-[#E86B2A] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#d05a1e]"
-                >
-                  {d.pricingSection.daily.cta} <DynIcon name="ArrowRight" className="inline" size={16} />
-                </button>
+                <div className="mt-auto">
+                  <button
+                    type="button"
+                    onClick={() => onEnroll?.("daily")}
+                    className="group block w-full text-center bg-[#E86B2A] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#d05a1e] shadow-[0_8px_20px_rgba(232,107,42,0.3)] transition-all"
+                  >
+                    {d.pricingSection.daily.cta} <DynIcon name="ArrowRight" className="inline transition-transform group-hover:translate-x-0.5" size={16} />
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Weekly second (right) */}
-            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#E5E7EB] hover:-translate-y-1 transition-transform">
-              <div className="px-8 pt-8 pb-5 border-b border-[#F2F4F7] bg-[#F8F9FB]">
+            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#CBD5E1] hover:-translate-y-1 transition-transform shadow-[0_10px_30px_rgba(13,34,64,0.12)] relative flex flex-col">
+              <div className="absolute top-5 right-5 text-[0.68rem] font-extrabold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#E8F1FF] text-[#1A3C6E] border border-[#BFD7F1]">
+                Value Plan
+              </div>
+              <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
                 <div className="flex items-end gap-2 flex-wrap">
                   <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(d.pricingSection.weekly.price)}</span>
@@ -248,7 +292,7 @@ export default function Imp2027View({
                 </div>
                 <p className="text-sm font-semibold text-[#5B8DB8] mt-3">{d.pricingSection.weekly.durationLine}</p>
               </div>
-              <div className="px-8 py-6">
+              <div className="px-8 py-6 flex flex-col grow">
                 <ul className="space-y-0 mb-6">
                   {d.pricingSection.weekly.features.map((f, i) => (
                     <li
@@ -276,13 +320,15 @@ export default function Imp2027View({
                     </li>
                   ))}
                 </ul>
-                <button
-                  type="button"
-                  onClick={() => onEnroll?.("weekly")}
-                  className="block w-full text-center bg-[#1A3C6E] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#0D2240]"
-                >
-                  {d.pricingSection.weekly.cta} <DynIcon name="ArrowRight" className="inline" size={16} />
-                </button>
+                <div className="mt-auto">
+                  <button
+                    type="button"
+                    onClick={() => onEnroll?.("weekly")}
+                    className="group block w-full text-center bg-[#1A3C6E] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#0D2240] shadow-[0_8px_20px_rgba(13,34,64,0.28)] transition-all"
+                  >
+                    {d.pricingSection.weekly.cta} <DynIcon name="ArrowRight" className="inline transition-transform group-hover:translate-x-0.5" size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -293,21 +339,31 @@ export default function Imp2027View({
               {d.pricingSection.comparisonTitle}
             </h3>
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-sm">
+              <table className="imp2027-comparison-table w-full table-fixed border-collapse text-sm">
                 <thead>
                   <tr className="bg-white/6">
-                    <th className="text-left py-3.5 px-5 font-['Poppins'] text-xs font-bold text-[#D5E8F0] uppercase tracking-wide">
+                    <th className="w-[44%] align-middle text-left py-3.5 px-5 font-['Poppins'] text-xs font-bold text-[#D5E8F0] uppercase tracking-wide">
                       {d.pricingSection.comparisonHead.left}
                     </th>
-                    <th className="text-center py-3.5 px-5 font-['Poppins'] text-xs font-bold text-[#E86B2A]">
-                      {d.pricingSection.comparisonHead.midLabel}
-                      <span className="block font-normal text-[0.82rem] text-[rgba(232,107,42,0.85)]">
-                        {d.pricingSection.comparisonHead.midPrice}
-                      </span>
+                    <th className="w-[28%] align-middle py-3.5 px-4">
+                      <div className="flex flex-col items-center justify-center gap-0.5 text-center">
+                        <span className="font-['Poppins'] text-xs font-bold uppercase tracking-wide text-[#FFB48A]">
+                          {d.pricingSection.comparisonHead.midLabel}
+                        </span>
+                        <span className="font-['Poppins'] text-[0.82rem] font-semibold leading-tight text-white drop-shadow-sm">
+                          {d.pricingSection.comparisonHead.midPrice}
+                        </span>
+                      </div>
                     </th>
-                    <th className="text-center py-3.5 px-5 font-['Poppins'] text-xs font-bold text-[#D5E8F0]">
-                      {d.pricingSection.comparisonHead.rightLabel}
-                      <span className="block font-normal text-[0.82rem]">{d.pricingSection.comparisonHead.rightPrice}</span>
+                    <th className="w-[28%] align-middle py-3.5 px-4">
+                      <div className="flex flex-col items-center justify-center gap-0.5 text-center">
+                        <span className="font-['Poppins'] text-xs font-bold uppercase tracking-wide text-[#D5E8F0]">
+                          {d.pricingSection.comparisonHead.rightLabel}
+                        </span>
+                        <span className="font-['Poppins'] text-[0.82rem] font-semibold leading-tight text-white drop-shadow-sm">
+                          {d.pricingSection.comparisonHead.rightPrice}
+                        </span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
@@ -325,17 +381,21 @@ export default function Imp2027View({
                     if (row.type === "text") {
                       return (
                         <tr key={ri} className="border-b border-white/6 hover:bg-white/4">
-                          <td className="py-3.5 px-5 text-white/75">{row.f}</td>
-                          <td className="text-center text-[0.85rem] font-semibold text-[#4ADE80]">{row.d}</td>
-                          <td className="text-center text-[0.85rem] font-semibold text-[#E86B2A]">{row.w}</td>
+                          <td className="align-middle py-3.5 px-5 text-white/75">{row.f}</td>
+                          <td className="align-middle px-3 text-center text-[0.85rem] font-semibold text-[#4ADE80]">
+                            {row.d}
+                          </td>
+                          <td className="align-middle px-3 text-center text-[0.85rem] font-semibold text-[#E86B2A]">
+                            {row.w}
+                          </td>
                         </tr>
                       );
                     }
                     return (
                       <tr key={ri} className="border-b border-white/6 hover:bg-white/4">
-                        <td className="py-3.5 px-5 text-white/75">{row.f}</td>
-                        <td className="text-center text-lg text-[#2D7D4E]">{row.d ? "✓" : "✕"}</td>
-                        <td className="text-center text-lg text-[#2D7D4E]">{row.w ? "✓" : "✕"}</td>
+                        <td className="align-middle py-3.5 px-5 text-white/75">{row.f}</td>
+                        <td className="align-middle px-3 text-center">{renderComparisonValueCell(row.d)}</td>
+                        <td className="align-middle px-3 text-center">{renderComparisonValueCell(row.w)}</td>
                       </tr>
                     );
                   })}
@@ -362,68 +422,93 @@ export default function Imp2027View({
             </h2>
             <p className="text-[#6B7280] max-w-xl mx-auto mt-3 leading-relaxed">{d.uspSection.sub}</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-7">
-            {d.uspSection.cards.map((c, i) => (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-7">
+            {d.uspSection.cards.map((c, i) => {
+              const shell =
+                c.variant === "green"
+                  ? "border-l-[#2D7D4E] bg-[#F0FDF4]"
+                  : c.variant === "blue"
+                    ? "border-l-[#5B8DB8] bg-[#EFF6FF]"
+                    : "border-l-[#E86B2A] bg-[#FFF7F3]";
+              const iconShell =
+                c.variant === "green"
+                  ? "bg-[#D1FAE5] text-[#2D7D4E]"
+                  : c.variant === "blue"
+                    ? "bg-[#BFDBFE] text-[#1A3C6E]"
+                    : "bg-[#FDE8D8] text-[#E86B2A]";
+              const titleCls =
+                c.variant === "green"
+                  ? "text-[#2D7D4E]"
+                  : c.variant === "blue"
+                    ? "text-[#1A3C6E]"
+                    : "text-[#E86B2A]";
+              const chip =
+                c.variant === "green"
+                  ? "bg-[#D1FAE5] text-[#2D7D4E]"
+                  : c.variant === "blue"
+                    ? "bg-[#DBEAFE] text-[#1A3C6E]"
+                    : "bg-[#FDE8D8] text-[#E86B2A]";
+              const linkCls =
+                c.variant === "green"
+                  ? "text-[#2D7D4E]"
+                  : c.variant === "blue"
+                    ? "text-[#1A3C6E]"
+                    : "text-[#E86B2A]";
+              return (
               <div
                 key={i}
-                className={`rounded-2xl p-8 shadow-md border-l-[6px] transition hover:-translate-y-1 hover:shadow-lg ${
-                  c.variant === "green"
-                    ? "border-l-[#2D7D4E] bg-[#F0FDF4]"
-                    : "border-l-[#E86B2A] bg-[#FFF7F3]"
-                }`}
+                className={`rounded-2xl p-8 shadow-md border-l-[6px] transition hover:-translate-y-1 hover:shadow-lg ${shell}`}
               >
                 <div
-                  className={`w-14 h-14 rounded-[14px] flex items-center justify-center text-2xl mb-4 ${
-                    c.variant === "green" ? "bg-[#D1FAE5] text-[#2D7D4E]" : "bg-[#FDE8D8] text-[#E86B2A]"
-                  }`}
+                  className={`w-14 h-14 rounded-[14px] flex items-center justify-center text-2xl mb-4 ${iconShell}`}
                 >
                   <DynIcon name={c.icon} size={28} />
                 </div>
-                <h3
-                  className={`text-lg font-extrabold mb-2 ${
-                    c.variant === "green" ? "text-[#2D7D4E]" : "text-[#E86B2A]"
-                  }`}
-                >
-                  {c.title}
-                </h3>
-                <p className="text-[#6B7280] leading-relaxed text-[0.96rem] mb-4">{c.body}</p>
+                <h3 className={`text-lg font-extrabold mb-2 ${titleCls}`}>{c.title}</h3>
+                {c.bodyHtml ? (
+                  <p
+                    className="text-[#6B7280] leading-relaxed text-[0.96rem] mb-4 imp-html-inline"
+                    dangerouslySetInnerHTML={{ __html: c.bodyHtml }}
+                  />
+                ) : (
+                  <p className="text-[#6B7280] leading-relaxed text-[0.96rem] mb-4">{c.body}</p>
+                )}
+                {c.stepsMode === "stack" ? (
+                  <div className="grid grid-cols-2 gap-2 mb-4 text-xs font-semibold">
+                    {c.steps.map((s, j) => (
+                      <span key={j} className={`px-2.5 py-1 rounded-md text-center whitespace-nowrap ${chip}`}>
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
                 <div className="flex flex-wrap items-center gap-2 mb-4 text-xs font-semibold">
                   {c.steps.map((s, j) => (
                     <span key={j} className="flex items-center gap-2">
-                      <span
-                        className={`px-2.5 py-1 rounded-md ${
-                          c.variant === "green" ? "bg-[#D1FAE5] text-[#2D7D4E]" : "bg-[#FDE8D8] text-[#E86B2A]"
-                        }`}
-                      >
-                        {s}
-                      </span>
+                      <span className={`px-2.5 py-1 rounded-md ${chip}`}>{s}</span>
                       {j < c.steps.length - 1 && <span className="text-[#6B7280]">→</span>}
                     </span>
                   ))}
                 </div>
-                {c.external ? (
-                  <a
-                    href={c.linkHref}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`inline-flex items-center gap-1 font-bold text-sm ${
-                      c.variant === "green" ? "text-[#2D7D4E]" : "text-[#E86B2A]"
-                    }`}
-                  >
-                    {c.linkText} <DynIcon name="ArrowRight" size={14} />
-                  </a>
-                ) : (
-                  <a
-                    href={c.linkHref}
-                    className={`inline-flex items-center gap-1 font-bold text-sm ${
-                      c.variant === "green" ? "text-[#2D7D4E]" : "text-[#E86B2A]"
-                    }`}
-                  >
-                    {c.linkText} <DynIcon name="ArrowRight" size={14} />
-                  </a>
                 )}
+                {c.linkText &&
+                  (c.external ? (
+                    <a
+                      href={c.linkHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`inline-flex items-center gap-1 font-bold text-sm ${linkCls}`}
+                    >
+                      {c.linkText} <DynIcon name="ArrowRight" size={14} />
+                    </a>
+                  ) : (
+                    <a href={c.linkHref} className={`inline-flex items-center gap-1 font-bold text-sm ${linkCls}`}>
+                      {c.linkText} <DynIcon name="ArrowRight" size={14} />
+                    </a>
+                  ))}
               </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mt-8 bg-[#1A3C6E] rounded-xl px-6 py-5 flex gap-3.5 items-start">
             <DynIcon name="Trophy" className="text-[#F59E0B] shrink-0 mt-0.5" size={24} />
@@ -450,6 +535,7 @@ export default function Imp2027View({
                 sky: "bg-[#5B8DB8]",
                 green: "bg-[#2D7D4E]",
                 gold: "bg-[#F59E0B]",
+                rose: "bg-[#E11D48]",
               };
               const iconBg = {
                 navy: "bg-[#EEF3FA] text-[#1A3C6E]",
@@ -457,6 +543,7 @@ export default function Imp2027View({
                 sky: "bg-[#D5E8F0] text-[#5B8DB8]",
                 green: "bg-[#D1FAE5] text-[#2D7D4E]",
                 gold: "bg-[#FEF9C3] text-[#F59E0B]",
+                rose: "bg-[#FFE4E6] text-[#E11D48]",
               };
               return (
                 <div
@@ -476,34 +563,107 @@ export default function Imp2027View({
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Timeline — horizontal scroll + progress (matches IMP roadmap design) */}
       <section className="bg-[#0D2240] py-20">
-        <div className="max-w-[1180px] mx-auto px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block bg-[rgba(232,107,42,0.2)] text-[#E86B2A] text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3.5">
+        <div className="max-w-[1240px] mx-auto px-6">
+          <div className="text-center mb-10 md:mb-12">
+            <span className="inline-block bg-[rgba(232,107,42,0.22)] text-[#E86B2A] text-[0.68rem] sm:text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-3.5 border border-[rgba(232,107,42,0.35)]">
               {d.timelineSection.tag}
             </span>
-            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.1rem)] text-white">{d.timelineSection.title}</h2>
-            <p className="text-[#D5E8F0] max-w-xl mx-auto mt-3 leading-relaxed">{d.timelineSection.sub}</p>
+            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.5rem,3vw,2.1rem)] text-white leading-tight">
+              {d.timelineSection.title}
+            </h2>
+            <p className="text-[#D5E8F0] max-w-2xl mx-auto mt-3 text-[0.92rem] md:text-[0.98rem] leading-relaxed">
+              {d.timelineSection.sub}
+            </p>
           </div>
-          <div className="relative imp-timeline-track grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-0 mb-8">
-            {d.timelineSection.phases.map((ph, i) => (
-              <div key={i} className="text-center relative z-[1]">
-                <div
-                  className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-white shadow-lg font-['Poppins'] font-extrabold text-lg"
-                  style={{ background: ph.color }}
-                >
-                  <DynIcon name={ph.icon} size={22} />
-                </div>
-                <div className="font-['Poppins'] font-bold text-white text-sm mb-1">{ph.label}</div>
-                <div className="text-[0.78rem] text-[#D5E8F0]">{ph.sub}</div>
-              </div>
-            ))}
+
+          <div
+            ref={timelineScrollRef}
+            onScroll={updateTimelineScroll}
+            className="imp-timeline-scroll -mx-6 px-6 overflow-x-auto overflow-y-visible pb-2 scroll-smooth snap-x snap-mandatory lg:overflow-x-visible [scrollbar-width:thin] [scrollbar-color:rgba(232,107,42,0.6)_rgba(255,255,255,0.08)]"
+          >
+            <div className="imp-timeline-row relative flex lg:grid lg:grid-cols-8 gap-5 md:gap-6 pt-1 pb-6 min-w-[1280px] lg:min-w-0">
+              <div
+                className="pointer-events-none absolute top-[27px] left-[calc(3.5rem/2)] right-[calc(3.5rem/2)] h-[3px] z-0 rounded-full opacity-95 hidden sm:block imp-timeline-line"
+                aria-hidden
+              />
+              {d.timelineSection.phases.map((ph, i) => {
+                const durTone = ph.durationTone || "default";
+                const durCls =
+                  durTone === "orange"
+                    ? "bg-[#E86B2A]/25 text-[#FDBA74] border border-[#E86B2A]/45"
+                    : durTone === "green"
+                      ? "bg-[#2D7D4E]/28 text-[#86EFAC] border border-[#2D7D4E]/45"
+                      : durTone === "teal"
+                        ? "bg-[#0D9488]/25 text-[#5EEAD4] border border-[#0D9488]/45"
+                        : durTone === "yellow"
+                          ? "bg-[#CA8A04]/22 text-[#FDE68A] border border-[#CA8A04]/40"
+                          : durTone === "purple"
+                            ? "bg-[#8B5CF6]/22 text-[#DDD6FE] border border-[#8B5CF6]/40"
+                            : durTone === "blue"
+                              ? "bg-[#3B82F6]/18 text-[#BFDBFE] border border-[#3B82F6]/35"
+                              : durTone === "lavender"
+                                ? "bg-[#9D8DF1]/22 text-[#EDE9FE] border border-[#9D8DF1]/45"
+                                : "bg-white/10 text-[#D5E8F0] border border-white/15";
+                return (
+                  <div
+                    key={i}
+                    className="text-center relative z-[1] w-[11.5rem] sm:w-[12.5rem] lg:w-auto shrink-0 lg:shrink flex flex-col items-center snap-center lg:snap-none"
+                  >
+                    <div
+                      className={`w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-white shadow-lg ${
+                        ph.highlight
+                          ? "ring-[3px] ring-[#E86B2A]/55 shadow-[0_0_28px_rgba(232,107,42,0.42)]"
+                          : ""
+                      }`}
+                      style={{ background: ph.color }}
+                    >
+                      <DynIcon name={ph.icon} size={22} />
+                    </div>
+                    {ph.dates && (
+                      <div className="text-[0.62rem] sm:text-[0.65rem] font-bold uppercase tracking-wider text-[#E86B2A] mb-1">
+                        {ph.dates}
+                      </div>
+                    )}
+                    <div className="font-['Poppins'] font-bold text-white text-[0.78rem] sm:text-[0.82rem] leading-snug mb-1.5 min-h-[2.4rem] flex items-center justify-center">
+                      {ph.label}
+                    </div>
+                    {ph.detail && (
+                      <p className="text-[0.65rem] sm:text-[0.68rem] leading-relaxed text-[#D5E8F0]/88 mb-2 grow text-balance">
+                        {ph.detail}
+                      </p>
+                    )}
+                    {!ph.detail && ph.sub && (
+                      <div className="text-[0.78rem] text-[#D5E8F0]">{ph.sub}</div>
+                    )}
+                    {ph.duration && (
+                      <span
+                        className={`inline-block mt-auto text-[0.55rem] sm:text-[0.58rem] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-md ${durCls}`}
+                      >
+                        {ph.duration}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <p className="text-center text-[#D5E8F0] text-sm bg-white/6 rounded-lg py-3.5 px-6 max-w-2xl mx-auto flex items-start justify-center gap-2">
-            <DynIcon name="Info" className="text-[#E86B2A] shrink-0 mt-0.5" size={18} />
-            {d.timelineSection.note}
-          </p>
+
+          <div className="max-w-3xl mx-auto mt-4">
+            <div className="h-1 rounded-full bg-white/12 mb-3 overflow-hidden">
+              <div
+                className="h-full bg-[#E86B2A] rounded-full transition-[width] duration-150 ease-out"
+                style={{ width: `${timelineViewPct}%` }}
+              />
+            </div>
+            <div className="bg-[#1A3C6E] border border-white/10 rounded-xl py-4 px-5 md:px-6 flex items-start gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+              <DynIcon name="Info" className="text-[#E86B2A] shrink-0 mt-0.5" size={20} />
+              <p className="text-left text-[#E8F1F8] text-[0.88rem] md:text-sm leading-relaxed m-0">
+                {d.timelineSection.note}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -564,11 +724,11 @@ export default function Imp2027View({
             <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.1rem)] text-[#1A3C6E]">{d.testimonialsSection.title}</h2>
             <p className="text-[#6B7280] max-w-xl mx-auto mt-3">{d.testimonialsSection.sub}</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
             {d.testimonialsSection.items.map((t, i) => (
               <div
                 key={i}
-                className="bg-[#F8F9FB] rounded-2xl p-7 shadow-sm border-t-4 border-[#1A3C6E] relative hover:-translate-y-1 hover:shadow-md transition"
+                className="bg-[#F8F9FB] rounded-2xl p-7 shadow-sm border-t-4 border-[#1A3C6E] relative hover:-translate-y-1 hover:shadow-md transition-all duration-200"
               >
                 <span className="absolute top-5 right-5 text-[0.72rem] font-bold px-2.5 py-1 rounded-full bg-[#FDE8D8] text-[#E86B2A]">
                   {t.stage}
@@ -623,9 +783,14 @@ export default function Imp2027View({
                 </div>
               </div>
             </div>
-            <ul className="list-none m-0 p-0">
+            <ul className="list-none m-0 p-0 space-y-3">
               {d.faqSection.items.map((item, i) => (
-                <li key={i} className={`border-b border-[#E5E7EB] ${openFaq === i ? "pb-0" : ""}`}>
+                <li
+                  key={i}
+                  className={`rounded-xl border border-[#E5E7EB] bg-white px-4 sm:px-5 transition-shadow duration-200 ${
+                    openFaq === i ? "shadow-sm" : "hover:shadow-sm"
+                  }`}
+                >
                   <button
                     type="button"
                     className="w-full flex items-center justify-between gap-3 py-4 text-left font-['Poppins'] font-semibold text-[#1A3C6E] hover:text-[#E86B2A] bg-transparent border-0 cursor-pointer"
@@ -679,11 +844,11 @@ export default function Imp2027View({
       </section>
 
       {/* Sticky mobile CTA */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] p-3 z-[998] shadow-[0_-4px_20px_rgba(0,0,0,0.12)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-[#E5E7EB] p-3 z-[998] shadow-[0_-4px_20px_rgba(0,0,0,0.12)]">
         <button
           type="button"
           onClick={() => onEnroll?.("daily")}
-          className="w-full flex items-center justify-center gap-2 bg-[#E86B2A] text-white font-bold py-3 rounded-lg"
+          className="w-full flex items-center justify-center gap-2 bg-[#E86B2A] text-white font-bold py-3 rounded-lg transition-colors duration-200 hover:bg-[#d05a1e]"
         >
           {d.stickyMobileCta} — {heroPrice} <DynIcon name="ArrowRight" size={18} />
         </button>

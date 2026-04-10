@@ -18,6 +18,73 @@ function unwrapCourseResponse(payload) {
   return null;
 }
 
+function Imp2027DetailSkeleton() {
+  return (
+    <div className="bg-white overflow-x-hidden pb-10 animate-pulse">
+      <div className="h-10 bg-[#0D2240]" />
+
+      <section className="bg-gradient-to-br from-[#0D2240] via-[#1A3C6E] to-[#1e4d82] pt-16 pb-14">
+        <div className="max-w-[1180px] mx-auto px-6 grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-16 items-start">
+          <div>
+            <div className="h-7 w-44 rounded-full bg-white/20 mb-6" />
+            <div className="h-10 w-[85%] rounded bg-white/20 mb-3" />
+            <div className="h-10 w-[65%] rounded bg-white/20 mb-5" />
+            <div className="h-4 w-[90%] rounded bg-white/20 mb-2" />
+            <div className="h-4 w-[72%] rounded bg-white/20 mb-8" />
+            <div className="flex gap-3 mb-8">
+              <div className="h-12 w-56 rounded-lg bg-white/25" />
+              <div className="h-12 w-44 rounded-lg bg-white/20" />
+            </div>
+            <div className="h-4 w-80 rounded bg-white/20" />
+          </div>
+          <div className="bg-white rounded-[20px] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
+            <div className="h-5 w-52 rounded bg-[#E5E7EB] mb-4" />
+            <div className="h-10 w-40 rounded bg-[#E5E7EB] mb-6" />
+            <div className="space-y-3 mb-6">
+              <div className="h-4 w-full rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[92%] rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[82%] rounded bg-[#E5E7EB]" />
+            </div>
+            <div className="h-12 w-full rounded-lg bg-[#E5E7EB]" />
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-[1180px] mx-auto px-6 py-14">
+        <div className="h-6 w-64 rounded bg-[#E5E7EB] mx-auto mb-10" />
+        <div className="grid md:grid-cols-2 gap-7 mb-8">
+          <div className="rounded-2xl border border-[#E5E7EB] p-7">
+            <div className="h-6 w-40 rounded bg-[#E5E7EB] mb-4" />
+            <div className="h-9 w-44 rounded bg-[#E5E7EB] mb-5" />
+            <div className="space-y-3">
+              <div className="h-4 w-full rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[90%] rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[85%] rounded bg-[#E5E7EB]" />
+            </div>
+          </div>
+          <div className="rounded-2xl border border-[#E5E7EB] p-7">
+            <div className="h-6 w-40 rounded bg-[#E5E7EB] mb-4" />
+            <div className="h-9 w-44 rounded bg-[#E5E7EB] mb-5" />
+            <div className="space-y-3">
+              <div className="h-4 w-full rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[88%] rounded bg-[#E5E7EB]" />
+              <div className="h-4 w-[80%] rounded bg-[#E5E7EB]" />
+            </div>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-[#E5E7EB] p-6">
+          <div className="h-5 w-56 rounded bg-[#E5E7EB] mb-5" />
+          <div className="space-y-3">
+            <div className="h-4 w-full rounded bg-[#E5E7EB]" />
+            <div className="h-4 w-full rounded bg-[#E5E7EB]" />
+            <div className="h-4 w-[96%] rounded bg-[#E5E7EB]" />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function IntegratedMentorship2027() {
   const [course, setCourse] = useState(null);
   const [detail, setDetail] = useState(() => getDefaultImp2027DetailPage());
@@ -96,16 +163,25 @@ export default function IntegratedMentorship2027() {
     else if (!loading) setShowEnquiryForm(true);
   };
 
+  const selectedBasePrice =
+    enrollPlan === "weekly" && weeklyPlan?.oldPrice != null
+      ? Number(weeklyPlan.oldPrice)
+      : enrollPlan === "daily" && dailyPlan?.oldPrice != null
+        ? Number(dailyPlan.oldPrice)
+        : basePrice;
+  const selectedSellingPrice =
+    enrollPlan === "weekly" && weeklyPlan?.price != null
+      ? Number(weeklyPlan.price)
+      : enrollPlan === "daily" && dailyPlan?.price != null
+        ? Number(dailyPlan.price)
+        : sellingPrice;
+
   const handlePaymentSuccess = () => {
     setShowPaymentForm(false);
   };
 
   if (loading) {
-    return (
-      <div className="min-h-[50vh] flex items-center justify-center bg-[#F8F9FB]">
-        <div className="text-[#1A3C6E] font-semibold animate-pulse">Loading programme…</div>
-      </div>
-    );
+    return <Imp2027DetailSkeleton />;
   }
 
   return (
@@ -156,33 +232,14 @@ export default function IntegratedMentorship2027() {
               &times;
             </button>
             <PaymentForm
+              key={`${course._id}-${enrollPlan || "default"}-${selectedSellingPrice}`}
               course={{
                 ...course,
-                basePrice:
-                  enrollPlan === "weekly" && weeklyPlan?.oldPrice != null
-                    ? Number(weeklyPlan.oldPrice)
-                    : enrollPlan === "daily" && dailyPlan?.oldPrice != null
-                      ? Number(dailyPlan.oldPrice)
-                      : basePrice,
-                sellingPrice:
-                  enrollPlan === "weekly" && weeklyPlan?.price != null
-                    ? Number(weeklyPlan.price)
-                    : enrollPlan === "daily" && dailyPlan?.price != null
-                      ? Number(dailyPlan.price)
-                      : sellingPrice,
+                basePrice: selectedBasePrice,
+                sellingPrice: selectedSellingPrice,
                 discountPercentage:
-                  enrollPlan === "weekly" || enrollPlan === "daily"
-                    ? (() => {
-                        const bp =
-                          enrollPlan === "weekly"
-                            ? Number(weeklyPlan?.oldPrice ?? 0)
-                            : Number(dailyPlan?.oldPrice ?? 0);
-                        const sp =
-                          enrollPlan === "weekly"
-                            ? Number(weeklyPlan?.price ?? 0)
-                            : Number(dailyPlan?.price ?? 0);
-                        return bp > sp && bp > 0 ? Math.round(((bp - sp) / bp) * 100) : discountPercentage;
-                      })()
+                  selectedBasePrice > selectedSellingPrice && selectedBasePrice > 0
+                    ? Math.round(((selectedBasePrice - selectedSellingPrice) / selectedBasePrice) * 100)
                     : discountPercentage,
               }}
               mentorshipPlan={enrollPlan === "weekly" || enrollPlan === "daily" ? enrollPlan : null}

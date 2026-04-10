@@ -20,11 +20,27 @@ exports.createCourse = async (req, res) => {
     }
 
     const courseData = { ...req.body, thumbnail: thumbnailId };
+    if (courseData.detailPage !== undefined && typeof courseData.detailPage === "string") {
+      const raw = courseData.detailPage.trim();
+      if (raw === "" || raw === "null") {
+        delete courseData.detailPage;
+      } else {
+        try {
+          courseData.detailPage = JSON.parse(raw);
+        } catch (e) {
+          return setBadRequest(res, { message: "detailPage must be valid JSON" });
+        }
+      }
+    }
+
     const newCourse = await courseService.createCourse(courseData);
     
     setCreateSuccess(res, { message: 'Course created successfully', data: newCourse });
   } catch (err) {
     if (err.message.includes('E11000')) {
+      if (err.message.includes('slug')) {
+        return setBadRequest(res, { message: "A course with this slug already exists." });
+      }
       return setBadRequest(res, { message: `A course with this title already exists.` });
     }
     logger.error(`Error creating course: ${err.message}`);

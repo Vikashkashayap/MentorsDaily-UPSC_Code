@@ -119,6 +119,10 @@ const CourseCard = ({
 
   // Check if course is integrated and get the year
   const getIntegratedRoute = () => {
+    if (course?.slug && String(course.slug).trim() !== "") {
+      return `/program/${encodeURIComponent(String(course.slug).trim())}`;
+    }
+
     const titleLower = title?.toLowerCase() || '';
     const categoryLower = category?.toLowerCase() || '';
     

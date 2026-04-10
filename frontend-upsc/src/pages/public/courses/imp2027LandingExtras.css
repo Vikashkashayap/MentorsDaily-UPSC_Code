@@ -51,21 +51,31 @@
   animation-delay: 0.34s;
 }
 
-.imp-timeline-track::before {
-  content: "";
-  position: absolute;
-  top: 28px;
-  left: 10%;
-  right: 10%;
-  height: 3px;
-  background: linear-gradient(90deg, var(--imp-orange) 0%, var(--imp-sky-dk) 50%, var(--imp-green) 100%);
-  z-index: 0;
+/* Horizontal connector behind roadmap icons (8 phases) */
+.imp-timeline-line {
+  background: linear-gradient(
+    90deg,
+    #5b8db8 0%,
+    #3b7ab8 14%,
+    #8b5cf6 28%,
+    var(--imp-orange) 42%,
+    var(--imp-green) 56%,
+    #0d9488 70%,
+    #ca8a04 84%,
+    #9d8df1 100%
+  );
 }
 
-@media (max-width: 960px) {
-  .imp-timeline-track::before {
-    display: none;
-  }
+.imp2027-root .imp-timeline-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.imp2027-root .imp-timeline-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+.imp2027-root .imp-timeline-scroll::-webkit-scrollbar-thumb {
+  background: rgba(232, 107, 42, 0.65);
+  border-radius: 999px;
 }
 
 .imp-a {

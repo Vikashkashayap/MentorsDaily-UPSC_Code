@@ -387,9 +387,9 @@ export default function AdminCourseDetails() {
               </dl>
               {!course.slug && (
                 <p className={`text-xs mb-3 p-2 rounded ${isDark ? 'bg-amber-950/50 text-amber-100' : 'bg-white text-amber-900 border border-amber-200'}`}>
-                  To link this course to <strong>/integrated-mentorship-2027</strong>, open{' '}
+                  To link this course to a dynamic landing URL, open{' '}
                   <strong>Edit Course</strong> and set <strong>URL slug</strong> to:{" "}
-                  <code className="font-mono">integrated-mentorship-2027</code>
+                  <code className="font-mono">your-program-slug</code> (it opens on <code className="font-mono">/program/your-program-slug</code>)
                 </p>
               )}
               <div className="flex flex-col gap-2">
@@ -401,12 +401,12 @@ export default function AdminCourseDetails() {
                   Edit slug &amp; landing JSON
                 </button>
                 <Link
-                  to="/integrated-mentorship-2027"
+                  to={course.slug ? `/program/${encodeURIComponent(course.slug)}` : "/integrated-mentorship-2027"}
                   target="_blank"
                   rel="noreferrer"
                   className={`w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium border ${isDark ? 'border-gray-600 text-gray-200 hover:bg-gray-700' : 'border-gray-300 text-gray-800 hover:bg-gray-50'}`}
                 >
-                  Open public IMP 2027 page (new tab)
+                  Open public landing page (new tab)
                 </Link>
               </div>
             </div>

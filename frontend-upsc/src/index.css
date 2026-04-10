@@ -411,19 +411,19 @@ table td {
 
 .rich-text-content table tr:nth-child(even),
 .prose table tr:nth-child(even),
-table tr:nth-child(even) {
+table:not(.imp2027-comparison-table) tr:nth-child(even) {
   background-color: #f0f9ff;
 }
 
 .rich-text-content table tr:nth-child(odd),
 .prose table tr:nth-child(odd),
-table tr:nth-child(odd) {
+table:not(.imp2027-comparison-table) tr:nth-child(odd) {
   background-color: #ffffff;
 }
 
 .rich-text-content table tr:hover,
 .prose table tr:hover,
-table tr:hover {
+table:not(.imp2027-comparison-table) tr:hover {
   background-color: #dbeafe !important;
   transform: scale(1.001);
   transition: all 0.2s ease;
