@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { updateCourse } from "../api/coreService";
 import { useTheme } from "../contexts/ThemeContext";
 import { messageHandler } from "../utils/messageHandler";
@@ -25,7 +26,9 @@ const EditCourseModal = ({
     duration: "",
     mode: "Hybrid",
     language: "English",
-    thumbnail: null
+    thumbnail: null,
+    slug: "",
+    detailPageJson: "",
   });
   
   const [previewUrl, setPreviewUrl] = useState("");
@@ -43,7 +46,11 @@ const EditCourseModal = ({
         duration: course.duration || "",
         mode: course.mode || "Hybrid",
         language: course.language || "English",
-        thumbnail: null
+        thumbnail: null,
+        slug: course.slug || "",
+        detailPageJson: course.detailPage
+          ? JSON.stringify(course.detailPage, null, 2)
+          : "",
       });
 
       // Set preview URL for existing thumbnail
@@ -119,6 +126,10 @@ const EditCourseModal = ({
     }
   };
 
+  const handleDetailPageChange = (e) => {
+    setEditForm((prev) => ({ ...prev, detailPageJson: e.target.value }));
+  };
+
   // Handle remove image
   const handleRemoveImage = () => {
     setEditForm(prev => ({
@@ -146,6 +157,19 @@ const EditCourseModal = ({
       formData.append('duration', editForm.duration.trim());
       formData.append('mode', editForm.mode);
       formData.append('language', editForm.language);
+      if (editForm.slug != null && editForm.slug.trim() !== "") {
+        formData.append('slug', editForm.slug.trim());
+      }
+      if (editForm.detailPageJson != null && editForm.detailPageJson.trim() !== "") {
+        try {
+          JSON.parse(editForm.detailPageJson);
+          formData.append('detailPage', editForm.detailPageJson.trim());
+        } catch {
+          messageHandler.error("Landing page JSON is invalid. Fix JSON before saving.");
+          setLoading(false);
+          return;
+        }
+      }
       
       if (editForm.thumbnail) {
         formData.append('thumbnail', editForm.thumbnail);
@@ -185,17 +209,19 @@ const EditCourseModal = ({
       duration: "",
       mode: "Hybrid",
       language: "English",
-      thumbnail: null
+      thumbnail: null,
+      slug: "",
+      detailPageJson: "",
     });
     setPreviewUrl("");
     setMessage("");
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !course) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10050] p-4">
       <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto`}>
         <div className="p-6">
           {/* Header */}
@@ -364,7 +390,42 @@ const EditCourseModal = ({
                       <option value="Multi-Language">Multi-Language</option>
                     </select>
                   </div>
-                </div>      
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    URL slug (optional)
+                  </label>
+                  <input
+                    name="slug"
+                    type="text"
+                    value={editForm.slug}
+                    onChange={handleEditFormChange}
+                    placeholder="e.g. integrated-mentorship-2027"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                  />
+                  <p className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                    Used for public landing URL lookup. Must be unique.
+                  </p>
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Landing page content (JSON, optional)
+                  </label>
+                  <textarea
+                    name="detailPageJson"
+                    value={editForm.detailPageJson}
+                    onChange={handleDetailPageChange}
+                    rows={10}
+                    placeholder='Overrides default copy — merge with built-in IMP 2027 template. Example: { "seo": { "title": "..." } }'
+                    className={`w-full px-4 py-3 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                  />
+                  <p className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                    Partial JSON merges into the default long-form page. Leave empty to keep defaults only.
+                  </p>
+                </div>
+
           {/* Thumbnail */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Thumbnail Image</label>
@@ -445,7 +506,8 @@ const EditCourseModal = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

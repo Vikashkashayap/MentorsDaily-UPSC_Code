@@ -21,7 +21,9 @@ const CreateCourseForm = ({
     duration: "",
     mode: "Hybrid",
     language: "English",
-    thumbnail: null
+    thumbnail: null,
+    slug: "",
+    detailPageJson: "",
   });
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -109,6 +111,19 @@ const CreateCourseForm = ({
       formData.append('duration', form.duration.trim());
       formData.append('mode', form.mode);
       formData.append('language', form.language);
+      if (form.slug && form.slug.trim() !== "") {
+        formData.append("slug", form.slug.trim());
+      }
+      if (form.detailPageJson && form.detailPageJson.trim() !== "") {
+        try {
+          JSON.parse(form.detailPageJson);
+          formData.append("detailPage", form.detailPageJson.trim());
+        } catch {
+          messageHandler.error("Landing page JSON is invalid. Fix JSON before creating.");
+          setLoading(false);
+          return;
+        }
+      }
       if (form.thumbnail) {
         formData.append('thumbnail', form.thumbnail);
       }
@@ -126,7 +141,9 @@ const CreateCourseForm = ({
         duration: "",
         mode: "Hybrid",
         language: "English",
-        thumbnail: null
+        thumbnail: null,
+        slug: "",
+        detailPageJson: "",
       });
       setPreviewUrl("");
       
@@ -335,6 +352,44 @@ const CreateCourseForm = ({
                     <option value="Multi-Language">Multi-Language</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  URL slug (optional)
+                </label>
+                <input
+                  type="text"
+                  name="slug"
+                  value={form.slug}
+                  onChange={handleFormChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
+                    isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                  placeholder="e.g. integrated-mentorship-2031"
+                />
+                <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                  Public landing URL will be `/program/{'{slug}'}`.
+                </p>
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Landing page content JSON (optional)
+                </label>
+                <textarea
+                  name="detailPageJson"
+                  value={form.detailPageJson}
+                  onChange={handleFormChange}
+                  rows={8}
+                  className={`w-full px-4 py-3 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
+                    isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                  }`}
+                  placeholder='Example: { "hero": { "badge": "New Batch" }, "includedSection": { "tabs": [] } }'
+                />
+                <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                  Use this to add/update/remove sections dynamically from admin.
+                </p>
               </div>
 
               {/* Course Thumbnail */}

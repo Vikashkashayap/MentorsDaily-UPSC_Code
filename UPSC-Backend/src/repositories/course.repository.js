@@ -28,6 +28,17 @@ exports.findBy = async (query) => {
   }
 };
 
+exports.findCourseBySlug = async (slug) => {
+  try {
+    if (!slug) return null;
+    return await Course.findOne({ slug: String(slug).trim() })
+      .populate(THUMB_POPULATE)
+      .lean();
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 exports.findAllCourse = async () => {
   try {
     return await Course.find({})

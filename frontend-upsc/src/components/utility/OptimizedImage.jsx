@@ -22,6 +22,8 @@ const OptimizedImage = ({
   srcSet,
   onError,
   onLoad,
+  /** Prefer high for LCP; passed to the img as lowercase `fetchpriority` (React 18 DOM). */
+  fetchPriority,
   ...props
 }) => {
   const [imageError, setImageError] = useState(false);

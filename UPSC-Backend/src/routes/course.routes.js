@@ -10,6 +10,7 @@ const { uploadSingleWithContext } = require("../utility/multer.js");
 
 router.post("/create-course", verifyTokenAndAdmin, uploadSingleWithContext('thumbnail'), courseController.createCourse);
 router.get("/get-course", courseController.findAllCourse);
+router.get("/course/slug/:slug", courseController.findCourseBySlug);
 router.get("/course/:id", auth, courseController.findCourseById);
 router.patch("/course/:id", verifyTokenAndAdmin, uploadSingleWithContext('thumbnail'), courseController.updateCourse);
 router.delete("/course/:id", verifyTokenAndAdmin, courseController.deleteCourse);

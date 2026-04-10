@@ -190,7 +190,7 @@ export default function CurrentAffairsDropdown() {
     <div className="relative min-h-screen w-full py-3 px-3 sm:py-6 sm:px-6 bg-gradient-to-br from-sky-50 via-white to-indigo-50">
       <SEOHead pathname={location.pathname} />
       
-      <style jsx>{`
+      <style>{`
         .current-affairs-content ul {
           list-style-type: disc !important;
           margin: 8px 0 !important;

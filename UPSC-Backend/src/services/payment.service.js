@@ -43,19 +43,42 @@ const generateEmiInstallments = (totalAmount, months, paymentId) => {
 };
 
 
+function resolveCourseAmountFromPlan(course, mentorshipPlan) {
+    const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
+    const ps = dp && dp.pricingSection ? dp.pricingSection : null;
+    if (mentorshipPlan === 'weekly' && ps && ps.weekly && ps.weekly.price != null) {
+        return Number(ps.weekly.price);
+    }
+    if (mentorshipPlan === 'daily' && ps && ps.daily && ps.daily.price != null) {
+        return Number(ps.daily.price);
+    }
+    const slug = (course.slug || '').toLowerCase();
+    const title = ((course.title || '') + '').toLowerCase();
+    const isImp2027 =
+        slug === 'integrated-mentorship-2027' ||
+        (title.includes('integrated') && title.includes('2027'));
+    if (isImp2027) {
+        if (mentorshipPlan === 'weekly') return 30000;
+        if (mentorshipPlan === 'daily') return 48000;
+    }
+    return null;
+}
+
 exports.initiateCoursePayment = async (data) => {
     const { 
         studentName, mobile, email, courseId, paymentMethod, createdBy,
         isEmi = false, 
-        emiDurationMonths 
+        emiDurationMonths,
+        mentorshipPlan = null,
     } = data;
 
-    logger.info(`paymentService.js <<initiateCoursePayment>> Initiating payment | student=${studentName} courseId=${courseId} | isEmi=${isEmi}`);
+    logger.info(`paymentService.js <<initiateCoursePayment>> Initiating payment | student=${studentName} courseId=${courseId} | isEmi=${isEmi} | plan=${mentorshipPlan || 'default'}`);
 
     const course = await courseService.findCourseById(courseId);
     if (!course) throw new Error('Course not found');
 
-    const totalCourseAmount = course.sellingPrice;
+    const planAmount = mentorshipPlan ? resolveCourseAmountFromPlan(course, mentorshipPlan) : null;
+    const totalCourseAmount = planAmount != null && !Number.isNaN(planAmount) ? planAmount : course.sellingPrice;
     let amountForRazorpayOrder = totalCourseAmount; 
     
     

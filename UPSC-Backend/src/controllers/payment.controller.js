@@ -8,7 +8,8 @@ exports.initiateCoursePayment = async (req, res) => {
     const {
       studentName, mobile, email, courseId, paymentMethod,
       isEmi,
-      emiDurationMonths
+      emiDurationMonths,
+      mentorshipPlan,
     } = req.body;
 
     if (!studentName || !mobile || !email || !courseId || !paymentMethod) {
@@ -30,7 +31,8 @@ exports.initiateCoursePayment = async (req, res) => {
       paymentMethod,
 
       isEmi: !!isEmi,
-      emiDurationMonths: parseInt(emiDurationMonths) || null
+      emiDurationMonths: parseInt(emiDurationMonths) || null,
+      mentorshipPlan: mentorshipPlan === 'weekly' || mentorshipPlan === 'daily' ? mentorshipPlan : null,
     });
 
     logger.info('paymentController.js < initiateCoursePayment: Payment initiated successfully');

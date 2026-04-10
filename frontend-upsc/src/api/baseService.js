@@ -82,9 +82,11 @@ export default async function callApi({
   responseType,
   headers = {},
   requiresAuth = true,
+  dedupe = true,
   useCache = false,
   cacheTtl = DEFAULT_GET_CACHE_TTL,
-  dedupe = true,
+  /** When true, 404 responses are not logged (optional public lookups). */
+  silentNotFound = false,
 }) {
   try {
     const authToken = localStorage.getItem("token");
@@ -115,7 +117,7 @@ export default async function callApi({
 
     const requestPromise = axios({
       url: requestUrl,
-      method,
+      method: normalizedMethod,
       data: body,
       responseType,
       headers: finalHeaders,
@@ -142,7 +144,9 @@ export default async function callApi({
 
     return requestPromise;
   } catch (e) {
-    console.error("API call failed:", e);
+    if (!(silentNotFound && e.response?.status === 404)) {
+      console.error("API call failed:", e);
+    }
 
     // Handle token expiry or unauthorized access (only for authenticated requests)
     if (e.response?.status === 401 && requiresAuth) {

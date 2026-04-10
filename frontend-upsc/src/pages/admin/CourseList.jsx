@@ -3,6 +3,7 @@ import RichTextEditor from "../../components/RichTextEditor";
 import {
   getCourses,
   deleteCourse,
+  clearCoursesCache,
 } from "../../api/coreService";
 import CourseManagementCard from "../../components/CourseManagementCard";
 import EditCourseModal from "../../components/EditCourseModal";
@@ -27,11 +28,15 @@ const CourseList = () => {
   const loadCourses = async () => {
     try {
       setCoursesLoading(true);
+      clearCoursesCache();
       const res = await getCourses();
-      setCourses(Array.isArray(res.data?.data) ? res.data.data : []);
-      if (res.data?.message) {
-        messageHandler.success(res.data.message);
-      }
+      const inner = res?.data;
+      const list = Array.isArray(inner)
+        ? inner
+        : Array.isArray(inner?.data)
+          ? inner.data
+          : [];
+      setCourses(list);
       setHasLoaded(true);
     } catch (e) {
       console.error("Error loading courses:", e);
@@ -63,6 +68,7 @@ const CourseList = () => {
 
   // Handle edit success callback
   const handleEditSuccess = () => {
+    clearCoursesCache();
     loadCourses(); // Refresh the courses list
   };
 
@@ -72,6 +78,7 @@ const CourseList = () => {
       const res = await deleteCourse(id);
       const msg = res.data?.message || "Course deleted successfully";
       messageHandler.success(msg);
+      clearCoursesCache();
       await loadCourses();
     } catch (err) {
       console.error("Error deleting course:", err);

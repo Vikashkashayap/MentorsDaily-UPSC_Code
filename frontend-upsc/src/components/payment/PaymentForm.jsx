@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   initiateCoursePayment,
   verifyCoursePayment,
 } from "../../api/coreService";
 import PaymentReceipt from "./PaymentReceipt";
 
-const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
+const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
   const [studentName, setStudentName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
@@ -13,6 +13,18 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
   const [showReceipt, setShowReceipt] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState("idle");
+  const planLabel =
+    mentorshipPlan === "daily"
+      ? "Daily Mentorship"
+      : mentorshipPlan === "weekly"
+        ? "Weekly Mentorship"
+        : null;
+  const cleanCourseTitle = String(course?.title || "").replace(/\s*\((daily|weekly)\)\s*/gi, " ").trim();
+
+  useEffect(() => {
+    setLoading(false);
+    setPaymentStatus("idle");
+  }, [course?._id, course?.sellingPrice, mentorshipPlan]);
 
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -44,6 +56,9 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
         email,
         courseId: course._id,
         paymentMethod: "UPI",
+        ...(mentorshipPlan === "weekly" || mentorshipPlan === "daily"
+          ? { mentorshipPlan }
+          : {}),
       });
 
       let orderData;
@@ -211,8 +226,13 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose }) => {
           <div className="mb-6">
             <div 
               className="text-lg text-gray-600 mb-4 prose max-w-none prose-lg"
-              dangerouslySetInnerHTML={{ __html: course.title }}
+              dangerouslySetInnerHTML={{ __html: cleanCourseTitle }}
             />
+            {planLabel && (
+              <div className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 text-xs font-semibold mb-3">
+                Selected Plan: {planLabel}
+              </div>
+            )}
 
             <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-2xl p-6 border-2 border-orange-200">
               <div className="flex items-center justify-between">
