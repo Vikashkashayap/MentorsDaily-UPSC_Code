@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import RichTextEditor from "./RichTextEditor";
 import { createCourse } from "../api/coreService";
 import { messageHandler } from "../utils/messageHandler";
 import RichTextField from "./RichTextField";
@@ -23,7 +22,6 @@ const CreateCourseForm = ({
     language: "English",
     thumbnail: null,
     slug: "",
-    detailPageJson: "",
   });
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -114,16 +112,6 @@ const CreateCourseForm = ({
       if (form.slug && form.slug.trim() !== "") {
         formData.append("slug", form.slug.trim());
       }
-      if (form.detailPageJson && form.detailPageJson.trim() !== "") {
-        try {
-          JSON.parse(form.detailPageJson);
-          formData.append("detailPage", form.detailPageJson.trim());
-        } catch {
-          messageHandler.error("Landing page JSON is invalid. Fix JSON before creating.");
-          setLoading(false);
-          return;
-        }
-      }
       if (form.thumbnail) {
         formData.append('thumbnail', form.thumbnail);
       }
@@ -143,7 +131,6 @@ const CreateCourseForm = ({
         language: "English",
         thumbnail: null,
         slug: "",
-        detailPageJson: "",
       });
       setPreviewUrl("");
       
@@ -153,7 +140,12 @@ const CreateCourseForm = ({
       }
     } catch (err) {
       console.error("Error creating course:", err);
-      const errMsg = err?.response?.data?.message || err?.message || "Failed to create course";
+      const payload = err?.response?.data;
+      const errMsg =
+        payload?.data?.message ||
+        payload?.message ||
+        err?.message ||
+        "Failed to create course";
       messageHandler.error(errMsg);
     } finally {
       setLoading(false);
@@ -171,9 +163,9 @@ const CreateCourseForm = ({
   const formContent = (
     <div className={isDark ? 'dark' : ''}>
       <div className="w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Form Section - Left Side */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 min-w-0">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Course Title */}
               <div>
@@ -373,25 +365,6 @@ const CreateCourseForm = ({
                 </p>
               </div>
 
-              <div>
-                <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Landing page content JSON (optional)
-                </label>
-                <textarea
-                  name="detailPageJson"
-                  value={form.detailPageJson}
-                  onChange={handleFormChange}
-                  rows={8}
-                  className={`w-full px-4 py-3 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
-                    isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
-                  }`}
-                  placeholder='Example: { "hero": { "badge": "New Batch" }, "includedSection": { "tabs": [] } }'
-                />
-                <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                  Use this to add/update/remove sections dynamically from admin.
-                </p>
-              </div>
-
               {/* Course Thumbnail */}
               <div>
                 <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -473,10 +446,11 @@ const CreateCourseForm = ({
           </div>
 
           {/* Formatting Toolbar - Right Side */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0">
             <FormattingToolbar 
               activeField={activeField}
               getFieldLabel={getFieldLabel}
+              variant={isModal ? "modal" : "page"}
             />
           </div>
         </div>

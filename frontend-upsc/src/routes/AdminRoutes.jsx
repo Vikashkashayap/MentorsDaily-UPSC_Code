@@ -13,7 +13,6 @@ const AdminUsers = lazy(() => import("../pages/admin/AdminUsers"));
 const AdminPayments = lazy(() => import("../pages/admin/AdminPayments"));
 const AdminCourses = lazy(() => import("../pages/admin/AdminCourses"));
 const AdminCourseDetails = lazy(() => import("../pages/admin/AdminCourseDetails"));
-const AdminImp2027Landing = lazy(() => import("../pages/admin/AdminImp2027Landing"));
 const AdminCurrentAffairs = lazy(() => import("../pages/admin/AdminCurrentAffairs"));
 const AdminPreviousYearPapers = lazy(() => import("../pages/admin/AdminPreviousYearPapers"));
 const ManageFreeResources = lazy(() => import("../pages/admin/ManageFreeResources"));
@@ -75,14 +74,6 @@ const AdminRoutes = () => {
           </MainLayout>
         </ProtectedRoute>
       } />
-      <Route path={ROUTES.ADMIN_IMP_2027_LANDING} element={
-        <ProtectedRoute allowedRoles={ADMIN_ROLES}>
-          <MainLayout>
-            <AdminImp2027Landing />
-          </MainLayout>
-        </ProtectedRoute>
-      } />
-
       {/* Current Affairs Management */}
       <Route path={ROUTES.ADMIN_CURRENT_AFFAIRS} element={
         <ProtectedRoute allowedRoles={ADMIN_ROLES}>

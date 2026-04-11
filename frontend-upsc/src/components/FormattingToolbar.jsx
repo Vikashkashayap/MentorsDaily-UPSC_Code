@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
-const FormattingToolbar = ({ activeField, getFieldLabel }) => {
+/** variant: "page" = full admin page under navbar; "modal" = dialog (no top nav offset). */
+const FormattingToolbar = ({ activeField, getFieldLabel, variant = 'modal' }) => {
   const { isDark } = useTheme();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [colorMode, setColorMode] = useState('text');
+  const stickyTopClass = variant === 'page' ? 'top-32' : 'top-6';
 
   const formatText = (command, value = null) => {
     document.execCommand(command, false, value);
@@ -88,7 +90,7 @@ const FormattingToolbar = ({ activeField, getFieldLabel }) => {
   ];
 
   return (
-    <div className={`sticky top-6 p-4 ${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md max-h-[85vh] overflow-y-auto`}>
+    <div className={`sticky ${stickyTopClass} z-10 p-4 ${isDark ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md max-h-[calc(100vh-9rem)] overflow-y-auto`}>
       {/* Header */}
       <div className="mb-4 pb-3 border-b border-gray-600">
         <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>

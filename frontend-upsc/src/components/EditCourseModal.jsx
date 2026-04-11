@@ -28,7 +28,6 @@ const EditCourseModal = ({
     language: "English",
     thumbnail: null,
     slug: "",
-    detailPageJson: "",
   });
   
   const [previewUrl, setPreviewUrl] = useState("");
@@ -48,9 +47,6 @@ const EditCourseModal = ({
         language: course.language || "English",
         thumbnail: null,
         slug: course.slug || "",
-        detailPageJson: course.detailPage
-          ? JSON.stringify(course.detailPage, null, 2)
-          : "",
       });
 
       // Set preview URL for existing thumbnail
@@ -126,10 +122,6 @@ const EditCourseModal = ({
     }
   };
 
-  const handleDetailPageChange = (e) => {
-    setEditForm((prev) => ({ ...prev, detailPageJson: e.target.value }));
-  };
-
   // Handle remove image
   const handleRemoveImage = () => {
     setEditForm(prev => ({
@@ -159,16 +151,6 @@ const EditCourseModal = ({
       formData.append('language', editForm.language);
       if (editForm.slug != null && editForm.slug.trim() !== "") {
         formData.append('slug', editForm.slug.trim());
-      }
-      if (editForm.detailPageJson != null && editForm.detailPageJson.trim() !== "") {
-        try {
-          JSON.parse(editForm.detailPageJson);
-          formData.append('detailPage', editForm.detailPageJson.trim());
-        } catch {
-          messageHandler.error("Landing page JSON is invalid. Fix JSON before saving.");
-          setLoading(false);
-          return;
-        }
       }
       
       if (editForm.thumbnail) {
@@ -211,7 +193,6 @@ const EditCourseModal = ({
       language: "English",
       thumbnail: null,
       slug: "",
-      detailPageJson: "",
     });
     setPreviewUrl("");
     setMessage("");
@@ -248,9 +229,9 @@ const EditCourseModal = ({
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Form Section - Left Side */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 min-w-0">
               <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
                 {/* Title */}
                 <div>
@@ -409,23 +390,6 @@ const EditCourseModal = ({
                   </p>
                 </div>
 
-                <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                    Landing page content (JSON, optional)
-                  </label>
-                  <textarea
-                    name="detailPageJson"
-                    value={editForm.detailPageJson}
-                    onChange={handleDetailPageChange}
-                    rows={10}
-                    placeholder='Overrides default copy — merge with built-in IMP 2027 template. Example: { "seo": { "title": "..." } }'
-                    className={`w-full px-4 py-3 border rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
-                  />
-                  <p className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                    Partial JSON merges into the default long-form page. Leave empty to keep defaults only.
-                  </p>
-                </div>
-
           {/* Thumbnail */}
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Thumbnail Image</label>
@@ -497,10 +461,11 @@ const EditCourseModal = ({
             </div>
 
             {/* Formatting Toolbar - Right Side */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 min-w-0">
               <FormattingToolbar 
                 activeField={activeField}
                 getFieldLabel={getFieldLabel}
+                variant="modal"
               />
             </div>
           </div>

@@ -3,48 +3,108 @@ const logger = require("../utility/logger");
 const { setBadRequest, setCreateSuccess, setServerError, setNotFoundError, setSuccess } = require("../utility/responseHelper");
 const  {uploadFileService}  =require ('../services/uploadFiles.service.js');
 
+/** @returns {object|undefined|false} parsed object, undefined if absent, false if invalid JSON */
+function parseDetailPageField(body) {
+  const v = body.detailPage;
+  if (v === undefined || v === null) return undefined;
+  if (typeof v === "object" && v !== null) return v;
+  if (typeof v !== "string") return undefined;
+  const raw = v.trim();
+  if (raw === "" || raw === "null") return undefined;
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    return false;
+  }
+}
+
 exports.createCourse = async (req, res) => {
   logger.info('courseController.js << createCourse');
   try {
-    const { title, description, category, basePrice } = req.body;
     const thumbnailFile = req.file;
+    const title = String(req.body.title ?? "").trim();
+    const description = String(req.body.description ?? "").trim();
+    const category = String(req.body.category ?? "").trim();
+    const basePriceRaw = req.body.basePrice;
 
-    if (!title || !description || !category || !basePrice) {
+    if (!title || !description || !category) {
       return setBadRequest(res, { message: "Required fields are missing." });
     }
-    
+    if (basePriceRaw === undefined || basePriceRaw === null || basePriceRaw === "") {
+      return setBadRequest(res, { message: "Required fields are missing." });
+    }
+
+    const basePrice = parseFloat(basePriceRaw);
+    if (!Number.isFinite(basePrice) || basePrice < 0) {
+      return setBadRequest(res, { message: "basePrice must be a valid non-negative number." });
+    }
+
+    const discountRaw = req.body.discountPercentage;
+    const discountPercentage = Math.min(
+      100,
+      Math.max(0, parseFloat(discountRaw) || 0)
+    );
+
+    const mode = ["Online", "Offline", "Hybrid"].includes(req.body.mode)
+      ? req.body.mode
+      : "Hybrid";
+
+    const courseData = {
+      title,
+      description,
+      category,
+      basePrice,
+      discountPercentage,
+      duration: String(req.body.duration ?? "").trim(),
+      mode,
+      language: String(req.body.language ?? "English").trim(),
+    };
+
+    const slug = req.body.slug != null ? String(req.body.slug).trim() : "";
+    if (slug) {
+      courseData.slug = slug;
+    }
+
+    const parsedDetail = parseDetailPageField(req.body);
+    if (parsedDetail === false) {
+      return setBadRequest(res, { message: "detailPage must be valid JSON" });
+    }
+    if (parsedDetail !== undefined) {
+      courseData.detailPage = parsedDetail;
+    }
+
     let thumbnailId = null;
     if (thumbnailFile) {
       const uploadedImage = await uploadFileService(thumbnailFile, req.user?._id);
       thumbnailId = uploadedImage._id;
     }
-
-    const courseData = { ...req.body, thumbnail: thumbnailId };
-    if (courseData.detailPage !== undefined && typeof courseData.detailPage === "string") {
-      const raw = courseData.detailPage.trim();
-      if (raw === "" || raw === "null") {
-        delete courseData.detailPage;
-      } else {
-        try {
-          courseData.detailPage = JSON.parse(raw);
-        } catch (e) {
-          return setBadRequest(res, { message: "detailPage must be valid JSON" });
-        }
-      }
+    if (thumbnailId) {
+      courseData.thumbnail = thumbnailId;
     }
 
     const newCourse = await courseService.createCourse(courseData);
     
     setCreateSuccess(res, { message: 'Course created successfully', data: newCourse });
   } catch (err) {
-    if (err.message.includes('E11000')) {
-      if (err.message.includes('slug')) {
+    const msg = err?.message || String(err);
+    if (msg.includes("space quota") || msg.includes("over your space")) {
+      logger.error(`Error creating course (storage quota): ${msg}`);
+      return res.status(507).json({
+        success: false,
+        data: {
+          message:
+            "Database storage limit reached (MongoDB Atlas). Delete old data or upgrade the cluster, then try again.",
+        },
+      });
+    }
+    if (msg.includes('E11000')) {
+      if (msg.includes('slug')) {
         return setBadRequest(res, { message: "A course with this slug already exists." });
       }
       return setBadRequest(res, { message: `A course with this title already exists.` });
     }
-    logger.error(`Error creating course: ${err.message}`);
-    setServerError(res, { message: 'Internal server error' });
+    logger.error(`Error creating course: ${msg}`);
+    setServerError(res, { message: msg || 'Internal server error' });
   }
 };
 
@@ -146,8 +206,19 @@ exports.updateCourse = async (req, res) => {
         setSuccess(res, { message: 'Course updated successfully', data: updatedCourse });
 
     } catch(err) {
-        logger.error(`Error updating course: ${err.message}`);
-        setServerError(res, { message: 'Internal server error' });
+        const msg = err?.message || String(err);
+        if (msg.includes("space quota") || msg.includes("over your space")) {
+          logger.error(`Error updating course (storage quota): ${msg}`);
+          return res.status(507).json({
+            success: false,
+            data: {
+              message:
+                "Database storage limit reached (MongoDB Atlas). Delete old data or upgrade the cluster, then try again.",
+            },
+          });
+        }
+        logger.error(`Error updating course: ${msg}`);
+        setServerError(res, { message: msg || 'Internal server error' });
     }
 };
 exports.deleteCourse = async (req, res) => {
