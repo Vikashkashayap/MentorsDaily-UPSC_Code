@@ -1,5 +1,26 @@
+const mongoose = require("mongoose");
 const courseRepository = require("../repositories/course.repository.js");
 const logger = require("../utility/logger.js");
+
+/**
+ * Optional local/dev mapping: when no Course document has `slug`, resolve by MongoDB _id.
+ * In UPSC-Backend/.env:
+ *   COURSE_ID_BY_SLUG={"integrated-mentorship-2027":"507f1f77bcf86cd799439011"}
+ * Use a real course _id from your DB (any IMP course row you use for payments).
+ */
+function resolveCourseIdFromSlugEnv(slug) {
+  const raw = process.env.COURSE_ID_BY_SLUG;
+  if (!raw || !String(raw).trim()) return null;
+  try {
+    const map = JSON.parse(String(raw).trim());
+    const id = map[String(slug).trim()];
+    if (!id || !mongoose.Types.ObjectId.isValid(String(id))) return null;
+    return String(id);
+  } catch (e) {
+    logger.warn(`course.service.js << COURSE_ID_BY_SLUG JSON parse failed: ${e.message}`);
+    return null;
+  }
+}
 
 exports.createCourse = async (courseData) => {
   try {
@@ -36,7 +57,24 @@ exports.findCourseById = async (courseId) => {
 
 exports.findCourseBySlug = async (slug) => {
   try {
-    return await courseRepository.findCourseBySlug(slug);
+    const s = String(slug ?? "").trim();
+    if (!s) return null;
+
+    let course = await courseRepository.findCourseBySlug(s);
+    if (course) return course;
+
+    const fallbackId = resolveCourseIdFromSlugEnv(s);
+    if (fallbackId) {
+      course = await courseRepository.findCourseById(fallbackId);
+      if (course) {
+        logger.info(
+          `courseService.js <<findCourseBySlug<< using COURSE_ID_BY_SLUG fallback for slug=${s}`
+        );
+        return course;
+      }
+    }
+
+    return null;
   } catch (err) {
     logger.error(`courseService.js <<findCourseBySlug<< ${err.message}`);
     throw new Error(err.message);

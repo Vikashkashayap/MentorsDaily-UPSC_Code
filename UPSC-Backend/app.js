@@ -35,6 +35,7 @@ app.use((req, res, next) => {
   if (req.method !== "GET") return next();
   if (
     req.path.includes("/api/v1/get-course") ||
+    req.path.includes("/api/v1/course/slug/") ||
     req.path.includes("/api/v1/get-affairs") ||
     req.path.includes("/api/v1/preparation/get-blog")
   ) {

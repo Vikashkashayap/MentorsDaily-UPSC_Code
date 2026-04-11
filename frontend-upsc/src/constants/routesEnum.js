@@ -10,6 +10,8 @@ export const ROUTES = {
   ADMIN_USERS: '/admin/users',
   ADMIN_PAYMENTS: '/admin/payments',
   ADMIN_COURSES: '/admin/courses',
+  /** Edit IMP 2027 long-form landing (detailPage in DB) */
+  ADMIN_IMP_2027_LANDING: '/admin/courses/imp-2027-landing',
   ADMIN_CURRENT_AFFAIRS: '/admin/current-affairs',
   ADMIN_PREVIOUS_YEAR_PAPERS: '/admin/previous-year-papers',
   ADMIN_ANALYTICS: '/admin/analytics',

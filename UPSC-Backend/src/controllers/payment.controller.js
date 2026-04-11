@@ -1,20 +1,28 @@
 const paymentService = require('../services/payment.service');
 const logger = require('../utility/logger');
+const { getErrorMessage } = require('../utility/errorMessage');
 
 const { setBadRequest, setCreateSuccess, setServerError, setSuccess, setNotFoundError } = require('../utility/responseHelper');
 
 exports.initiateCoursePayment = async (req, res) => {
   try {
     const {
-      studentName, mobile, email, courseId, paymentMethod,
+      studentName, mobile, email, courseId, courseSlug, paymentMethod,
       isEmi,
       emiDurationMonths,
       mentorshipPlan,
     } = req.body;
 
-    if (!studentName || !mobile || !email || !courseId || !paymentMethod) {
+    const hasCourseId = courseId != null && String(courseId).trim() !== '';
+    const hasCourseSlug = courseSlug != null && String(courseSlug).trim() !== '';
+
+    if (!studentName || !mobile || !email || !paymentMethod) {
       logger.error('paymentController.js < initiateCoursePayment: Missing required fields');
-      return setBadRequest(res, 'Missing required fields: studentName, mobile, email, courseId, or paymentMethod');
+      return setBadRequest(res, 'Missing required fields: studentName, mobile, email, or paymentMethod');
+    }
+    if (!hasCourseId && !hasCourseSlug) {
+      logger.error('paymentController.js < initiateCoursePayment: Missing courseId and courseSlug');
+      return setBadRequest(res, 'Missing courseId or courseSlug (slug is enough if the course exists in the catalog)');
     }
 
 
@@ -27,7 +35,8 @@ exports.initiateCoursePayment = async (req, res) => {
       studentName,
       mobile,
       email,
-      courseId,
+      courseId: hasCourseId ? String(courseId).trim() : undefined,
+      courseSlug: hasCourseSlug ? String(courseSlug).trim() : undefined,
       paymentMethod,
 
       isEmi: !!isEmi,
@@ -44,8 +53,9 @@ exports.initiateCoursePayment = async (req, res) => {
       razorpayOrder: paymentResult.razorpayOrder
     });
   } catch (error) {
-    logger.error('paymentController.js < initiateCoursePayment: Error -', error.message);
-    return setServerError(res, error.message);
+    const msg = getErrorMessage(error);
+    logger.error(`paymentController.js < initiateCoursePayment: ${msg}`);
+    return setServerError(res, msg);
   }
 };
 
@@ -71,8 +81,9 @@ exports.verifyCoursePayment = async (req, res) => {
       return setBadRequest(res, { message: 'Payment verification failed' });
     }
   } catch (error) {
-    logger.error('paymentController.js < verifyCoursePayment: Error -', error.message);
-    return setServerError(res, error.message);
+    const msg = getErrorMessage(error);
+    logger.error(`paymentController.js < verifyCoursePayment: ${msg}`);
+    return setServerError(res, msg);
   }
 };
 
@@ -99,8 +110,9 @@ exports.getPaymentReceipt = async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('paymentController.js < getPaymentReceipt: Error -', error.message);
-    return setServerError(res, error.message);
+    const msg = getErrorMessage(error);
+    logger.error(`paymentController.js < getPaymentReceipt: ${msg}`);
+    return setServerError(res, msg);
   }
 };
 

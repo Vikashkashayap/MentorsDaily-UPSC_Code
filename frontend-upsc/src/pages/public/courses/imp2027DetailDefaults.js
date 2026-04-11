@@ -66,6 +66,9 @@ export function getDefaultImp2027DetailPage() {
         "100% Fee Refund",
         "24/7 Mentor Support",
       ],
+      /** Hero stats line (HTML allowed: <strong>, ·, etc.) */
+      socialProofHtml:
+        '<strong class="text-white/85">1200+ Already enrolled</strong> · 98% Student Satisfaction · Trusted by aspirants across India',
       trustLine: "4.9/5 Trusted by aspirants across India",
       cardTitle: "Integrated Mentorship Program (IMP) 2027",
       cardSubtitle: "From Basics to Interview — Complete UPSC Preparation with 1:1 Mentorship",

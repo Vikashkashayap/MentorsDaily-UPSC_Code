@@ -10,25 +10,48 @@ function HtmlLine({ html, className }) {
   return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
-function renderComparisonValueCell(value) {
+function renderLightComparisonCell(value, asPill) {
   if (typeof value === "boolean") {
     return (
-      <span className={`text-lg font-bold ${value ? "text-[#4ADE80]" : "text-[#F87171]"}`}>
+      <span className={`text-xl font-bold leading-none ${value ? "text-[#22C55E]" : "text-[#EF4444]"}`}>
         {value ? "✓" : "✕"}
       </span>
     );
   }
   if (value == null || value === "") {
-    return <span className="text-white/40">—</span>;
+    return <span className="text-[#94A3B8]">—</span>;
   }
+  const s = String(value);
+  if (asPill) {
+    return (
+      <span className="inline-block max-w-[200px] px-2.5 py-1.5 rounded-md bg-[#F1F5F9] text-[#475569] text-[0.75rem] sm:text-[0.8rem] font-semibold leading-snug border border-[#E2E8F0]">
+        {s}
+      </span>
+    );
+  }
+  return <span className="text-[#1E293B] font-medium text-[0.875rem]">{s}</span>;
+}
+
+function renderHeroTitleLine(line, i) {
+  if (line.fragment) {
+    return (
+      <span key={i} className="block">
+        <span className="text-[#E86B2A]">{line.accentText}</span>
+        {line.after}
+      </span>
+    );
+  }
+  const a = line.accent;
+  const accented =
+    a === true || a === "orange" || a === "purple" || a === "gold" || a === "sky";
   return (
-    <span className="inline-flex min-w-[44px] justify-center px-2 py-1 rounded-md bg-white text-[#0D2240] text-[0.9rem] font-extrabold shadow-sm">
-      {String(value)}
+    <span key={i} className="block">
+      {accented ? <span className="text-[#E86B2A]">{line.text}</span> : line.text}
     </span>
   );
 }
 
-export default function Imp2027View({
+export default function Imp2028View({
   d,
   sellingPrice,
   basePrice,
@@ -37,7 +60,7 @@ export default function Imp2027View({
   onEnroll,
   onEnquire,
 }) {
-  const [tab, setTab] = useState("foundation");
+  const [tab, setTab] = useState(d.includedSection.tabs[0]?.id ?? "foundation");
   const [openFaq, setOpenFaq] = useState(-1);
   const [timelineViewPct, setTimelineViewPct] = useState(100);
   const timelineScrollRef = useRef(null);
@@ -69,7 +92,7 @@ export default function Imp2027View({
     discountPercentage > 0 && savings > 0
       ? `🎉 ${discountPercentage}% OFF · Early Bird — Save ${fmt(savings)}`
       : "";
-  const dashboardCards = [
+  const dashboardFallback = [
     {
       title: "Module Roadmap",
       body: "Visual journey of your entire 36-month syllabus broken into structured, week-by-week modules.",
@@ -133,6 +156,7 @@ export default function Imp2027View({
       noteTone: "text-[#0F766E]",
     },
   ];
+  const dashboardCards = d.dashboardSection?.cards?.length ? d.dashboardSection.cards : dashboardFallback;
 
   return (
     <div className="imp2027-root bg-white overflow-x-hidden pb-24 md:pb-0">
@@ -154,14 +178,10 @@ export default function Imp2027View({
         <div className="max-w-[1180px] mx-auto px-6 grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-16 items-center">
           <div>
             <div className="imp-fade-up inline-flex items-center gap-1.5 bg-[rgba(232,107,42,0.18)] border border-[rgba(232,107,42,0.4)] text-[#E86B2A] text-[0.82rem] font-bold px-3.5 py-1.5 rounded-full mb-5">
-              <DynIcon name="Star" size={12} /> {d.hero.badge}
+              <DynIcon name={d.hero.badgeIcon || "Star"} size={12} /> {d.hero.badge}
             </div>
             <h1 className="imp-fade-up delay-1 font-['Poppins'] font-black text-[clamp(1.9rem,4vw,2.9rem)] text-white leading-[1.18] mb-4">
-              {d.hero.titleLines.map((line, i) => (
-                <span key={i} className="block">
-                  {line.accent ? <span className="text-[#E86B2A]">{line.text}</span> : line.text}
-                </span>
-              ))}
+              {d.hero.titleLines.map((line, i) => renderHeroTitleLine(line, i))}
             </h1>
             <p
               className="imp-fade-up delay-2 text-[1.05rem] text-white/76 leading-relaxed mb-7 imp-html-inline"
@@ -193,16 +213,18 @@ export default function Imp2027View({
                 <DynIcon name="Compass" size={18} /> Explore Program
               </a>
             </div>
-            <div className="imp-fade-up delay-3 flex items-center gap-2 text-sm text-white/55">
-              <span
-                className="text-white/55 imp-html-inline"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    d.hero.socialProofHtml ||
-                    '<strong class="text-white/85">1200+ Already enrolled</strong> · 98% Student Satisfaction · Trusted by aspirants across India',
-                }}
+            {d.hero.trustLineHtml ? (
+              <div
+                className="imp-fade-up delay-3 flex flex-wrap items-center gap-2 text-sm text-white/55 imp-html-inline"
+                dangerouslySetInnerHTML={{ __html: d.hero.trustLineHtml }}
               />
-            </div>
+            ) : (
+              <div className="imp-fade-up delay-3 flex items-center gap-2 text-sm text-white/55">
+                <span className="text-white/55">
+                  <strong className="text-white/85">1200+ Already enrolled</strong> · 98% Student Satisfaction · Trusted by aspirants across India
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="imp-fade-up delay-2 bg-white rounded-[20px] shadow-[0_24px_80px_rgba(0,0,0,0.28)] overflow-hidden" id="enroll">
@@ -286,9 +308,8 @@ export default function Imp2027View({
             </h2>
             <p className="text-[#D5E8F0] mt-3 max-w-xl mx-auto leading-relaxed">{d.pricingSection.sub}</p>
           </div>
-          <p className="text-center text-sm text-white/45 mb-12 whitespace-pre-line">
-            {d.pricingSection.toggleHint ||
-              "Scroll down for a feature-by-feature comparison table ↓"}
+          <p className="text-center text-sm text-white/45 mb-12">
+            Scroll down for a <strong className="text-[#E86B2A]">feature-by-feature comparison</strong> table ↓
           </p>
 
           <div className="grid md:grid-cols-2 gap-7 mb-12 items-stretch">
@@ -299,6 +320,9 @@ export default function Imp2027View({
               </div>
               <div className="px-8 pt-8 pb-5 border-b border-[#F2F4F7] bg-gradient-to-br from-[#1A3C6E] to-[#24527A]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-white mb-2">{d.pricingSection.daily.name}</div>
+                {d.pricingSection.daily.tagline && (
+                  <p className="text-sm text-[#D5E8F0]/95 mb-2">{d.pricingSection.daily.tagline}</p>
+                )}
                 <div className="flex items-end gap-2 flex-wrap">
                   <span className="font-['Poppins'] text-4xl font-black text-white">{fmt(d.pricingSection.daily.price)}</span>
                   <span className="text-white/45 line-through text-base mb-1">{fmt(d.pricingSection.daily.oldPrice)}</span>
@@ -346,6 +370,9 @@ export default function Imp2027View({
               </div>
               <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
+                {d.pricingSection.weekly.tagline && (
+                  <p className="text-sm text-[#6B7280] mb-2">{d.pricingSection.weekly.tagline}</p>
+                )}
                 <div className="flex items-end gap-2 flex-wrap">
                   <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(d.pricingSection.weekly.price)}</span>
                   <span className="text-[#6B7280] line-through text-base mb-1">{fmt(d.pricingSection.weekly.oldPrice)}</span>
@@ -396,35 +423,35 @@ export default function Imp2027View({
             </div>
           </div>
 
-          {/* Comparison */}
-          <div className="rounded-[18px] overflow-hidden border border-white/10 bg-white/4">
-            <h3 className="text-center py-6 font-['Poppins'] font-bold text-white border-b border-white/10">
+          {/* Comparison — light card (Daily vs Weekly) */}
+          <div className="rounded-2xl overflow-hidden border border-[#CBD5E1] bg-white shadow-[0_8px_40px_rgba(15,23,42,0.12)]">
+            <h3 className="text-center font-['Poppins'] font-bold text-[#0F172A] text-[1.05rem] sm:text-lg py-4 px-4 border-b border-[#E5E7EB] bg-white m-0">
               {d.pricingSection.comparisonTitle}
             </h3>
             <div className="overflow-x-auto">
-              <table className="imp2027-comparison-table w-full table-fixed border-collapse text-sm">
+              <table className="w-full table-fixed border-collapse text-sm min-w-[min(100%,520px)]">
                 <thead>
-                  <tr className="bg-white/6">
-                    <th className="w-[44%] align-middle text-left py-3.5 px-5 font-['Poppins'] text-xs font-bold text-[#D5E8F0] uppercase tracking-wide">
+                  <tr className="bg-[#2563EB]">
+                    <th className="w-[38%] align-middle text-left py-4 px-4 font-['Poppins'] text-[0.7rem] sm:text-xs font-bold text-white uppercase tracking-wide">
                       {d.pricingSection.comparisonHead.left}
                     </th>
-                    <th className="w-[28%] align-middle py-3.5 px-4">
-                      <div className="flex flex-col items-center justify-center gap-0.5 text-center">
-                        <span className="font-['Poppins'] text-xs font-bold uppercase tracking-wide text-[#FFB48A]">
+                    <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
+                      <div className="flex flex-col items-center justify-center gap-1 text-center">
+                        <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
                           {d.pricingSection.comparisonHead.midLabel}
                         </span>
-                        <span className="font-['Poppins'] text-[0.82rem] font-semibold leading-tight text-white drop-shadow-sm">
-                          {d.pricingSection.comparisonHead.midPrice}
+                        <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
+                          {d.pricingSection.comparisonHead.midPrice ?? fmt(d.pricingSection.daily.price)}
                         </span>
                       </div>
                     </th>
-                    <th className="w-[28%] align-middle py-3.5 px-4">
-                      <div className="flex flex-col items-center justify-center gap-0.5 text-center">
-                        <span className="font-['Poppins'] text-xs font-bold uppercase tracking-wide text-[#D5E8F0]">
+                    <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
+                      <div className="flex flex-col items-center justify-center gap-1 text-center">
+                        <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
                           {d.pricingSection.comparisonHead.rightLabel}
                         </span>
-                        <span className="font-['Poppins'] text-[0.82rem] font-semibold leading-tight text-white drop-shadow-sm">
-                          {d.pricingSection.comparisonHead.rightPrice}
+                        <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
+                          {d.pricingSection.comparisonHead.rightPrice ?? fmt(d.pricingSection.weekly.price)}
                         </span>
                       </div>
                     </th>
@@ -434,8 +461,11 @@ export default function Imp2027View({
                   {d.pricingSection.comparisonRows.map((row, ri) => {
                     if (row.type === "cat") {
                       return (
-                        <tr key={ri} className="bg-[rgba(26,60,110,0.5)]">
-                          <td colSpan={3} className="py-3 px-5 font-['Poppins'] text-xs font-bold text-[#D5E8F0] uppercase tracking-wide">
+                        <tr key={ri} className="bg-[#5B7FA3]">
+                          <td
+                            colSpan={3}
+                            className="py-2.5 px-4 font-['Poppins'] text-[0.65rem] sm:text-xs font-bold text-white uppercase tracking-wide"
+                          >
                             {row.label}
                           </td>
                         </tr>
@@ -443,22 +473,30 @@ export default function Imp2027View({
                     }
                     if (row.type === "text") {
                       return (
-                        <tr key={ri} className="border-b border-white/6 hover:bg-white/4">
-                          <td className="align-middle py-3.5 px-5 text-white/75">{row.f}</td>
-                          <td className="align-middle px-3 text-center text-[0.85rem] font-semibold text-[#4ADE80]">
-                            {row.d}
+                        <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
+                          <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
+                            {row.f}
                           </td>
-                          <td className="align-middle px-3 text-center text-[0.85rem] font-semibold text-[#E86B2A]">
-                            {row.w}
+                          <td className="align-middle px-2 py-3 text-center">
+                            {renderLightComparisonCell(row.d, row.dPill)}
+                          </td>
+                          <td className="align-middle px-2 py-3 text-center">
+                            {renderLightComparisonCell(row.w, row.wPill)}
                           </td>
                         </tr>
                       );
                     }
                     return (
-                      <tr key={ri} className="border-b border-white/6 hover:bg-white/4">
-                        <td className="align-middle py-3.5 px-5 text-white/75">{row.f}</td>
-                        <td className="align-middle px-3 text-center">{renderComparisonValueCell(row.d)}</td>
-                        <td className="align-middle px-3 text-center">{renderComparisonValueCell(row.w)}</td>
+                      <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
+                        <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
+                          {row.f}
+                        </td>
+                        <td className="align-middle px-2 py-3 text-center">
+                          {renderLightComparisonCell(row.d, row.dPill)}
+                        </td>
+                        <td className="align-middle px-2 py-3 text-center">
+                          {renderLightComparisonCell(row.w, row.wPill)}
+                        </td>
                       </tr>
                     );
                   })}
@@ -467,7 +505,7 @@ export default function Imp2027View({
             </div>
           </div>
           <p
-            className="text-center mt-9 text-sm text-white/45 imp-html-inline"
+            className="text-center mt-9 text-sm text-[#94A3B8] imp-html-inline"
             dangerouslySetInnerHTML={{ __html: d.pricingSection.helpHtml }}
           />
         </div>
@@ -492,31 +530,51 @@ export default function Imp2027View({
                   ? "border-l-[#2D7D4E] bg-[#F0FDF4]"
                   : c.variant === "blue"
                     ? "border-l-[#5B8DB8] bg-[#EFF6FF]"
-                    : "border-l-[#E86B2A] bg-[#FFF7F3]";
+                    : c.variant === "purple"
+                      ? "border-l-[#7C3AED] bg-[#F5F3FF]"
+                      : c.variant === "gold"
+                        ? "border-l-[#F59E0B] bg-[#FFFBEB]"
+                        : "border-l-[#E86B2A] bg-[#FFF7F3]";
               const iconShell =
                 c.variant === "green"
                   ? "bg-[#D1FAE5] text-[#2D7D4E]"
                   : c.variant === "blue"
                     ? "bg-[#BFDBFE] text-[#1A3C6E]"
-                    : "bg-[#FDE8D8] text-[#E86B2A]";
+                    : c.variant === "purple"
+                      ? "bg-[#EDE9FE] text-[#7C3AED]"
+                      : c.variant === "gold"
+                        ? "bg-[#FEF9C3] text-[#D97706]"
+                        : "bg-[#FDE8D8] text-[#E86B2A]";
               const titleCls =
                 c.variant === "green"
                   ? "text-[#2D7D4E]"
                   : c.variant === "blue"
                     ? "text-[#1A3C6E]"
-                    : "text-[#E86B2A]";
+                    : c.variant === "purple"
+                      ? "text-[#7C3AED]"
+                      : c.variant === "gold"
+                        ? "text-[#D97706]"
+                        : "text-[#E86B2A]";
               const chip =
                 c.variant === "green"
                   ? "bg-[#D1FAE5] text-[#2D7D4E]"
                   : c.variant === "blue"
                     ? "bg-[#DBEAFE] text-[#1A3C6E]"
-                    : "bg-[#FDE8D8] text-[#E86B2A]";
+                    : c.variant === "purple"
+                      ? "bg-[#EDE9FE] text-[#7C3AED]"
+                      : c.variant === "gold"
+                        ? "bg-[#FEF9C3] text-[#B45309]"
+                        : "bg-[#FDE8D8] text-[#E86B2A]";
               const linkCls =
                 c.variant === "green"
                   ? "text-[#2D7D4E]"
                   : c.variant === "blue"
                     ? "text-[#1A3C6E]"
-                    : "text-[#E86B2A]";
+                    : c.variant === "purple"
+                      ? "text-[#7C3AED]"
+                      : c.variant === "gold"
+                        ? "text-[#D97706]"
+                        : "text-[#E86B2A]";
               return (
               <div
                 key={i}
@@ -599,6 +657,7 @@ export default function Imp2027View({
                 green: "bg-[#2D7D4E]",
                 gold: "bg-[#F59E0B]",
                 rose: "bg-[#E11D48]",
+                purple: "bg-[#7C3AED]",
               };
               const iconBg = {
                 navy: "bg-[#EEF3FA] text-[#1A3C6E]",
@@ -607,6 +666,7 @@ export default function Imp2027View({
                 green: "bg-[#D1FAE5] text-[#2D7D4E]",
                 gold: "bg-[#FEF9C3] text-[#F59E0B]",
                 rose: "bg-[#FFE4E6] text-[#E11D48]",
+                purple: "bg-[#EDE9FE] text-[#7C3AED]",
               };
               return (
                 
@@ -628,19 +688,18 @@ export default function Imp2027View({
       </section>
 
       {/* Student Dashboard */}
-      <section className="bg-[#F8F9FB] py-20">
+      <section className="bg-[#F8F9FB] py-20" id="dashboard">
         <div className="max-w-[1180px] mx-auto px-6">
           <div className="text-center mb-11">
             <span className="inline-block bg-[#FDE8D8] text-[#E86B2A] text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3.5">
-              Student Dashboard
+              {d.dashboardSection?.tag ?? "Student Dashboard"}
             </span>
-            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.15rem)] text-[#1A3C6E] leading-tight">
-              AI Powered Student Dashboard
-              {/* <br className="hidden sm:block" /> In One Smart Dashboard */}
+            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.15rem)] text-[#1A3C6E] leading-tight whitespace-pre-line">
+              {d.dashboardSection?.title ?? "AI Powered Student Dashboard"}
             </h2>
             <p className="text-[#6B7280] max-w-2xl mx-auto mt-3 leading-relaxed text-[0.95rem]">
-              IMP 2027 students get exclusive access to a personalised digital dashboard that tracks every
-              dimension of UPSC preparation in real time.
+              {d.dashboardSection?.sub ??
+                "Students get exclusive access to a personalised digital dashboard that tracks every dimension of UPSC preparation in real time."}
             </p>
           </div>
 
@@ -655,7 +714,12 @@ export default function Imp2027View({
                 </div>
                 <h3 className="font-['Poppins'] text-[0.96rem] font-bold text-[#1A3C6E] mb-2">{card.title}</h3>
                 <p className="text-[#6B7280] text-[0.82rem] leading-relaxed">{card.body}</p>
-                {card.note && <p className={`mt-2 text-[0.72rem] font-bold ${card.noteTone}`}>{card.note}</p>}
+                {card.note && (
+                  <p className={`mt-2 text-[0.72rem] font-bold ${card.noteTone || "text-[#1A3C6E]"}`}>{card.note}</p>
+                )}
+                {card.note2 && (
+                  <p className={`mt-1 text-[0.72rem] font-bold ${card.note2Tone || "text-[#E86B2A]"}`}>{card.note2}</p>
+                )}
               </div>
             ))}
           </div>
@@ -663,13 +727,13 @@ export default function Imp2027View({
       </section>
 
       {/* Timeline — horizontal scroll + progress (matches IMP roadmap design) */}
-      <section className="bg-[#0D2240] py-20">
+      <section className="bg-[#0D2240] py-20" id="timeline">
         <div className="max-w-[1240px] mx-auto px-6">
           <div className="text-center mb-10 md:mb-12">
             <span className="inline-block bg-[rgba(232,107,42,0.22)] text-[#E86B2A] text-[0.68rem] sm:text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-3.5 border border-[rgba(232,107,42,0.35)]">
               {d.timelineSection.tag}
             </span>
-            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.5rem,3vw,2.1rem)] text-white leading-tight">
+            <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.5rem,3vw,2.1rem)] text-white leading-tight whitespace-pre-line">
               {d.timelineSection.title}
             </h2>
             <p className="text-[#D5E8F0] max-w-2xl mx-auto mt-3 text-[0.92rem] md:text-[0.98rem] leading-relaxed">
@@ -682,9 +746,14 @@ export default function Imp2027View({
             onScroll={updateTimelineScroll}
             className="imp-timeline-scroll -mx-6 px-6 overflow-x-auto overflow-y-visible pb-2 scroll-smooth snap-x snap-mandatory lg:overflow-x-visible [scrollbar-width:thin] [scrollbar-color:rgba(232,107,42,0.6)_rgba(255,255,255,0.08)]"
           >
-            <div className="imp-timeline-row relative flex lg:grid lg:grid-cols-8 gap-5 md:gap-6 pt-1 pb-6 min-w-[1280px] lg:min-w-0">
+            <div
+              className="imp-timeline-row relative flex lg:grid gap-5 md:gap-4 pt-1 pb-6 min-w-[1100px] lg:min-w-0"
+              style={{
+                gridTemplateColumns: `repeat(${d.timelineSection.phases.length}, minmax(0, 1fr))`,
+              }}
+            >
               <div
-                className="pointer-events-none absolute top-[27px] left-[calc(3.5rem/2)] right-[calc(3.5rem/2)] h-[3px] z-0 rounded-full opacity-95 hidden sm:block imp-timeline-line"
+                className="pointer-events-none absolute top-[27px] left-[5%] right-[5%] h-[3px] z-0 rounded-full opacity-95 hidden sm:block imp-timeline-line"
                 aria-hidden
               />
               {d.timelineSection.phases.map((ph, i) => {
@@ -705,27 +774,38 @@ export default function Imp2027View({
                               : durTone === "lavender"
                                 ? "bg-[#9D8DF1]/22 text-[#EDE9FE] border border-[#9D8DF1]/45"
                                 : "bg-white/10 text-[#D5E8F0] border border-white/15";
+                const circleContent =
+                  ph.numLabel != null ? (
+                    <span className="font-['Poppins'] font-extrabold text-sm leading-none">{ph.numLabel}</span>
+                  ) : ph.icon ? (
+                    <DynIcon name={ph.icon} size={22} />
+                  ) : null;
                 return (
                   <div
                     key={i}
-                    className="text-center relative z-[1] w-[11.5rem] sm:w-[12.5rem] lg:w-auto shrink-0 lg:shrink flex flex-col items-center snap-center lg:snap-none"
+                    className="text-center relative z-[1] w-[10rem] sm:w-[10.5rem] lg:w-auto shrink-0 lg:shrink flex flex-col items-center snap-center lg:snap-none px-1"
                   >
                     <div
-                      className={`w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-white shadow-lg ${
+                      className={`w-[3.35rem] h-[3.35rem] rounded-full mx-auto mb-3 flex items-center justify-center text-white shadow-lg ${
                         ph.highlight
                           ? "ring-[3px] ring-[#E86B2A]/55 shadow-[0_0_28px_rgba(232,107,42,0.42)]"
                           : ""
                       }`}
                       style={{ background: ph.color }}
                     >
-                      <DynIcon name={ph.icon} size={22} />
+                      {circleContent}
                     </div>
                     {ph.dates && (
                       <div className="text-[0.62rem] sm:text-[0.65rem] font-bold uppercase tracking-wider text-[#E86B2A] mb-1">
                         {ph.dates}
                       </div>
                     )}
-                    <div className="font-['Poppins'] font-bold text-white text-[0.78rem] sm:text-[0.82rem] leading-snug mb-1.5 min-h-[2.4rem] flex items-center justify-center">
+                    {ph.sub && ph.numLabel != null && !ph.dates && (
+                      <div className="text-[0.62rem] sm:text-[0.65rem] font-bold uppercase tracking-wider text-[#E86B2A] mb-1">
+                        {ph.sub}
+                      </div>
+                    )}
+                    <div className="font-['Poppins'] font-bold text-white text-[0.72rem] sm:text-[0.78rem] leading-snug mb-1 min-h-[2.25rem] flex items-center justify-center text-balance">
                       {ph.label}
                     </div>
                     {ph.detail && (
@@ -733,7 +813,7 @@ export default function Imp2027View({
                         {ph.detail}
                       </p>
                     )}
-                    {!ph.detail && ph.sub && (
+                    {!ph.detail && ph.sub && ph.numLabel == null && !ph.dates && (
                       <div className="text-[0.78rem] text-[#D5E8F0]">{ph.sub}</div>
                     )}
                     {ph.duration && (
@@ -758,7 +838,7 @@ export default function Imp2027View({
             </div>
             <div className="bg-[#1A3C6E] border border-white/10 rounded-xl py-4 px-5 md:px-6 flex items-start gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
               <DynIcon name="Info" className="text-[#E86B2A] shrink-0 mt-0.5" size={20} />
-              <p className="text-left text-[#E8F1F8] text-[0.88rem] md:text-sm leading-relaxed m-0">
+              <p className="text-left text-[#E8F1F8] text-[0.88rem] md:text-sm leading-relaxed m-0 whitespace-pre-line">
                 {d.timelineSection.note}
               </p>
             </div>
@@ -823,7 +903,7 @@ export default function Imp2027View({
             <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.1rem)] text-[#1A3C6E]">{d.testimonialsSection.title}</h2>
             <p className="text-[#6B7280] max-w-xl mx-auto mt-3">{d.testimonialsSection.sub}</p>
           </div>
-          <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {d.testimonialsSection.items.map((t, i) => (
               <div
                 key={i}
@@ -868,7 +948,9 @@ export default function Imp2027View({
               <div className="bg-[#1A3C6E] rounded-xl p-7">
                 <p className="text-[#D5E8F0] text-sm mb-3.5">Still have questions? Talk to our team directly.</p>
                 <a
-                  href={`https://wa.me/${d.contact.wa}?text=${encodeURIComponent("Hello MentorsDaily! I have a query about IMP 2027.")}`}
+                  href={`https://wa.me/${d.contact.wa}?text=${encodeURIComponent(
+                    d.contact?.waPrefill || "Hello MentorsDaily! I have a query about this program."
+                  )}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 bg-[#E86B2A] text-white text-sm font-bold px-5 py-3 rounded-lg"
@@ -917,7 +999,7 @@ export default function Imp2027View({
       {/* Bottom CTA */}
       <section className="bg-gradient-to-br from-[#0D2240] to-[#1A3C6E] py-20 text-center">
         <div className="max-w-[1180px] mx-auto px-6">
-          <h2 className="font-['Poppins'] font-black text-[clamp(1.8rem,4vw,2.6rem)] text-white mb-3">{d.bottomCta.title}</h2>
+          <h2 className="font-['Poppins'] font-black text-[clamp(1.8rem,4vw,2.6rem)] text-white mb-3 whitespace-pre-line">{d.bottomCta.title}</h2>
           <p className="text-[#D5E8F0] max-w-xl mx-auto mb-9 leading-relaxed">{d.bottomCta.sub}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <button

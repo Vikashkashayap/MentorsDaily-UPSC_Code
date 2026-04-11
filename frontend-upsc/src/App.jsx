@@ -14,10 +14,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setShowNonCriticalUI(true);
-    }, 1200);
-    return () => window.clearTimeout(timer);
+    const show = () => setShowNonCriticalUI(true);
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(show, { timeout: 1800 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = window.setTimeout(show, 400);
+    return () => window.clearTimeout(t);
   }, []);
 
   return (

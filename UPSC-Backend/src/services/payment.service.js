@@ -1,8 +1,10 @@
+const mongoose = require('mongoose');
 const paymentRepo = require('../repositories/payment.repository');
 const courseService = require('./course.service');
 
 const emiInstallmentRepo = require('../repositories/emi.installment.repository'); 
 const logger = require('../utility/logger');
+const { getErrorMessage } = require('../utility/errorMessage');
 const razorpay = require('../utility/razorpay.js');
 const crypto = require('crypto');
 const { sendEmail} = require('../utility/email.service');
@@ -43,7 +45,23 @@ const generateEmiInstallments = (totalAmount, months, paymentId) => {
 };
 
 
-function resolveCourseAmountFromPlan(course, mentorshipPlan) {
+/** When checkout slug is integrated-mentorship-20xx but Mongo row is missing or is another year, still charge correct plan amounts (must match frontend defaults). */
+const IMP_PLAN_AMOUNTS_BY_YEAR = {
+    '2027': { weekly: 30000, daily: 48000 },
+    '2028': { weekly: 60000, daily: 90000 },
+    '2029': { weekly: 90000, daily: 120000 },
+};
+
+/** Default full-pay amount (no weekly/daily in payload) for slug-only checkout aligned to each program’s “daily” list price. */
+function resolveImpFullPayAmountBySlug(slug) {
+    const s = String(slug || '').toLowerCase().trim();
+    const m = s.match(/^integrated-mentorship-(20\d{2})$/);
+    if (!m) return null;
+    const daily = IMP_PLAN_AMOUNTS_BY_YEAR[m[1]]?.daily;
+    return daily != null ? daily : null;
+}
+
+function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
     const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
     const ps = dp && dp.pricingSection ? dp.pricingSection : null;
     if (mentorshipPlan === 'weekly' && ps && ps.weekly && ps.weekly.price != null) {
@@ -52,8 +70,15 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan) {
     if (mentorshipPlan === 'daily' && ps && ps.daily && ps.daily.price != null) {
         return Number(ps.daily.price);
     }
-    const slug = (course.slug || '').toLowerCase();
+    const slug = (requestedSlug != null ? String(requestedSlug) : String(course.slug || '')).toLowerCase().trim();
     const title = ((course.title || '') + '').toLowerCase();
+    const yearMatch = slug.match(/integrated-mentorship-(20\d{2})\b/);
+    const year = yearMatch ? yearMatch[1] : null;
+    const byYear = year && IMP_PLAN_AMOUNTS_BY_YEAR[year];
+    if (byYear) {
+        if (mentorshipPlan === 'weekly') return byYear.weekly;
+        if (mentorshipPlan === 'daily') return byYear.daily;
+    }
     const isImp2027 =
         slug === 'integrated-mentorship-2027' ||
         (title.includes('integrated') && title.includes('2027'));
@@ -64,21 +89,79 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan) {
     return null;
 }
 
+/**
+ * Resolve Mongo course for checkout: prefer valid courseId, else findCourseBySlug (same as GET /course/slug — includes COURSE_ID_BY_SLUG fallback).
+ */
+const IMP_SLUG_RE = /^integrated-mentorship-20\d{2}$/i;
+
+async function resolveCourseForPayment(courseId, courseSlug) {
+    const idStr = courseId != null ? String(courseId).trim() : '';
+    if (idStr && mongoose.Types.ObjectId.isValid(idStr)) {
+        const byId = await courseService.findCourseById(idStr);
+        if (byId) return { course: byId, resolvedCourseId: idStr };
+    }
+    const slug = courseSlug != null ? String(courseSlug).trim() : '';
+    if (slug) {
+        const bySlug = await courseService.findCourseBySlug(slug);
+        if (bySlug && bySlug._id) {
+            return { course: bySlug, resolvedCourseId: String(bySlug._id) };
+        }
+        const fb = process.env.PAYMENT_FALLBACK_COURSE_OBJECT_ID?.trim();
+        if (fb && mongoose.Types.ObjectId.isValid(fb) && IMP_SLUG_RE.test(slug)) {
+            const byFb = await courseService.findCourseById(fb);
+            if (byFb && byFb._id) {
+                logger.info(
+                    `paymentService.js <<resolveCourseForPayment>> slug=${slug} → PAYMENT_FALLBACK_COURSE_OBJECT_ID=${fb}`
+                );
+                return { course: byFb, resolvedCourseId: String(byFb._id) };
+            }
+        }
+    }
+    return { course: null, resolvedCourseId: null };
+}
+
 exports.initiateCoursePayment = async (data) => {
     const { 
-        studentName, mobile, email, courseId, paymentMethod, createdBy,
+        studentName, mobile, email, courseId, courseSlug, paymentMethod, createdBy,
         isEmi = false, 
         emiDurationMonths,
         mentorshipPlan = null,
     } = data;
 
-    logger.info(`paymentService.js <<initiateCoursePayment>> Initiating payment | student=${studentName} courseId=${courseId} | isEmi=${isEmi} | plan=${mentorshipPlan || 'default'}`);
+    const { course, resolvedCourseId } = await resolveCourseForPayment(courseId, courseSlug);
+    if (!course || !resolvedCourseId) {
+        throw new Error(
+            'Course not found. Add the course in MongoDB, or set COURSE_ID_BY_SLUG={"integrated-mentorship-2028":"<Mongo _id>"} in UPSC-Backend/.env, or set PAYMENT_FALLBACK_COURSE_OBJECT_ID=<Mongo _id> for integrated-mentorship-20xx slugs, then restart the API.'
+        );
+    }
 
-    const course = await courseService.findCourseById(courseId);
-    if (!course) throw new Error('Course not found');
+    logger.info(`paymentService.js <<initiateCoursePayment>> Initiating payment | student=${studentName} courseId=${resolvedCourseId} | isEmi=${isEmi} | plan=${mentorshipPlan || 'default'}`);
 
-    const planAmount = mentorshipPlan ? resolveCourseAmountFromPlan(course, mentorshipPlan) : null;
-    const totalCourseAmount = planAmount != null && !Number.isNaN(planAmount) ? planAmount : course.sellingPrice;
+    const planAmount = mentorshipPlan ? resolveCourseAmountFromPlan(course, mentorshipPlan, courseSlug) : null;
+    const fromPlan =
+      planAmount != null && !Number.isNaN(planAmount) && Number.isFinite(Number(planAmount))
+        ? Number(planAmount)
+        : null;
+    const fromSlugFull =
+      !mentorshipPlan && courseSlug != null && String(courseSlug).trim()
+        ? resolveImpFullPayAmountBySlug(courseSlug)
+        : null;
+    const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
+    const totalCourseAmount =
+      fromPlan != null
+        ? fromPlan
+        : fromSlugFull != null
+          ? fromSlugFull
+          : fromCourse != null
+            ? fromCourse
+            : NaN;
+
+    if (!Number.isFinite(totalCourseAmount) || totalCourseAmount < 1) {
+        throw new Error(
+            `Invalid payment amount (${String(totalCourseAmount)}). Set course sellingPrice or detailPage.pricingSection for plan "${mentorshipPlan || "default"}".`
+        );
+    }
+
     let amountForRazorpayOrder = totalCourseAmount; 
     
     
@@ -96,7 +179,7 @@ exports.initiateCoursePayment = async (data) => {
     const receiptNumber = generateReceiptNumber();
 
     const paymentDataFinal = {
-        studentName, mobile, email, courseId, orderId,
+        studentName, mobile, email, courseId: resolvedCourseId, orderId,
         amount: totalCourseAmount, 
         paymentMethod,
         paymentGateway: RAZORPAY,
@@ -122,22 +205,44 @@ exports.initiateCoursePayment = async (data) => {
     // --- End Installment Creation ---
     
     if (paymentMethod !== CASH && paymentMethod !== CHEQUE) {
+        if (!process.env.RAZORPAY_KEY_ID?.trim() || !process.env.RAZORPAY_KEY_SECRET?.trim()) {
+            throw new Error(
+                "Razorpay is not configured: set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in UPSC-Backend/.env and restart the API."
+            );
+        }
+
         logger.info(`paymentService.js <<initiateCoursePayment>> Creating Razorpay order for amount: ${amountForRazorpayOrder}`);
 
+        const amountPaise = Math.round(Number(amountForRazorpayOrder) * 100);
+        if (!Number.isFinite(amountPaise) || amountPaise < 100) {
+            throw new Error(
+                `Razorpay order amount must be at least ₹1 (100 paise). Got ${amountPaise} paise.`
+            );
+        }
+
         const razorpayOrderOptions = {
-            amount: parseInt(amountForRazorpayOrder * 100), // Amount in smallest unit (Paisa)
+            amount: amountPaise,
             currency: 'INR',
             receipt: receiptNumber,
             notes: {
                 studentName,
-                courseId,
+                courseId: resolvedCourseId,
                 paymentId: newPayment._id.toString(), 
                 isEmi: isEmi ? 'true' : 'false',
                 installmentNumber: isEmi ? '1' : 'full' // Indicate first installment or full payment
             }
         };
 
-        const razorpayOrder = await razorpay.orders.create(razorpayOrderOptions);
+        let razorpayOrder;
+        try {
+            razorpayOrder = await razorpay.orders.create(razorpayOrderOptions);
+        } catch (rzpErr) {
+            const detail = getErrorMessage(rzpErr);
+            logger.error(`paymentService.js <<initiateCoursePayment>> Razorpay orders.create failed: ${detail}`);
+            throw new Error(
+                detail.includes('Razorpay') ? detail : `Razorpay: ${detail}`
+            );
+        }
         
         const updatedPayment = await paymentRepo.updatePaymentStatus(newPayment._id, {
             razorpayOrderId: razorpayOrder.id,

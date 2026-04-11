@@ -37,14 +37,15 @@ const setCachedValue = (key, value) => {
 
 /** Clears client-side course list cache so admin/public see fresh data after edits. */
 export const clearCoursesCache = () => {
-  const prefix = "courses:";
+  const prefixes = ["courses:", "courseSlug:"];
   memoryCache.forEach((_, k) => {
-    if (String(k).startsWith(prefix)) memoryCache.delete(k);
+    const key = String(k);
+    if (prefixes.some((p) => key.startsWith(p))) memoryCache.delete(k);
   });
   try {
     for (let i = sessionStorage.length - 1; i >= 0; i--) {
       const k = sessionStorage.key(i);
-      if (k && k.startsWith(prefix)) sessionStorage.removeItem(k);
+      if (k && prefixes.some((p) => k.startsWith(p))) sessionStorage.removeItem(k);
     }
   } catch {
     /* ignore */
@@ -134,15 +135,41 @@ export const getCourseById = async (courseId) => {
   }
 };
 
+/**
+ * Normalizes `GET .../course/slug/:slug` body: `{ success, data: { message, data: course } }`
+ * or `{ success, data: course }` so callers always get the course document.
+ */
+export function unwrapCourseFromSlugResponse(envelope) {
+  if (!envelope || typeof envelope !== "object") return null;
+  const inner = envelope.data;
+  if (!inner || typeof inner !== "object") return null;
+  let course = null;
+  if (Object.prototype.hasOwnProperty.call(inner, "data") && inner.data != null && typeof inner.data === "object") {
+    course = inner.data;
+  } else if (inner._id != null || inner.slug || inner.title) {
+    course = inner;
+  }
+  if (course && typeof course === "object" && (course._id != null || course.slug || course.title)) {
+    return course;
+  }
+  return null;
+}
+
 /** Public landing page: course by URL slug (e.g. integrated-mentorship-2027). No auth. Returns null if not found (no console spam). */
 export const getCourseBySlug = async (slug) => {
   try {
+    const safe = String(slug ?? "").trim();
+    if (!safe) return null;
+    const cacheKey = makeCacheKey("courseSlug", safe);
+    const cached = getCachedValue(cacheKey, 3 * 60 * 1000);
+    if (cached !== null && cached !== undefined) return cached;
     const response = await callApi({
-      endpoint: `api/v1/course/slug/${encodeURIComponent(slug)}`,
+      endpoint: `api/v1/course/slug/${encodeURIComponent(safe)}`,
       method: "GET",
       requiresAuth: false,
       silentNotFound: true,
     });
+    setCachedValue(cacheKey, response.data);
     return response.data;
   } catch (error) {
     if (error?.response?.status === 404) return null;

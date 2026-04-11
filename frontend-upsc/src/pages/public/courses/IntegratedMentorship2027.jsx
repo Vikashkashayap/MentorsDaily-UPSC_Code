@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { getCourses } from "../../../api/coreService";
+import { getCourseBySlug, unwrapCourseFromSlugResponse } from "../../../api/coreService";
+import { IMP_2027_SLUG } from "./imp2027DetailDefaults";
 import PaymentForm from "../../../components/payment/PaymentForm";
 import Form from "../components/Form";
 import Imp2027View from "./Imp2027View";
@@ -92,13 +93,8 @@ export default function IntegratedMentorship2027() {
       try {
         setLoading(true);
         let c = null;
-        const res2 = await getCourses();
-        const inner = res2?.data;
-        const list = Array.isArray(inner?.data) ? inner.data : [];
-        c = list.find((x) => {
-          const t = (x.title || "").toLowerCase();
-          return t.includes("integrated") && t.includes("2027");
-        });
+        const envelope = await getCourseBySlug(IMP_2027_SLUG);
+        c = unwrapCourseFromSlugResponse(envelope);
         if (cancelled) return;
         const base = getDefaultImp2027DetailPage();
         if (c) {
@@ -147,9 +143,26 @@ export default function IntegratedMentorship2027() {
 
   const handleEnrollClick = (plan) => {
     setEnrollPlan(plan === "weekly" || plan === "daily" ? plan : "daily");
-    if (course) setShowPaymentForm(true);
-    else if (!loading) setShowEnquiryForm(true);
+    setShowPaymentForm(true);
   };
+
+  /** When the API does not return the course (common on local dev), still show the payment UI using defaults + detail; set VITE_IMP_2027_COURSE_ID for a real Razorpay order. */
+  const paymentCourseBase =
+    course ??
+    (() => {
+      const id =
+        typeof import.meta.env.VITE_IMP_2027_COURSE_ID === "string"
+          ? import.meta.env.VITE_IMP_2027_COURSE_ID.trim()
+          : "";
+      return {
+        _id: id || undefined,
+        title: detail?.hero?.cardTitle ?? "Integrated Mentorship Program - 2027",
+        slug: IMP_2027_SLUG,
+        basePrice,
+        sellingPrice,
+        discountPercentage,
+      };
+    })();
 
   const selectedBasePrice =
     enrollPlan === "weekly" && weeklyPlan?.oldPrice != null
@@ -195,12 +208,12 @@ export default function IntegratedMentorship2027() {
         onEnquire={() => setShowEnquiryForm(true)}
       />
 
-      {showPaymentForm && course && (
+      {showPaymentForm && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl relative overflow-hidden">
             <div className="bg-gradient-to-r from-[#1A3C6E] to-[#24527A] p-4 text-white">
               <h3 className="text-xl font-semibold">
-                Enroll in <span dangerouslySetInnerHTML={{ __html: course.title }} />
+                Enroll in <span dangerouslySetInnerHTML={{ __html: paymentCourseBase.title }} />
                 {enrollPlan === "weekly" || enrollPlan === "daily" ? (
                   <span className="block text-sm font-normal text-white/90 mt-1">
                     Plan: {enrollPlan === "daily" ? "Daily Mentorship" : "Weekly Mentorship"}
@@ -220,9 +233,9 @@ export default function IntegratedMentorship2027() {
               &times;
             </button>
             <PaymentForm
-              key={`${course._id}-${enrollPlan || "default"}-${selectedSellingPrice}`}
+              key={`${paymentCourseBase._id ?? "local"}-${enrollPlan || "default"}-${selectedSellingPrice}`}
               course={{
-                ...course,
+                ...paymentCourseBase,
                 basePrice: selectedBasePrice,
                 sellingPrice: selectedSellingPrice,
                 discountPercentage:

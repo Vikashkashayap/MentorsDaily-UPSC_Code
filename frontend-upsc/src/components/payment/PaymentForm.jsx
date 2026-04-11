@@ -5,6 +5,34 @@ import {
 } from "../../api/coreService";
 import PaymentReceipt from "./PaymentReceipt";
 
+/**
+ * Resolves MongoDB course id for payment: document _id, then slug → VITE_IMP_*_COURSE_ID, then VITE_PAYMENT_FALLBACK_COURSE_ID.
+ * Use frontend-upsc/.env for local dev when the course API does not return a row.
+ */
+export function getPaymentCourseId(course) {
+  if (!course || typeof course !== "object") return null;
+  const raw = course._id;
+  if (raw !== undefined && raw !== null && raw !== "") {
+    return typeof raw === "object" && typeof raw.toString === "function"
+      ? String(raw.toString())
+      : String(raw);
+  }
+  const slug = String(course.slug || "")
+    .trim()
+    .toLowerCase();
+  const bySlug = {
+    "integrated-mentorship-2027": import.meta.env.VITE_IMP_2027_COURSE_ID,
+    "integrated-mentorship-2028": import.meta.env.VITE_IMP_2028_COURSE_ID,
+    "integrated-mentorship-2029": import.meta.env.VITE_IMP_2029_COURSE_ID,
+    "integrated-mentorship-2030": import.meta.env.VITE_IMP_2030_COURSE_ID,
+  };
+  const fromSlug = bySlug[slug];
+  if (typeof fromSlug === "string" && fromSlug.trim()) return fromSlug.trim();
+  const fallback = import.meta.env.VITE_PAYMENT_FALLBACK_COURSE_ID;
+  if (typeof fallback === "string" && fallback.trim()) return fallback.trim();
+  return null;
+}
+
 const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
   const [studentName, setStudentName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -21,10 +49,12 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         : null;
   const cleanCourseTitle = String(course?.title || "").replace(/\s*\((daily|weekly)\)\s*/gi, " ").trim();
 
+  const paymentCourseId = getPaymentCourseId(course);
+
   useEffect(() => {
     setLoading(false);
     setPaymentStatus("idle");
-  }, [course?._id, course?.sellingPrice, mentorshipPlan]);
+  }, [paymentCourseId, course?.sellingPrice, mentorshipPlan]);
 
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -45,6 +75,19 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
       alert("Please fill in all required fields");
       return;
     }
+    const slugForPay = String(course?.slug || "")
+      .trim()
+      .toLowerCase();
+    if (!paymentCourseId && !slugForPay) {
+      alert(
+        "Course id and slug are missing, so payment cannot start.\n\n" +
+          "Fix one of:\n" +
+          "• MongoDB: add a course with the correct slug, or\n" +
+          "• UPSC-Backend/.env: COURSE_ID_BY_SLUG={\"your-slug\":\"<Mongo _id>\"} then restart API, or\n" +
+          "• frontend-upsc/.env: VITE_IMP_2027_COURSE_ID (or VITE_PAYMENT_FALLBACK_COURSE_ID), then restart Vite."
+      );
+      return;
+    }
 
     setLoading(true);
     setPaymentStatus("processing");
@@ -54,7 +97,8 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         studentName,
         mobile,
         email,
-        courseId: course._id,
+        ...(paymentCourseId ? { courseId: paymentCourseId } : {}),
+        ...(slugForPay ? { courseSlug: slugForPay } : {}),
         paymentMethod: "UPI",
         ...(mentorshipPlan === "weekly" || mentorshipPlan === "daily"
           ? { mentorshipPlan }
@@ -175,7 +219,18 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
       rzp.open();
     } catch (error) {
       console.error("Payment process error:", error);
-      alert("An error occurred while processing payment. Please try again.");
+      const payload = error?.response?.data;
+      const serverMsg =
+        typeof payload?.data === "string" && payload.data.trim()
+          ? payload.data
+          : typeof payload?.message === "string" && payload.message.trim()
+            ? payload.message
+            : null;
+      alert(
+        serverMsg ||
+          error?.message ||
+          "An error occurred while processing payment. Please try again."
+      );
       setLoading(false);
       setPaymentStatus("failed");
     }
