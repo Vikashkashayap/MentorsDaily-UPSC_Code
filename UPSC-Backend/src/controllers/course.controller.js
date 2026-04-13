@@ -1,7 +1,7 @@
 const courseService =require ("../services/course.service");
 const logger = require("../utility/logger");
 const { setBadRequest, setCreateSuccess, setServerError, setNotFoundError, setSuccess } = require("../utility/responseHelper");
-const  {uploadFileService}  =require ('../services/uploadFiles.service.js');
+const { uploadFileService } = require("../services/uploadFiles.service.js");
 
 /** @returns {object|undefined|false} parsed object, undefined if absent, false if invalid JSON */
 function parseDetailPageField(body) {
@@ -73,13 +73,14 @@ exports.createCourse = async (req, res) => {
       courseData.detailPage = parsedDetail;
     }
 
-    let thumbnailId = null;
     if (thumbnailFile) {
-      const uploadedImage = await uploadFileService(thumbnailFile, req.user?._id);
-      thumbnailId = uploadedImage._id;
-    }
-    if (thumbnailId) {
-      courseData.thumbnail = thumbnailId;
+      const uploadedImage = await uploadFileService(thumbnailFile, {
+        folder: "thumbnails",
+        uploadedBy: req.user?.id,
+      });
+      courseData.thumbnailUrl = uploadedImage.url;
+    } else if (req.body.thumbnailUrl != null && String(req.body.thumbnailUrl).trim() !== "") {
+      courseData.thumbnailUrl = String(req.body.thumbnailUrl).trim();
     }
 
     const newCourse = await courseService.createCourse(courseData);
@@ -180,6 +181,7 @@ exports.updateCourse = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = { ...req.body };
+        delete updateData.thumbnail;
 
         if (updateData.detailPage !== undefined && typeof updateData.detailPage === 'string') {
             const raw = updateData.detailPage.trim();
@@ -195,8 +197,13 @@ exports.updateCourse = async (req, res) => {
         }
         
         if (req.file) {
-            const uploadedImage = await uploadFileService(req.file, req.user?._id);
-            updateData.thumbnail = uploadedImage._id;
+            const uploadedImage = await uploadFileService(req.file, {
+              folder: "thumbnails",
+              uploadedBy: req.user?.id,
+            });
+            updateData.thumbnailUrl = uploadedImage.url;
+        } else if (updateData.thumbnailUrl !== undefined) {
+            updateData.thumbnailUrl = String(updateData.thumbnailUrl || "").trim();
         }
 
         const updatedCourse = await courseService.updateCourse(id, updateData);

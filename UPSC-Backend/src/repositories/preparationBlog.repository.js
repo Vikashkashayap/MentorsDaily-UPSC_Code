@@ -4,7 +4,7 @@ const PreparationBlog = require("../models/preparationBlog.model.js");
 
 const PUBLIC_STATUS_FILTER = {
   $or: [
-    { status: { $exists: false } }, // backward compatibility for old blogs
+    { status: { $exists: false } },
     { status: "published" },
     { $and: [{ status: "scheduled" }, { publishDate: { $lte: new Date() } }] },
   ],
@@ -21,14 +21,16 @@ async function autoPublishDueScheduledBlogs() {
   }
 }
 
+function popUser(q) {
+  return q.populate("user", "name");
+}
+
 exports.createBlogRepo = async (blogData) => {
   try {
     logger.info("preparationBlog.repository.js << createBlogRepo << Creating new blog");
     const newBlog = await PreparationBlog.create(blogData);
 
-    return await PreparationBlog.findById(newBlog._id)
-      .populate("file", "filename contentType size")
-      .populate("user", "name");
+    return await popUser(PreparationBlog.findById(newBlog._id));
   } catch (err) {
     logger.error(`preparationBlog.repository.js << createBlogRepo << ${err.message}`);
     throw new Error(err.message);
@@ -42,10 +44,7 @@ exports.getBlogRepo = async ({ onlyPublic = false } = {}) => {
       await autoPublishDueScheduledBlogs();
     }
     const filter = onlyPublic ? PUBLIC_STATUS_FILTER : {};
-    return await PreparationBlog.find(filter)
-      .sort({ createdAt: -1 })
-      .populate("file", "filename contentType size")
-      .populate("user", "name");
+    return await popUser(PreparationBlog.find(filter).sort({ createdAt: -1 }));
   } catch (err) {
     logger.error(`preparationBlog.repository.js << getBlogRepo << ${err.message}`);
     throw new Error(err.message);
@@ -71,13 +70,17 @@ exports.getBlogPagedRepo = async ({ page, limit, search, onlyPublic = false }) =
         { shortDescription: { $regex: q, $options: "i" } },
       ];
     }
+    let listQuery = PreparationBlog.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    if (onlyPublic) {
+      listQuery = listQuery.select(
+        "title shortDescription slug category thumbnailUrl pdfUrl imageAlt views createdAt updatedAt publishDate status metaTitle user"
+      );
+    }
     const [blogs, total] = await Promise.all([
-      PreparationBlog.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate("file", "filename contentType size")
-        .populate("user", "name"),
+      popUser(listQuery),
       PreparationBlog.countDocuments(filter),
     ]);
     return { blogs, total };
@@ -91,10 +94,10 @@ exports.deleteBlogRepo = async (id) => {
   try {
     logger.info(`preparationBlog.repository.js << deleteBlogRepo << Deleting blog with id: ${id}`);
 
-    const deletedBlog = await PreparationBlog.findByIdAndDelete(new mongoose.Types.ObjectId(id) );
+    const deletedBlog = await PreparationBlog.findByIdAndDelete(new mongoose.Types.ObjectId(id));
     return deletedBlog;
-    } catch (error) {
-    logger.error( `preparationBlog.repository.js << deleteBlogRepo << ${error.message}` );
+  } catch (error) {
+    logger.error(`preparationBlog.repository.js << deleteBlogRepo << ${error.message}`);
     throw new Error(error.message);
   }
 };
@@ -102,10 +105,8 @@ exports.deleteBlogRepo = async (id) => {
 exports.updateBlogRepo = async (id, data) => {
   try {
     logger.info("preparationBlog.repository.js << updateBlogRepo << Updating blog with id");
-    // Ensure we return the updated document and populate fields for consistency
     const updatedBlog = await PreparationBlog.findByIdAndUpdate(id, data, { new: true })
-        .populate("file", "filename contentType size")
-        .populate("user", "name");
+      .populate("user", "name");
     return updatedBlog;
   } catch (error) {
     logger.error(`preparationBlog.repository.js << updateBlogRepo << ${error.message}`);
@@ -113,29 +114,15 @@ exports.updateBlogRepo = async (id, data) => {
   }
 };
 
-exports.getBlogFileIdRepo = async (blogId) => {
-  try {
-    logger.info(`preparationBlog.repository.js << getBlogFileIdRepo << Fetching file ID for blog: ${blogId}`);
-    
-    // The requested logic: Find by ID and select only the 'file' field
-    const currentBlog = await PreparationBlog.findById(blogId).select('file');
-    return currentBlog;
-  } catch (err) {
-    logger.error(`preparationBlog.repository.js << getBlogFileIdRepo << ${err.message}`);
-    // Do not throw a new Error here, just throw the caught error to be handled by the service/controller
-    throw err; 
-  }
-};
-
 exports.getBlogByIdRepo = async (id) => {
   try {
-    logger.info(`preparationBlog.repository.js << getBlogByIdRepo << Fetching file ID for blog: ${id}`);
-    
-    const currentBlog = await PreparationBlog.findById(id)
+    logger.info(`preparationBlog.repository.js << getBlogByIdRepo << Fetching blog: ${id}`);
+
+    const currentBlog = await PreparationBlog.findById(id);
     return currentBlog;
   } catch (err) {
     logger.error(`preparationBlog.repository.js << getBlogByIdRepo << ${err.message}`);
-    throw err; 
+    throw err;
   }
 };
 
@@ -155,7 +142,7 @@ exports.incrementBlogViewsRepo = async (id) => {
 };
 
 function popBlog(q) {
-  return q.populate("file", "filename contentType size").populate("user", "name");
+  return q.populate("user", "name");
 }
 
 exports.getBlogBySlugFlexibleRepo = async (slug, { onlyPublic = false } = {}) => {

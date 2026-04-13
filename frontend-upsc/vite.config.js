@@ -26,8 +26,15 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // Avoid manual vendor chunking to prevent cross-chunk init-order issues.
-        // Optimize chunk file names
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
+            if (id.includes('react-router')) return 'vendor-router';
+            if (id.includes('draft-js') || id.includes('react-draft-wysiwyg')) return 'vendor-editor';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+          }
+          return undefined;
+        },
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {

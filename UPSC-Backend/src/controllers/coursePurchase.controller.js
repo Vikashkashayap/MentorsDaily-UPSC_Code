@@ -61,7 +61,8 @@ exports.buyCourse = async (req, res) => {
           _id: result.course._id,
           title: result.course.title,
           sellingPrice: result.course.sellingPrice,
-          thumbnail: result.course.thumbnail
+          thumbnailUrl: result.course.thumbnailUrl || '',
+          thumbnail: result.course.thumbnailUrl || '',
         },
         razorpayOrder: {
           id: result.razorpayOrder.id,

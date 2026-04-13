@@ -1,6 +1,7 @@
 const currentAffairsService = require("../services/currentAffairs.service");
 const logger = require("../utility/logger");
 const { setBadRequest, setCreateSuccess, setServerError, setNotFoundError, setSuccess } = require("../utility/responseHelper");
+const { uploadFileService } = require("../services/uploadFiles.service.js");
 
 exports.createAffair = async (req, res) => {
   try {
@@ -11,7 +12,16 @@ exports.createAffair = async (req, res) => {
       return setBadRequest(res, { message: "Title is required!" });
     }
 
-    const newAffair = await currentAffairsService.createAffair(req.body);
+    const payload = { ...req.body };
+    if (req.file) {
+      const uploaded = await uploadFileService(req.file, {
+        folder: "thumbnails",
+        uploadedBy: req.user?.id,
+      });
+      payload.thumbnailUrl = uploaded.url;
+    }
+
+    const newAffair = await currentAffairsService.createAffair(payload);
     
     logger.info(`currentAffairsController.js <<createAffair<< Current affair created successfully: ${req.body.title}`);
     setCreateSuccess(res, {
@@ -87,7 +97,16 @@ exports.updateAffair = async (req, res) => {
     const { id } = req.params;
     logger.info(`currentAffairsController.js <<updateAffair<< Updating current affair by ID: ${id}`);
     
-    const updatedAffair = await currentAffairsService.updateAffair(id, req.body);
+    const payload = { ...req.body };
+    if (req.file) {
+      const uploaded = await uploadFileService(req.file, {
+        folder: "thumbnails",
+        uploadedBy: req.user?.id,
+      });
+      payload.thumbnailUrl = uploaded.url;
+    }
+
+    const updatedAffair = await currentAffairsService.updateAffair(id, payload);
     
     if (!updatedAffair) {
       logger.error(`currentAffairsController.js <<updateAffair<< Current affair not found for ID: ${id}`);

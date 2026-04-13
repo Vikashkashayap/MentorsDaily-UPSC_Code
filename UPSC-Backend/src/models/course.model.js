@@ -31,9 +31,10 @@ const courseSchema = new mongoose.Schema({
   startDate: { type: Date },
   endDate: { type: Date },
   language: { type: String, default: "English" },
-  thumbnail: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UploadedDocuments",
+  thumbnailUrl: {
+    type: String,
+    trim: true,
+    default: "",
   },
   /** Public URL key for landing pages, e.g. integrated-mentorship-2027 */
   slug: {
@@ -63,5 +64,6 @@ courseSchema.pre("save", function (next) {
 });
 
 courseSchema.index({ createdAt: -1 });
+courseSchema.index({ category: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Course", courseSchema);

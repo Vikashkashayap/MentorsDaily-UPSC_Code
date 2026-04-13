@@ -1,5 +1,4 @@
 const logger = require("../utility/logger.js");
-const mongoose = require("mongoose");
 const {
   createBlogService,
   getBlogService,
@@ -46,6 +45,7 @@ exports.createBlogController = async (req, res) => {
       metaTitle,
       metaDescription,
       metaImage,
+      thumbnailUrl,
       thumbnail,
       imageAlt,
       template,
@@ -82,7 +82,7 @@ exports.createBlogController = async (req, res) => {
       metaTitle: metaTitle || "",
       metaDescription: metaDescription || "",
       metaImage: metaImage || "",
-      thumbnail: thumbnail || "",
+      thumbnailUrl: String(thumbnailUrl || thumbnail || "").trim(),
       imageAlt: imageAlt || "",
       template: normalizedTemplate,
       ctaText: ctaText || "",
@@ -180,6 +180,7 @@ exports.updateBlogController = async (req, res) => {
       metaTitle,
       metaDescription,
       metaImage,
+      thumbnailUrl,
       thumbnail,
       imageAlt,
       template,
@@ -201,6 +202,7 @@ exports.updateBlogController = async (req, res) => {
       metaTitle === undefined &&
       metaDescription === undefined &&
       metaImage === undefined &&
+      thumbnailUrl === undefined &&
       thumbnail === undefined &&
       imageAlt === undefined &&
       template === undefined &&
@@ -225,7 +227,8 @@ exports.updateBlogController = async (req, res) => {
     if (metaTitle !== undefined) blogData.metaTitle = metaTitle;
     if (metaDescription !== undefined) blogData.metaDescription = metaDescription;
     if (metaImage !== undefined) blogData.metaImage = metaImage;
-    if (thumbnail !== undefined) blogData.thumbnail = thumbnail;
+    if (thumbnailUrl !== undefined) blogData.thumbnailUrl = thumbnailUrl;
+    else if (thumbnail !== undefined) blogData.thumbnailUrl = thumbnail;
     if (imageAlt !== undefined) blogData.imageAlt = imageAlt;
     if (template !== undefined) {
       if (!BLOG_TEMPLATES.has(template)) {

@@ -206,7 +206,7 @@ export default function Footer() {
               <div className="space-y-3">
                 {[
                   { name: "About Us", href: "/about-us", icon: "👥" },
-                  { name: "Mentorship Courses", href: "/MentorshipCourses", icon: "📚" },
+                  { name: "Mentorship Courses", href: "/mentorship-courses", icon: "📚" },
                   { name: "UPSC Answer Evaluation", href: "/", icon: "✍️" },
                   { name: "UPSC Blog", href: "/preparation-blogs", icon: "📝" },
                   { name: "Contact Us", href: "/contact-us", icon: "📞" },

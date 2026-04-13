@@ -1,18 +1,34 @@
-const mongoose = require("mongoose");
 const logger = require("../utility/logger.js");
-const { createBlogRepo, getBlogRepo, getBlogPagedRepo, deleteBlogRepo, updateBlogRepo, getBlogFileIdRepo, getBlogByIdRepo, incrementBlogViewsRepo, getBlogBySlugFlexibleRepo } = require("../repositories/preparationBlog.repository.js");
+const {
+  createBlogRepo,
+  getBlogRepo,
+  getBlogPagedRepo,
+  deleteBlogRepo,
+  updateBlogRepo,
+  getBlogByIdRepo,
+  incrementBlogViewsRepo,
+  getBlogBySlugFlexibleRepo,
+} = require("../repositories/preparationBlog.repository.js");
 const { uploadFileService } = require("./uploadFiles.service.js");
-const preparationBlogModel = require("../models/preparationBlog.model.js");
 
 exports.createBlogService = async (blogData, file, userId) => {
   logger.info("preparationBlog.service.js << createBlogService << Creating blog");
   try {
-    const uploadedFile = await uploadFileService(file, userId);
+    const folder = file.mimetype === "application/pdf" ? "pdfs" : "thumbnails";
+    const uploadedFile = await uploadFileService(file, { folder, uploadedBy: userId });
+
+    const patch = {
+      user: userId,
+    };
+    if (file.mimetype === "application/pdf") {
+      patch.pdfUrl = uploadedFile.url;
+    } else {
+      patch.thumbnailUrl = uploadedFile.url;
+    }
 
     const blog = await createBlogRepo({
       ...blogData,
-      user: userId,
-      file: uploadedFile._id,
+      ...patch,
     });
 
     return blog;
@@ -53,29 +69,20 @@ exports.deleteBlogService = async (id) => {
   }
 };
 
-
 exports.updateBlogService = async (blogId, blogData, newFile, userId) => {
   logger.info(`preparationBlog.service.js << updateBlogService << Updating blog with ID: ${blogId}`);
   try {
-    let fileId;
-    let oldFileId;
-
-    // 1. Check if a new file is uploaded
     if (newFile) {
-      // Find the current blog to get the old file reference
-      const currentBlog = await getBlogFileIdRepo(blogId)
-      if (currentBlog) {
-        oldFileId = currentBlog.file;
+      const folder = newFile.mimetype === "application/pdf" ? "pdfs" : "thumbnails";
+      const uploadedFile = await uploadFileService(newFile, { folder, uploadedBy: userId });
+      if (newFile.mimetype === "application/pdf") {
+        blogData.pdfUrl = uploadedFile.url;
+      } else {
+        blogData.thumbnailUrl = uploadedFile.url;
       }
-
-      // 2. Upload the new file
-      const uploadedFile = await uploadFileService(newFile, userId);
-      fileId = uploadedFile._id;
-
-      
     }
 
-    const updatedBlog = await updateBlogRepo(blogId, blogData, fileId);
+    const updatedBlog = await updateBlogRepo(blogId, blogData);
 
     return updatedBlog;
   } catch (error) {
@@ -84,15 +91,15 @@ exports.updateBlogService = async (blogId, blogData, newFile, userId) => {
   }
 };
 
-exports.getBlogByIdService = async(id) => {
+exports.getBlogByIdService = async (id) => {
   logger.info(`preparationBlog.service.js << getBlogByIdService() << finding blog with ID: ${id}`);
- try {
-    return await getBlogByIdRepo(id)
+  try {
+    return await getBlogByIdRepo(id);
   } catch (error) {
     logger.error(`preparationBlog.service.js << getBlogByIdService() << Error in finding blog error: ${error.message}`);
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
-}
+};
 
 exports.incrementBlogViewsService = async (id) => {
   logger.info(`preparationBlog.service.js << incrementBlogViewsService << Incrementing views for blog ID: ${id}`);

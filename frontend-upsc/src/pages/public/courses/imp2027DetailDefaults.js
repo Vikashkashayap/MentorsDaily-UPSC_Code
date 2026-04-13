@@ -503,7 +503,7 @@ export function getDefaultImp2027DetailPage() {
       brand: "Empowering UPSC aspirants through personalized mentorship, structured guidance, and comprehensive support — from Day 1 to the Interview panel.",
       quickLinks: [
         { label: "About Us", href: "/about-us" },
-        { label: "All Courses", href: "/MentorshipCourses" },
+        { label: "All Courses", href: "/mentorship-courses" },
         { label: "IMP 2027", href: "/integrated-mentorship-2027" },
         { label: "UPPCS Mentorship", href: "/uppcs-mentorship" },
         { label: "Success Stories", href: "/success-stories" },
@@ -512,7 +512,7 @@ export function getDefaultImp2027DetailPage() {
       ],
       resources: [
         { label: "UPSC Mentorship", href: "/integrated-mentorship" },
-        { label: "Current Affairs", href: "/currentAffairs" },
+        { label: "Current Affairs", href: "/current-affairs" },
         { label: "UPSC Guides", href: "/preparation-blogs" },
         { label: "Careers", href: "/careers" },
         { label: "Privacy Policy", href: "/privacy-policy" },

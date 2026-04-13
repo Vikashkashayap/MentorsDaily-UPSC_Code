@@ -1,12 +1,9 @@
 const Course = require("../models/course.model");
 
-/** Thumbnail populate: only _id (for view URL), filename, contentType. Never include base64 `data`. */
-const THUMB_POPULATE = { path: 'thumbnail', select: '_id filename contentType' };
-
 exports.createCourse = async (courseData) => {
   try {
     const newCourse = await Course.create(courseData);
-    return await Course.findById(newCourse._id).populate(THUMB_POPULATE).lean();
+    return await Course.findById(newCourse._id).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -14,7 +11,7 @@ exports.createCourse = async (courseData) => {
 
 exports.findCourseById = async (id) => {
   try {
-    return await Course.findById(id).populate(THUMB_POPULATE).lean();
+    return await Course.findById(id).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -22,7 +19,7 @@ exports.findCourseById = async (id) => {
 
 exports.findBy = async (query) => {
   try {
-    return await Course.findOne(query).populate(THUMB_POPULATE).lean();
+    return await Course.findOne(query).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -31,9 +28,7 @@ exports.findBy = async (query) => {
 exports.findCourseBySlug = async (slug) => {
   try {
     if (!slug) return null;
-    return await Course.findOne({ slug: String(slug).trim() })
-      .populate(THUMB_POPULATE)
-      .lean();
+    return await Course.findOne({ slug: String(slug).trim() }).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -41,10 +36,7 @@ exports.findCourseBySlug = async (slug) => {
 
 exports.findAllCourse = async () => {
   try {
-    return await Course.find({})
-      .populate(THUMB_POPULATE)
-      .sort({ createdAt: -1 })
-      .lean();
+    return await Course.find({}).sort({ createdAt: -1 }).lean();
   } catch (err) {
     throw new Error(err.message);
   }
@@ -57,7 +49,6 @@ exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
     const skip = (safePage - 1) * safeLimit;
     const [data, total] = await Promise.all([
       Course.find({})
-        .populate(THUMB_POPULATE)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(safeLimit)
@@ -75,13 +66,6 @@ exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
     throw new Error(err.message);
   }
 };
-// exports.updateCourse = async (id, updateData) => {
-//   try {
-//     return await Course.findByIdAndUpdate(id, updateData, { new: true }).populate('thumbnail');
-//   } catch (err) {
-//     throw new Error(err.message);
-//   }
-// };
 
 exports.updateCourse = async (id, updateData) => {
   try {
@@ -95,7 +79,7 @@ exports.updateCourse = async (id, updateData) => {
     });
 
     const updatedCourse = await course.save();
-    return await Course.findById(updatedCourse._id).populate(THUMB_POPULATE).lean();
+    return await Course.findById(updatedCourse._id).lean();
   } catch (err) {
     throw new Error(err.message);
   }

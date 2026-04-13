@@ -173,7 +173,7 @@ export default function CurrentAffairsDropdown() {
 
   const handleCardClick = (item) => {
     const s = slugify(item.title || "");
-    navigate(`/currentAffairs/${s}`);
+    navigate(`/current-affairs/${s}`);
   };
 
 

@@ -4,7 +4,7 @@ const uploadedDocumentsSchema = new mongoose.Schema({
   filename: { type: String, required: true },
   contentType: { type: String, required: true },
   size: { type: Number, required: true },
-  data: { type: String, required: true },
+  data: { type: String, required: false },
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   createdAt: { type: Date, default: Date.now },
 });

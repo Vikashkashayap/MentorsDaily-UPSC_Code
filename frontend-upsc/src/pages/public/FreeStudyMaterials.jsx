@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllFreeResources, getAvailableCategories, getSubjects, getCategorySubcategories, getSubcategoriesForCategory } from '../../api/freeResourceService';
+import { resolveFreeResourcePdfUrl } from '../../utils/mediaUrls';
 
 export default function FreeStudyMaterials() {
   const navigate = useNavigate();
@@ -52,10 +53,8 @@ export default function FreeStudyMaterials() {
   };
 
   const handleDownload = (resource) => {
-    if (resource.fileId?._id) {
-      const downloadUrl = `${import.meta.env.VITE_API_URL}/api/v1/download/${resource.fileId._id}`;
-      window.open(downloadUrl, '_blank');
-    }
+    const href = resolveFreeResourcePdfUrl(resource);
+    if (href) window.open(href, '_blank');
   };
 
   return (

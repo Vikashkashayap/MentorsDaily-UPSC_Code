@@ -188,7 +188,7 @@ const TodaysCurrentAffairs = () => {
               className="w-full md:max-w-sm bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
             >
               {post.thumbnailUrl && (
-                <div className="relative cursor-pointer" onClick={() => navigate(`/currentAffairs/${slugify(post.title || "")}`)}>
+                <div className="relative cursor-pointer" onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}>
                   <img
                     src={post.thumbnailUrl}
                     alt={post.title}
@@ -205,7 +205,7 @@ const TodaysCurrentAffairs = () => {
               <div className="p-5">
                 <h3
                   className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 hover:text-blue-700 cursor-pointer prose max-w-none"
-                  onClick={() => navigate(`/currentAffairs/${slugify(post.title || "")}`)}
+                  onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}
                   dangerouslySetInnerHTML={{ __html: post.title }}
                 />
 
@@ -270,7 +270,7 @@ const TodaysCurrentAffairs = () => {
 
         <div className="text-center mt-8">
           <button
-            onClick={() => navigate('/currentAffairs')}
+            onClick={() => navigate('/current-affairs')}
             className="relative z-10 inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1"
           >
             View All Current Affairs

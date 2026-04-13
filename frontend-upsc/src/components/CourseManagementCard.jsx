@@ -1,38 +1,11 @@
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { formatDate, formatRelativeTime } from "../utils/dateUtils";
+import { resolveCourseThumbnailUrl } from "../utils/mediaUrls";
 
 const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }) => {
   const [imageError, setImageError] = useState(false);
   const { isDark } = useTheme();
-
-  // Helper function to get thumbnail URL
-  const getThumbnailUrl = (thumb) => {
-    if (!thumb) return null;
-
-    // If it's already a URL string
-    if (typeof thumb === 'string') {
-      return thumb;
-    }
-
-    // If it's a base64 object
-    if (thumb && thumb.data) {
-      return `data:${thumb.contentType || 'image/png'};base64,${thumb.data}`;
-    }
-
-    // If it's an object with _id (from backend populate)
-    if (thumb && thumb._id) {
-      const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-      return `${BASE_URL}/api/v1/view/${thumb._id}`;
-    }
-
-    // If it's a file path
-    if (thumb && thumb.path) {
-      return thumb.path;
-    }
-
-    return null;
-  };
 
   // Helper function to get initials for fallback avatar
   const getInitials = (name) => {
@@ -60,7 +33,7 @@ const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }
     return colors[index];
   };
 
-  const thumbnailUrl = getThumbnailUrl(item.thumbnail);
+  const thumbnailUrl = resolveCourseThumbnailUrl(item);
   return (
     <div className={`group relative p-2 rounded-xl border-2 ${isDark ? 'border-gray-600 bg-gray-800' : 'border-blue-200 bg-white'} shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ${className}`}>
       {/* Category Ribbon */}

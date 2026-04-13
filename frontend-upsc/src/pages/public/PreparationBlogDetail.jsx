@@ -215,33 +215,57 @@ const PreparationBlogDetail = () => {
         <article className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Featured Image/File - Full Width */}
           <div className="w-full aspect-[1200/630] overflow-hidden relative bg-gray-100">
-            {blog.file?._id && fileBase ? (
-              <>
-                {/* If file is image, show it directly */}
-                {blog.file.contentType?.startsWith('image/') ? (
-                  <img
-                    src={`${fileBase}/api/v1/view/${blog.file._id}`}
-                    alt={blog.imageAlt || stripHtml(blog.title)}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  /* If file is PDF or other, show iframe preview */
-                  <iframe
-                    src={`${fileBase}/api/v1/view/${blog.file._id}`}
-                    className="w-full h-full border-0"
-                    title="File Preview"
-                  />
-                )}
-                {/* Category Badge - Positioned without dark overlay */}
-                {blog.category && (
-                  <div className="absolute bottom-4 left-4">
-                    <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium shadow-lg">
-                      {blog.category}
-                    </span>
-                  </div>
-                )}
-              </>
-            ) : (
+            {(() => {
+              const heroImage =
+                (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                (blog.file?.contentType?.startsWith('image/') && blog.file?._id && fileBase
+                  ? `${fileBase}/api/v1/view/${blog.file._id}`
+                  : null);
+              const embedUrl =
+                (blog.pdfUrl && String(blog.pdfUrl).trim()) ||
+                (blog.file?._id && fileBase ? `${fileBase}/api/v1/view/${blog.file._id}` : null);
+              const isPdf =
+                (blog.pdfUrl && /\.pdf($|\?)/i.test(blog.pdfUrl)) ||
+                blog.file?.contentType === 'application/pdf';
+
+              if (heroImage) {
+                return (
+                  <>
+                    <img
+                      src={heroImage}
+                      alt={blog.imageAlt || stripHtml(blog.title)}
+                      className="w-full h-full object-cover"
+                    />
+                    {blog.category && (
+                      <div className="absolute bottom-4 left-4">
+                        <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium shadow-lg">
+                          {blog.category}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                );
+              }
+              if (embedUrl && isPdf) {
+                return (
+                  <>
+                    <iframe
+                      src={embedUrl}
+                      className="w-full h-full border-0"
+                      title="File Preview"
+                    />
+                    {blog.category && (
+                      <div className="absolute bottom-4 left-4">
+                        <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium shadow-lg">
+                          {blog.category}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                );
+              }
+              return null;
+            })() || (
               /* No file - show gradient background */
               <div className="w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center">
                 <div className="text-center text-white p-8">

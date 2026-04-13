@@ -2,6 +2,11 @@ import React, { lazy } from "react";
 import { Route } from "react-router-dom";
 import PublicLayout from "../components/Layout/PublicLayout";
 import { ROUTES } from '../constants/routesEnum';
+import {
+  LegacyCurrentAffairsRedirect,
+  LegacyMentorshipCoursesRedirect,
+  LegacyPreparationBlogAliasRedirect,
+} from "./LegacyRedirects";
 
 // Lazy load components for better performance
 const LandingPage = lazy(() => import("../pages/public/LandingPage"));
@@ -80,7 +85,8 @@ const PublicRoutes = () => {
           <CourseDetails />
         </PublicLayout>
       } />
-      <Route path="/MentorshipCourses" element={
+      <Route path="/MentorshipCourses" element={<LegacyMentorshipCoursesRedirect />} />
+      <Route path="/mentorship-courses" element={
         <PublicLayout>
           <MentorshipCourses />
         </PublicLayout>
@@ -153,18 +159,19 @@ const PublicRoutes = () => {
         </PublicLayout>
       } />
 
-      {/* Current Affairs Routes */}
-      <Route path="/currentAffairs" element={
+      {/* Current affairs: kebab-case is canonical; CamelCase redirects for old links */}
+      <Route path="/currentAffairs/*" element={<LegacyCurrentAffairsRedirect />} />
+      <Route path="/current-affairs" element={
         <PublicLayout>
           <CurrentAffairsDropdown />
         </PublicLayout>
       } />
-      <Route path="/currentAffairs/:slug" element={
+      <Route path="/current-affairs/:slug" element={
         <PublicLayout showFooter={false}>
           <CurrentAffairDetail />
         </PublicLayout>
       } />
-      <Route path="/currentAffairs/:id/:slug" element={
+      <Route path="/current-affairs/:id/:slug" element={
         <PublicLayout showFooter={false}>
           <CurrentAffairDetail />
         </PublicLayout>
@@ -223,11 +230,7 @@ const PublicRoutes = () => {
           <PreparationBlogDetail />
         </PublicLayout>
       } />
-      <Route path="/blog/:slug" element={
-        <PublicLayout>
-          <PreparationBlogDetail />
-        </PublicLayout>
-      } />
+      <Route path="/blog/:slug" element={<LegacyPreparationBlogAliasRedirect />} />
 
       {/* 404 Route */}
       <Route path="*" element={<NotFound />} />

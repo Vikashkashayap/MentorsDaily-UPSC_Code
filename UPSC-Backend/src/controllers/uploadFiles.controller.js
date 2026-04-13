@@ -8,7 +8,12 @@ exports.uploadFile = async (req, res) => {
     if (!file) {
       return setBadRequest(res, { message: 'No file uploaded' });
     }
-    const result = await uploadFileService(file, req.user?._id);
+    const folderRaw = String(req.body?.folder || '').trim();
+    const folder =
+      folderRaw === 'pdfs' || folderRaw === 'thumbnails' || folderRaw === 'images'
+        ? folderRaw
+        : undefined;
+    const result = await uploadFileService(file, { folder, uploadedBy: req.user?.id });
     return setCreateSuccess(res, { message: 'File uploaded successfully', data: result });
   } catch (err) {
     logger.error(`uploadFiles.controller.js << uploadFile() << Error: ${err}`);

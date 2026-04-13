@@ -342,27 +342,42 @@ const ManagePreparationBlogs = () => {
 
               {/* Thumbnail */}
               <div className="h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                {blog.file?._id ? (
-                  blog.file.contentType?.startsWith('image/') ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
-                      alt={blog.imageAlt || stripHtml(blog.title)}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
+                {(() => {
+                  const api = import.meta.env.VITE_API_URL;
+                  const cover =
+                    (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                    (blog.file?.contentType?.startsWith('image/') && blog.file?._id
+                      ? `${api}/api/v1/download/${blog.file._id}`
+                      : null);
+                  const hasPdf =
+                    (blog.pdfUrl && /\.pdf($|\?)/i.test(blog.pdfUrl)) ||
+                    blog.file?.contentType === 'application/pdf';
+                  if (cover) {
+                    return (
+                      <img
+                        src={cover}
+                        alt={blog.imageAlt || stripHtml(blog.title)}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    );
+                  }
+                  if (hasPdf) {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+                        <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    );
+                  }
+                  return (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-                      <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
+                      <div className="text-white text-4xl font-bold">
+                        {blog.title.charAt(0).toUpperCase()}
+                      </div>
                     </div>
-                  )
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-                    <div className="text-white text-4xl font-bold">
-                      {blog.title.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
 
               {/* Content */}

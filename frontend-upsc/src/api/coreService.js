@@ -194,15 +194,15 @@ export const createCourse = async (payload) => {
   }
 };
 
-// Create a new current affair
+// Create a new current affair (JSON or FormData when uploading thumbnail to S3)
 export const createCurrentAffair = async (payload) => {
   try {
     const response = await callApi({
       endpoint: "api/v1/create-affair",
       method: "POST",
       body: payload,
+      requiresAuth: true,
     });
-    // Return backend message and data
     return response.data;
   } catch (error) {
     console.error("Error creating current affair:", error);
@@ -256,15 +256,15 @@ export const fetchCurrentAffairBySlug = async (slug) => {
   }
 };
 
-// Update a current affair by ID
+// Update a current affair by ID (JSON or FormData when replacing thumbnail on S3)
 export const updateCurrentAffair = async (id, payload) => {
   try {
     const response = await callApi({
       endpoint: `api/v1/update-affair/${id}`,
       method: "PUT",
       body: payload,
+      requiresAuth: true,
     });
-    // Return backend message and data
     return response.data;
   } catch (error) {
     console.error("Error updating current affair:", error);

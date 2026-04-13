@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import RichTextField from "../../components/RichTextField";
 import FormattingToolbar from "../../components/FormattingToolbar";
 import {
@@ -57,6 +57,9 @@ export default function CurrentAffirsList() {
   const [viewAffair, setViewAffair] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [activeField, setActiveField] = useState('title');
+  const [editThumbnailFile, setEditThumbnailFile] = useState(null);
+  const [editThumbnailPreview, setEditThumbnailPreview] = useState(null);
+  const editThumbInputRef = useRef(null);
   const [editForm, setEditForm] = useState({
     title: "",
     paperName: "",
@@ -87,7 +90,6 @@ export default function CurrentAffirsList() {
       'description': 'Description',
       'content': 'Content',
       'source': 'Source URL',
-      'thumbnailUrl': 'Thumbnail URL'
     };
     return labels[fieldName] || fieldName;
   };
@@ -123,7 +125,23 @@ export default function CurrentAffirsList() {
     loadAffairs(1);
   }, []);
 
+  const clearEditThumbnail = () => {
+    setEditThumbnailFile(null);
+    setEditThumbnailPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    if (editThumbInputRef.current) editThumbInputRef.current.value = "";
+  };
+
+  useEffect(() => {
+    return () => {
+      if (editThumbnailPreview) URL.revokeObjectURL(editThumbnailPreview);
+    };
+  }, [editThumbnailPreview]);
+
   const startEditAffair = (affair) => {
+    clearEditThumbnail();
     setEditAffairId(affair._id);
     setEditForm({
       title: affair.title || "",
@@ -152,6 +170,27 @@ export default function CurrentAffirsList() {
     }));
   };
 
+  const handleEditThumbnailFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const ok = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(file.type);
+    if (!ok) {
+      messageHandler.error("Please choose a JPEG, PNG, WebP, or GIF image.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      messageHandler.error("Image must be under 10 MB.");
+      e.target.value = "";
+      return;
+    }
+    setEditThumbnailFile(file);
+    setEditThumbnailPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
+
   // Update a current affair
   const submitEditAffair = async (e) => {
     e.preventDefault();
@@ -168,10 +207,29 @@ export default function CurrentAffirsList() {
         thumbnailUrl: cleanHtmlFragments(editForm.thumbnailUrl),
         source: cleanHtmlFragments(editForm.source)
       };
-      const res = await updateCurrentAffair(editAffairId, cleanedFormData);
+
+      let body;
+      if (editThumbnailFile) {
+        const fd = new FormData();
+        fd.append("title", cleanedFormData.title);
+        fd.append("description", cleanedFormData.description);
+        fd.append("content", cleanedFormData.content);
+        fd.append("paperName", cleanedFormData.paperName);
+        fd.append("subject", cleanedFormData.subject);
+        fd.append("source", cleanedFormData.source);
+        if (cleanedFormData.date) fd.append("date", cleanedFormData.date);
+        fd.append("thumbnailUrl", cleanedFormData.thumbnailUrl || "");
+        fd.append("thumbnail", editThumbnailFile);
+        body = fd;
+      } else {
+        body = cleanedFormData;
+      }
+
+      const res = await updateCurrentAffair(editAffairId, body);
       const msg = res.data?.message || "Current affair updated successfully";
       messageHandler.success(msg);
       setEditAffairId(null);
+      clearEditThumbnail();
       await loadAffairs(affairsMeta.page);
     } catch (err) {
       const errMsg =
@@ -384,7 +442,7 @@ export default function CurrentAffirsList() {
                   Edit Current Affair
                 </h3>
                 <button
-                  onClick={() => setEditAffairId(null)}
+                  onClick={() => { clearEditThumbnail(); setEditAffairId(null); }}
                   className={`${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -505,27 +563,49 @@ export default function CurrentAffirsList() {
                       </div>
                     </div>
 
-                    {/* Thumbnail URL */}
+                    {/* Thumbnail: S3 upload (new) or existing URL */}
                     <div>
                       <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                        Thumbnail URL {activeField === 'thumbnailUrl' && <span className="text-blue-500 text-xs">(Active in Editor)</span>}
+                        Thumbnail image (S3)
                       </label>
-                      <RichTextField
-                        name="thumbnailUrl"
-                        value={editForm.thumbnailUrl}
-                        onChange={handleRichTextChange}
-                        onFocus={handleFieldFocus}
-                        placeholder="Enter thumbnail URL"
-                        isActive={activeField === 'thumbnailUrl'}
-                        multiline={false}
+                      <p className={`text-xs mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Upload a new image to replace the current thumbnail, or keep the existing one below.
+                      </p>
+                      <input
+                        ref={editThumbInputRef}
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        onChange={handleEditThumbnailFile}
+                        className={`w-full px-4 py-3 border rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
                       />
+                      {(editThumbnailPreview || editForm.thumbnailUrl) && (
+                        <div className="mt-3">
+                          <p className={`text-xs mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {editThumbnailPreview ? "New preview" : "Current thumbnail"}
+                          </p>
+                          <img
+                            src={editThumbnailPreview || editForm.thumbnailUrl}
+                            alt=""
+                            className="max-h-36 rounded-lg border border-gray-200 dark:border-gray-600 object-cover"
+                          />
+                          {editThumbnailPreview && (
+                            <button
+                              type="button"
+                              onClick={clearEditThumbnail}
+                              className="mt-2 text-sm text-red-600 hover:text-red-700 font-medium"
+                            >
+                              Cancel new image
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Form Actions */}
                     <div className={`flex items-center justify-end gap-3 pt-6 border-t ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
                       <button
                         type="button"
-                        onClick={() => setEditAffairId(null)}
+                        onClick={() => { clearEditThumbnail(); setEditAffairId(null); }}
                         className={`px-6 py-3 rounded-lg transition-colors duration-200 ${isDark ? 'text-gray-300 bg-gray-700 hover:bg-gray-600' : 'text-gray-700 bg-gray-100 hover:bg-gray-200'}`}
                       >
                         Cancel

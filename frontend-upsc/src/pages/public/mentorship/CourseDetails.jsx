@@ -5,6 +5,7 @@ import PaymentForm from '../../../components/payment/PaymentForm';
 import { formatDateRange } from '../../../utils/dateUtils';
 import ContactForm from '../components/Form';
 import OptimizedImage from '../../../components/utility/OptimizedImage';
+import { resolveCourseThumbnailUrl } from '../../../utils/mediaUrls';
 
 const CourseDetails = () => {
   const { courseId, category, title } = useParams();
@@ -76,26 +77,6 @@ const CourseDetails = () => {
       document.body.style.overflow = 'unset';
     };
   }, [showPaymentForm, showEnquiryForm]);
-
-  const getThumbnailUrl = (thumb) => {
-    if (!thumb) return null;
-    
-    // If it's already a URL string
-    if (typeof thumb === 'string') return thumb;
-    
-    // If it's a base64 object
-    if (thumb.data) {
-      return `data:${thumb.contentType || 'image/png'};base64,${thumb.data}`;
-    }
-    
-    // If it's an object with _id (from backend populate)
-    if (thumb._id) {
-      const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-      return `${BASE_URL}/api/v1/view/${thumb._id}`;
-    }
-    
-    return null;
-  };
 
   const basePrice = course?.basePrice || 0;
   const sellingPrice = course?.sellingPrice || 0;
@@ -182,7 +163,7 @@ const CourseDetails = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Course Not Found</h2>
           <p className="text-gray-600 mb-6">{error || 'The course you are looking for does not exist.'}</p>
           <button
-            onClick={() => navigate('/MentorshipCourses')}
+            onClick={() => navigate('/mentorship-courses')}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Back to Mentorship Courses
@@ -192,7 +173,7 @@ const CourseDetails = () => {
     );
   }
 
-  const thumbnailUrl = getThumbnailUrl(course.thumbnail);
+  const thumbnailUrl = resolveCourseThumbnailUrl(course);
 
   // Check if the course is an UPSC Integrated course
   const isIntegratedCourse = () => {
@@ -212,7 +193,7 @@ const CourseDetails = () => {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <button
-            onClick={() => navigate('/MentorshipCourses')}
+            onClick={() => navigate('/mentorship-courses')}
             className="flex items-center text-gray-600 hover:text-blue-600 transition-colors mb-4"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

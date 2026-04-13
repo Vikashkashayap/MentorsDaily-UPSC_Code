@@ -78,6 +78,9 @@ export function getPreparationBlogOgImageUrl(blog) {
   if (blog?.metaImage && String(blog.metaImage).trim()) {
     return toAbsoluteOgUrl(blog.metaImage);
   }
+  if (blog?.thumbnailUrl && String(blog.thumbnailUrl).trim()) {
+    return toAbsoluteOgUrl(blog.thumbnailUrl);
+  }
   if (blog?.thumbnail && String(blog.thumbnail).trim()) {
     return toAbsoluteOgUrl(blog.thumbnail);
   }

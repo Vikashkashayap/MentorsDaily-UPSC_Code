@@ -49,16 +49,19 @@ const EditCourseModal = ({
         slug: course.slug || "",
       });
 
-      // Set preview URL for existing thumbnail
-      if (course.thumbnail) {
-        if (typeof course.thumbnail === 'string') {
-          setPreviewUrl(course.thumbnail);
-        } else if (course.thumbnail.data) {
-          setPreviewUrl(`data:${course.thumbnail.contentType || 'image/png'};base64,${course.thumbnail.data}`);
-        } else if (course.thumbnail._id) {
-          // If it's an object with _id (from backend populate)
+      const thumb =
+        course.thumbnailUrl ||
+        course.thumbnail;
+      if (thumb) {
+        if (typeof thumb === 'string') {
+          setPreviewUrl(thumb);
+        } else if (thumb.data) {
+          setPreviewUrl(`data:${thumb.contentType || 'image/png'};base64,${thumb.data}`);
+        } else if (thumb._id) {
           const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-          setPreviewUrl(`${BASE_URL}/api/v1/view/${course.thumbnail._id}`);
+          setPreviewUrl(`${BASE_URL}/api/v1/view/${thumb._id}`);
+        } else {
+          setPreviewUrl("");
         }
       } else {
         setPreviewUrl("");

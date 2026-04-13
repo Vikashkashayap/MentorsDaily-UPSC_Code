@@ -196,19 +196,30 @@ const PreparationBlogs = () => {
                   onClick={() => handleBlogClick(blog)}
                   className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer"
                 >
-                  {blog.file?._id && (
+                  {(blog.thumbnailUrl || blog.pdfUrl || blog.file?._id) && (
                     <div className="aspect-[1200/630] w-full overflow-hidden bg-gray-100 relative">
-                      {blog.file.contentType?.startsWith('image/') ? (
-                        <img
-                          src={`${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`}
-                          alt={blog.imageAlt || stripHtml(blog.title)}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                          <BookOpen className="w-12 h-12 text-blue-600" />
-                        </div>
-                      )}
+                      {(() => {
+                        const api = import.meta.env.VITE_API_URL;
+                        const cover =
+                          (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                          (blog.file?.contentType?.startsWith('image/') && blog.file?._id
+                            ? `${api}/api/v1/download/${blog.file._id}`
+                            : null);
+                        if (cover) {
+                          return (
+                            <img
+                              src={cover}
+                              alt={blog.imageAlt || stripHtml(blog.title)}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          );
+                        }
+                        return (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                            <BookOpen className="w-12 h-12 text-blue-600" />
+                          </div>
+                        );
+                      })()}
                       {blog.category && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs bg-blue-600 text-white rounded font-medium shadow-lg">
                           {blog.category}

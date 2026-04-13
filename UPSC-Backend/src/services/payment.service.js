@@ -131,7 +131,7 @@ exports.initiateCoursePayment = async (data) => {
     const { course, resolvedCourseId } = await resolveCourseForPayment(courseId, courseSlug);
     if (!course || !resolvedCourseId) {
         throw new Error(
-            'Course not found. Add the course in MongoDB, or set COURSE_ID_BY_SLUG={"integrated-mentorship-2028":"<Mongo _id>"} in UPSC-Backend/.env, or set PAYMENT_FALLBACK_COURSE_OBJECT_ID=<Mongo _id> for integrated-mentorship-20xx slugs, then restart the API.'
+            'Course not found. In MongoDB, set `slug` on the course (e.g. integrated-mentorship-2027), or set COURSE_ID_BY_SLUG={"integrated-mentorship-2027":"<Mongo _id>"} in UPSC-Backend/.env, or set PAYMENT_FALLBACK_COURSE_OBJECT_ID=<Mongo _id> for integrated-mentorship-20xx slugs, then restart the API.'
         );
     }
 

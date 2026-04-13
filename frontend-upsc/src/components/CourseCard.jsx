@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PaymentForm from "./payment/PaymentForm";
 import { formatDateRange } from "../utils/dateUtils";
 import OptimizedImage from "./utility/OptimizedImage";
+import { resolveLegacyUploadThumb } from "../utils/mediaUrls";
 
 const CourseCard = ({
   title,
@@ -14,6 +15,7 @@ const CourseCard = ({
   endDate,
   language,
   thumbnail,
+  thumbnailUrl,
   category,
   expanded = false,
   onToggle,
@@ -51,27 +53,9 @@ const CourseCard = ({
     };
   }, [shouldShowPaymentForm]);
 
-  const getThumbnailUrl = (thumb) => {
-    if (!thumb) return null;
-    
-    // If it's already a URL string
-    if (typeof thumb === 'string') return thumb;
-    
-    // If it's a base64 object
-    if (thumb.data) {
-      return `data:${thumb.contentType || 'image/png'};base64,${thumb.data}`;
-    }
-    
-    // If it's an object with _id (from backend populate)
-    if (thumb._id) {
-      const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-      return `${BASE_URL}/api/v1/view/${thumb._id}`;
-    }
-    
-    return null;
-  };
-
-  const thumbnailUrl = getThumbnailUrl(thumbnail);
+  const rawThumb =
+    thumbnailUrl ?? course.thumbnailUrl ?? thumbnail ?? course.thumbnail;
+  const displayThumbnailUrl = resolveLegacyUploadThumb(rawThumb);
 
   const {
     basePrice = 0,
@@ -230,9 +214,9 @@ const CourseCard = ({
             {/* Image Section */}
             <div className="lg:w-2/5 relative">
               <div className="bg-gray-100">
-                {thumbnailUrl && !imageError ? (
+                {displayThumbnailUrl && !imageError ? (
                   <OptimizedImage
-                    src={thumbnailUrl}
+                    src={displayThumbnailUrl}
                     onError={() => setImageError(true)}
                     alt={title}
                     className="w-full h-auto object-cover"
@@ -384,9 +368,9 @@ const CourseCard = ({
           onClick={handleCardClick}
         >
           <div className="relative h-40 overflow-hidden bg-gray-100">
-            {thumbnailUrl && !imageError ? (
+            {displayThumbnailUrl && !imageError ? (
               <OptimizedImage
-                src={thumbnailUrl}
+                src={displayThumbnailUrl}
                 onError={() => setImageError(true)}
                 alt={title}
                 className="w-full h-full object-cover object-center"

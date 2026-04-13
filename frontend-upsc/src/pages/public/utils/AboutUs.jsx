@@ -182,7 +182,7 @@ export default function AboutUs() {
                   Contact Us
                 </motion.a>
                 <motion.a
-                  href="/MentorshipCourses"
+                  href="/mentorship-courses"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center px-6 py-3 bg-white/10 text-white font-semibold rounded-lg border border-gray-600 hover:border-green-500 transition-all"

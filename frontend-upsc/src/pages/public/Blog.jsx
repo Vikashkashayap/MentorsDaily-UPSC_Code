@@ -76,6 +76,9 @@ const Blog = () => {
   };
 
   const getBlogImage = (blog) => {
+      if (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) {
+        return String(blog.thumbnailUrl).trim();
+      }
       if (blog.file?._id && blog.file?.contentType?.startsWith('image/')) {
           return `${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`;
       }
@@ -101,7 +104,18 @@ const Blog = () => {
 
 
   if (loading) {
-      return null; // Or a loading skeleton
+      return (
+        <section className="w-full py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-pulse">
+            <div className="h-10 w-64 mx-auto rounded-lg bg-gray-200 dark:bg-gray-700 mb-8" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((k) => (
+                <div key={k} className="h-72 rounded-2xl bg-gray-200 dark:bg-gray-700" />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
   }
 
   if (blogs.length === 0) {

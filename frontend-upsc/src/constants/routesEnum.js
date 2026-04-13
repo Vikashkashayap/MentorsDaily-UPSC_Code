@@ -19,7 +19,8 @@ export const ROUTES = {
   // User routes
   USER_DASHBOARD: '/home',
   ASK_MENTORSDAILY: '/ask',
-  CURRENT_AFFAIRS: '/current-affairs',
+  /** Logged-in study area (distinct from public SEO URL /current-affairs). */
+  CURRENT_AFFAIRS: '/study/current-affairs',
   MY_LIBRARY: '/library',
   MCQ_PRACTICE: '/mcq',
   PRELIMS_PYQS: '/pyqs',

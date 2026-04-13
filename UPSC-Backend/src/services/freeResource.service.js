@@ -1,20 +1,19 @@
 const freeResourceRepository = require('../repositories/freeResource.repository.js');
-const UploadedDocuments = require('../models/uploadedDocuments.model.js');
 const { uploadFileService } = require('./uploadFiles.service.js');
 const logger = require('../utility/logger.js');
 
 exports.createFreeResourceService = async (resourceData, file, userId) => {
     logger.info('freeResource.service.js << createFreeResourceService << Creating free resource');
     try {
-        let fileId = null;
+        let pdfUrl = '';
         if (file) {
-            const uploadedFile = await uploadFileService(file, userId);
-            fileId = uploadedFile._id;
+            const uploadedFile = await uploadFileService(file, { folder: 'pdfs', uploadedBy: userId });
+            pdfUrl = uploadedFile.url;
         }
 
         const resource = await freeResourceRepository.createFreeResource({
             ...resourceData,
-            fileId: fileId,
+            pdfUrl,
             uploadedBy: userId
         });
         return resource;
@@ -24,14 +23,13 @@ exports.createFreeResourceService = async (resourceData, file, userId) => {
     }
 };
 
-exports.getAllFreeResourcesService = async (filters = {}) => {
-    logger.info('freeResource.service.js << getAllFreeResourcesService << Fetching all resources');
+exports.getAllFreeResourcesService = async (filters = {}, listOptions = {}) => {
+    logger.info('freeResource.service.js << getAllFreeResourcesService << Fetching resources');
     try {
         const query = { isActive: true };
         const andConditions = [];
 
         if (filters.category) {
-            // Support both new category field and legacy categories array
             andConditions.push({
                 $or: [
                     { category: filters.category },
@@ -54,13 +52,42 @@ exports.getAllFreeResourcesService = async (filters = {}) => {
             });
         }
 
-        // Combine all conditions
         if (andConditions.length > 0) {
             query.$and = andConditions;
         }
 
-        const resources = await freeResourceRepository.findAllFreeResources(query);
-        return resources;
+        const page = parseInt(listOptions.page, 10);
+        const limitRaw = parseInt(listOptions.limit, 10);
+        const usePage = Number.isFinite(page) && page >= 1 && Number.isFinite(limitRaw) && limitRaw >= 1;
+        const limit = usePage ? Math.min(200, Math.max(1, limitRaw)) : null;
+        const safePage = usePage ? page : 1;
+
+        if (usePage) {
+            const skip = (safePage - 1) * limit;
+            const [resources, total] = await Promise.all([
+                freeResourceRepository.findAllFreeResources(query, { skip, limit }),
+                freeResourceRepository.countFreeResources(query),
+            ]);
+            return {
+                resources,
+                total,
+                page: safePage,
+                limit,
+                totalPages: Math.max(1, Math.ceil(total / limit)),
+            };
+        }
+
+        const [total, resources] = await Promise.all([
+            freeResourceRepository.countFreeResources(query),
+            freeResourceRepository.findAllFreeResources(query, { limit: 500 }),
+        ]);
+        return {
+            resources,
+            total,
+            page: 1,
+            limit: resources.length,
+            totalPages: Math.max(1, Math.ceil(total / 500)),
+        };
     } catch (error) {
         logger.error(`freeResource.service.js << getAllFreeResourcesService << ${error}`);
         throw error;
@@ -93,8 +120,8 @@ exports.updateFreeResourceService = async (id, updateData, file, userId) => {
         }
 
         if (file) {
-            const uploadedFile = await uploadFileService(file, userId);
-            updateData.fileId = uploadedFile._id;
+            const uploadedFile = await uploadFileService(file, { folder: 'pdfs', uploadedBy: userId });
+            updateData.pdfUrl = uploadedFile.url;
         }
 
         updateData.updatedAt = Date.now();
@@ -116,10 +143,6 @@ exports.deleteFreeResourceService = async (id) => {
             throw new Error('Resource not found');
         }
 
-        // Delete the uploaded file
-        await UploadedDocuments.findByIdAndDelete(resource.fileId);
-
-        // Delete the resource using repository
         await freeResourceRepository.deleteFreeResource(id);
 
         return { message: 'Resource deleted successfully' };
@@ -128,5 +151,3 @@ exports.deleteFreeResourceService = async (id) => {
         throw error;
     }
 };
-
-

@@ -42,9 +42,10 @@ const blogSchema = new mongoose.Schema(
       },
     ],
 
-    file: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "UploadedDocuments",
+    pdfUrl: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
     views: {
@@ -72,7 +73,7 @@ const blogSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
-    thumbnail: {
+    thumbnailUrl: {
       type: String,
       trim: true,
       default: "",
@@ -111,5 +112,8 @@ const blogSchema = new mongoose.Schema(
     timestamps: true, // ✅ Correct place & spelling
   }
 );
+
+blogSchema.index({ status: 1, publishDate: -1, createdAt: -1 });
+blogSchema.index({ category: 1, createdAt: -1 });
 
 module.exports = mongoose.model("PreparationBlog", blogSchema);

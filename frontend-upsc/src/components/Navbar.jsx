@@ -92,6 +92,11 @@ export default function Navbar() {
     return location.pathname === path;
   };
 
+  const isMentorshipCoursesActive = location.pathname === "/mentorship-courses";
+  const isPublicCurrentAffairsActive =
+    location.pathname === "/current-affairs" ||
+    location.pathname.startsWith("/current-affairs/");
+
   return (
     <nav className={`w-full sticky top-0 z-50 transition-all duration-300 ${
       scrolled 
@@ -120,9 +125,9 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
             <Link
-              to="/MentorshipCourses"
+              to="/mentorship-courses"
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                isActiveRoute("/MentorshipCourses")
+                isMentorshipCoursesActive
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
                     : "text-blue-700 bg-blue-50 font-semibold"
@@ -132,15 +137,15 @@ export default function Navbar() {
               }`}
             >
               Mentorship Courses
-              {isActiveRoute("/MentorshipCourses") && (
+              {isMentorshipCoursesActive && (
                 <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></span>
               )}
             </Link>
 
             <Link
-              to="/currentAffairs"
+              to="/current-affairs"
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                isActiveRoute("/currentAffairs")
+                isPublicCurrentAffairsActive
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
                     : "text-blue-700 bg-blue-50 font-semibold"
@@ -150,7 +155,7 @@ export default function Navbar() {
               }`}
             >
               Current Affairs
-              {isActiveRoute("/currentAffairs") && (
+              {isPublicCurrentAffairsActive && (
                 <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></span>
               )}
             </Link>
@@ -519,7 +524,7 @@ export default function Navbar() {
             {/* Navigation Links */}
             <div className="flex-1 p-4 space-y-2">
               <Link
-                to="/MentorshipCourses"
+                to="/mentorship-courses"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center px-4 py-3 text-base font-medium text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
               >
@@ -527,7 +532,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="/currentAffairs"
+                to="/current-affairs"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center px-4 py-3 text-base font-medium text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
               >

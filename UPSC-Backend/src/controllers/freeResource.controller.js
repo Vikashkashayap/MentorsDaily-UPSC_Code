@@ -54,13 +54,18 @@ exports.createFreeResource = async (req, res) => {
 
 exports.getAllFreeResources = async (req, res) => {
     try {
-        const { category, subcategory, subject, search } = req.query;
+        const { category, subcategory, subject, search, page, limit } = req.query;
         const filters = { category, subcategory, subject, search };
+        const listOptions = { page, limit };
 
-        const resources = await getAllFreeResourcesService(filters);
+        const result = await getAllFreeResourcesService(filters, listOptions);
         return setSuccess(res, {
             message: 'Resources fetched successfully',
-            data: resources
+            data: result.resources,
+            totalCount: result.total,
+            page: result.page,
+            limit: result.limit,
+            totalPages: result.totalPages,
         });
     } catch (err) {
         logger.error(`freeResource.controller.js << getAllFreeResources() << Error: ${err}`);

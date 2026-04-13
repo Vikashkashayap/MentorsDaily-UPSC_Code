@@ -49,7 +49,7 @@ export default function ManageFreeResources() {
   const fetchResources = async () => {
     try {
       setLoading(true);
-      const response = await getAllFreeResources();
+      const response = await getAllFreeResources({ page: 1, limit: 300 });
       // Handle different response structures
       const resourcesData = response?.data?.data || response?.data || [];
       setResources(Array.isArray(resourcesData) ? resourcesData : []);

@@ -13,28 +13,14 @@ exports.findPurchaseById = async (id) => {
 
 exports.findPurchasesByUserId = async (userId) => {
   return await CoursePurchase.find({ userId })
-    .populate('courseId', 'title description sellingPrice duration mode thumbnail')
-    .populate({
-      path: 'courseId',
-      populate: {
-        path: 'thumbnail',
-        select: '_id filename contentType'
-      }
-    })
+    .populate('courseId', 'title description sellingPrice duration mode thumbnailUrl')
     .populate('paymentId', 'orderId amount status paymentDate')
     .sort({ purchaseDate: -1 });
 };
 
 exports.findPurchasesByEmail = async (email) => {
   return await CoursePurchase.find({ 'guestInfo.email': email })
-    .populate('courseId', 'title description sellingPrice duration mode thumbnail')
-    .populate({
-      path: 'courseId',
-      populate: {
-        path: 'thumbnail',
-        select: '_id filename contentType'
-      }
-    })
+    .populate('courseId', 'title description sellingPrice duration mode thumbnailUrl')
     .populate('paymentId', 'orderId amount status paymentDate')
     .sort({ purchaseDate: -1 });
 };

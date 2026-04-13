@@ -7,6 +7,10 @@ export const getAllFreeResources = async (filters = {}) => {
     if (filters.subcategory) queryParams.append("subcategory", filters.subcategory);
     if (filters.subject) queryParams.append("subject", filters.subject);
     if (filters.search) queryParams.append("search", filters.search);
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 120;
+    if (page != null) queryParams.append("page", String(page));
+    if (limit != null) queryParams.append("limit", String(limit));
 
     const queryString = queryParams.toString();
     const endpoint = queryString

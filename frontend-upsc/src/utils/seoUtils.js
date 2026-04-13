@@ -157,18 +157,18 @@ export const PAGE_SEO_DATA = {
     keywords: 'UPSC preparation tips, study strategies, exam guidance, success tips, preparation blog',
     canonical: '/upsc-preparation-blog'
   },
-  '/currentAffairs': {
+  '/current-affairs': {
     title: 'Daily Current Affairs for UPSC Exam - Latest News | MentorsDaily',
     description: 'Comprehensive daily current affairs for UPSC 2025 preparation. Expert-curated news analysis organized by GS papers (GS1, GS2, GS3, GS4) with date-wise and paper-wise filtering. Perfect for prelims and mains exam preparation.',
     keywords: 'daily current affairs UPSC, UPSC current affairs 2025, current affairs for UPSC exam, GS paper current affairs, GS1 current affairs, GS2 current affairs, GS3 current affairs, GS4 current affairs, latest news for UPSC, current events UPSC, news analysis UPSC, civil services current affairs, IAS current affairs, UPSC preparation current affairs, daily news analysis, important current affairs, UPSC exam current affairs, prelims current affairs, mains current affairs, UPSC news today, current affairs for civil services, UPSC daily news, UPSC current affairs analysis, expert insights UPSC, current affairs syllabus, UPSC 2025 preparation, smart organization current affairs, date-wise current affairs, paper-wise current affairs, comprehensive current affairs, in-depth analysis UPSC, contemporary issues UPSC, static syllabus current affairs, history culture current affairs, geography environment current affairs, polity governance current affairs, international relations UPSC, economy development UPSC, science technology UPSC, social issues justice UPSC, ethics integrity UPSC, disaster management UPSC',
-    canonical: '/currentAffairs',
+    canonical: '/current-affairs',
     ogImage: '/images/hero.png'
   },
-  '/MentorshipCourses': {
+  '/mentorship-courses': {
     title: 'UPSC Mentorship Courses | Expert Guidance Programs | MentorsDaily',
     description: 'Comprehensive UPSC mentorship courses with expert guidance, personalized study plans, and proven strategies for success.',
     keywords: 'UPSC mentorship, expert guidance, personalized courses, study plans, success strategies',
-    canonical: '/MentorshipCourses'
+    canonical: '/mentorship-courses'
   },
   '/about-us': {
     title: 'About Us - MentorsDaily | Leading UPSC Platform',
@@ -312,8 +312,18 @@ export const BLOG_SEO_DATA = {
   }
 };
 
+/** Map legacy URLs to canonical paths for meta + JSON-LD lookups. */
+export const normalizeSeoPath = (pathname = '') => {
+  if (pathname === '/MentorshipCourses') return '/mentorship-courses';
+  if (pathname === '/currentAffairs' || pathname.startsWith('/currentAffairs/')) {
+    return pathname.replace(/^\/currentAffairs/, '/current-affairs');
+  }
+  return pathname;
+};
+
 // Function to get SEO data for a specific page
 export const getPageSEO = (pathname) => {
+  pathname = normalizeSeoPath(pathname);
   if (pathname.startsWith('/preparation-blog/')) {
     return {
       title: 'UPSC Preparation Blog | MentorsDaily',
@@ -347,7 +357,8 @@ export const getPageSEO = (pathname) => {
 // Function to generate JSON-LD structured data
 export const generateJSONLD = (pageData = {}, pathname) => {
   const baseUrl = SEO_CONFIG.siteUrl;
-  const currentUrl = `${baseUrl}${pathname}`;
+  const canonicalPath = normalizeSeoPath(pathname);
+  const currentUrl = `${baseUrl}${canonicalPath}`;
   
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -399,8 +410,8 @@ export const generateJSONLD = (pageData = {}, pathname) => {
   };
 
   // Add current page to breadcrumb
-  if (pathname !== '/') {
-    const pathSegments = pathname.split('/').filter(segment => segment);
+  if (canonicalPath !== '/') {
+    const pathSegments = canonicalPath.split('/').filter(segment => segment);
     pathSegments.forEach((segment, index) => {
       breadcrumbSchema.itemListElement.push({
         "@type": "ListItem",
@@ -413,8 +424,8 @@ export const generateJSONLD = (pageData = {}, pathname) => {
 
   const schemas = [organizationSchema, websiteSchema, breadcrumbSchema];
 
-  // Add CollectionPage schema for current affairs page
-  if (pathname === '/currentAffairs') {
+  // Add CollectionPage schema for current affairs listing only
+  if (canonicalPath === '/current-affairs') {
     const collectionPageSchema = {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
@@ -908,7 +919,8 @@ export const optimizeDescription = (description, maxLength = SEO_LENGTHS.DESCRIP
 // Function to generate meta tags
 export const generateMetaTags = (pageData, pathname) => {
   const baseUrl = SEO_CONFIG.siteUrl;
-  const currentUrl = `${baseUrl}${pathname}`;
+  const path = normalizeSeoPath(pathname);
+  const currentUrl = `${baseUrl}${path}`;
   const imageUrl = pageData.ogImage ? `${baseUrl}${pageData.ogImage}` : `${baseUrl}/images/hero.png`;
 
   // Optimize title and description lengths

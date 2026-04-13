@@ -13,7 +13,7 @@ Disallow: /dashboard
 Disallow: /admin/
 Disallow: /home
 Disallow: /ask
-Disallow: /current-affairs
+Disallow: /study/current-affairs
 Disallow: /library
 Disallow: /mcq
 Disallow: /pyqs
@@ -40,6 +40,6 @@ Allow: /download-ncerts
 Allow: /upsc-preparation-blog
 Allow: /preparation-blogs
 Allow: /preparation-blog/
-Allow: /currentAffairs
-Allow: /MentorshipCourses
+Allow: /current-affairs
+Allow: /mentorship-courses
 Allow: /blogs/

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFreeResourceById } from '../../api/freeResourceService';
+import { resolveFreeResourcePdfUrl } from '../../utils/mediaUrls';
 import { Download, ArrowLeft, FileText } from 'lucide-react';
 
 export default function FreeResourceDetail() {
@@ -28,18 +29,14 @@ export default function FreeResourceDetail() {
     }
   };
 
+  const pdfHref = resource ? resolveFreeResourcePdfUrl(resource) : null;
+
   const handleDownload = () => {
-    if (resource?.fileId?._id) {
-      const downloadUrl = `${import.meta.env.VITE_API_URL}/api/v1/download/${resource.fileId._id}`;
-      window.open(downloadUrl, '_blank');
-    }
+    if (pdfHref) window.open(pdfHref, '_blank');
   };
 
   const handleView = () => {
-    if (resource?.fileId?._id) {
-      const viewUrl = `${import.meta.env.VITE_API_URL}/api/v1/view/${resource.fileId._id}`;
-      window.open(viewUrl, '_blank');
-    }
+    if (pdfHref) window.open(pdfHref, '_blank');
   };
 
   if (loading) {

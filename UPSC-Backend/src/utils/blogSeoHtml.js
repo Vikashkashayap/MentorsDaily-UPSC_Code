@@ -84,21 +84,24 @@ function buildBlogMeta(blog, requestSlug, env = process.env, routeBase = "/prepa
 
   const defaultImage = ensureHttps(`${siteUrl}/images/default-blog.png`);
   let image = defaultImage;
+  const thumb =
+    (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+    (blog.thumbnail && String(blog.thumbnail).trim()) ||
+    "";
   if (isAbsoluteHttpUrl(blog.metaImage)) {
     image = ensureHttps(String(blog.metaImage).trim());
-  } else if (isAbsoluteHttpUrl(blog.thumbnail)) {
-    image = ensureHttps(String(blog.thumbnail).trim());
+  } else if (isAbsoluteHttpUrl(thumb)) {
+    image = ensureHttps(thumb);
   }
   const file = blog.file;
   const fileId = file && (file._id || file);
   if (
     !isAbsoluteHttpUrl(blog.metaImage) &&
-    !isAbsoluteHttpUrl(blog.thumbnail) &&
+    !isAbsoluteHttpUrl(thumb) &&
     fileId &&
     isLikelyBlogCoverImage(file) &&
     apiPublic
   ) {
-    // Use /view/ so responses are inline; link previews must fetch a real image URL on the API host.
     image = ensureHttps(`${apiPublic}/api/v1/view/${fileId}`);
   }
 

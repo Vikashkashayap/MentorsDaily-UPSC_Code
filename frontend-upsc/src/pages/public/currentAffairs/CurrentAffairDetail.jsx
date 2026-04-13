@@ -80,7 +80,7 @@ const CurrentAffairDetail = () => {
           const single = slugRes?.data?.data;
           if (single) {
             setPost(single);
-            const canonical = `/currentAffairs/${slugify(single.title)}`;
+            const canonical = `/current-affairs/${slugify(single.title)}`;
             if (location.pathname !== canonical) {
               navigate(canonical, { replace: true });
             }
@@ -93,7 +93,7 @@ const CurrentAffairDetail = () => {
           const match = all.find((a) => slugify(a.title) === slug);
           if (match) {
             setPost(match);
-            const canonical = `/currentAffairs/${slugify(match.title)}`;
+            const canonical = `/current-affairs/${slugify(match.title)}`;
             if (location.pathname !== canonical) {
               navigate(canonical, { replace: true });
             }
@@ -113,7 +113,7 @@ const CurrentAffairDetail = () => {
           const data = res?.data || null;
           setPost(data);
           if (data?.title) {
-            const canonical = `/currentAffairs/${slugify(data.title)}`;
+            const canonical = `/current-affairs/${slugify(data.title)}`;
             if (location.pathname !== canonical) {
               navigate(canonical, { replace: true });
             }
@@ -131,7 +131,7 @@ const CurrentAffairDetail = () => {
 
   const pathname = useMemo(() => {
     const s = post?.title ? slugify(post.title) : (slug || "");
-    return `/currentAffairs/${s}`;
+    return `/current-affairs/${s}`;
   }, [slug, post]);
 
   const seoData = useMemo(() => {
@@ -199,7 +199,7 @@ const CurrentAffairDetail = () => {
             {filteredAffairs.map((item) => (
               <button
                 key={item._id}
-                onClick={() => navigate(`/currentAffairs/${slugify(item.title || "")}`)}
+                onClick={() => navigate(`/current-affairs/${slugify(item.title || "")}`)}
                 className={`block w-full text-left px-3 py-2 rounded-lg text-base transition ${
                   post && post._id === item._id
                     ? "bg-blue-100 text-blue-800 font-medium"
@@ -218,7 +218,7 @@ const CurrentAffairDetail = () => {
         {/* Back button */}
         <div className="mb-3">
           <button
-            onClick={() => navigate('/currentAffairs')}
+            onClick={() => navigate('/current-affairs')}
             className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md text-sm font-semibold"
           >
             ← Back

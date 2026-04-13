@@ -24,7 +24,19 @@ connectDB();
 
 const app = express();
 
-app.use(compression());
+app.use(
+  compression({
+    level: 6,
+    threshold: 1024,
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) return false;
+      return compression.filter(req, res);
+    },
+  })
+);
+
+const { publicGetCache } = require("./src/middleware/publicGetCache.middleware.js");
+app.use(publicGetCache);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());

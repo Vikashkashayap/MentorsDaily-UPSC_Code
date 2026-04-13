@@ -299,14 +299,7 @@ exports.getAllSalesSummary = async (userId = null) => {
 
   const purchases = await CoursePurchase.find(query)
     .populate('userId', 'name email phone')
-    .populate('courseId', 'title sellingPrice thumbnail')
-    .populate({
-      path: 'courseId',
-      populate: {
-        path: 'thumbnail',
-        select: '_id filename contentType'
-      }
-    })
+    .populate('courseId', 'title sellingPrice thumbnailUrl')
     .populate('paymentId')
     .sort({ purchaseDate: -1 });
 

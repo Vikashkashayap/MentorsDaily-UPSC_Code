@@ -10,10 +10,10 @@ const freeResourceSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    fileId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'UploadedDocuments',
-        required: false
+    pdfUrl: {
+        type: String,
+        trim: true,
+        default: '',
     },
     fileSize: {
         type: String,
@@ -64,6 +64,11 @@ freeResourceSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
 });
+
+freeResourceSchema.index({ isActive: 1, createdAt: -1 });
+freeResourceSchema.index({ isActive: 1, category: 1, createdAt: -1 });
+freeResourceSchema.index({ isActive: 1, subcategory: 1, createdAt: -1 });
+freeResourceSchema.index({ isActive: 1, subject: 1, createdAt: -1 });
 
 const FreeResource = mongoose.model('FreeResource', freeResourceSchema);
 module.exports = FreeResource;
