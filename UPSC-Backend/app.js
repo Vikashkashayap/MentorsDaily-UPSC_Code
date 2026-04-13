@@ -1,7 +1,8 @@
-const express = require("express");
 const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+
+const express = require("express");
 const compression = require("compression");
-const dotenv = require("dotenv");
 const connectDB = require("./src/config/db.js");
 const userRoutes = require("./src/routes/user.routes.js");
 const courseRoute = require("./src/routes/course.routes.js");
@@ -17,8 +18,6 @@ const axios = require('axios');
 const preparationBlogRoutes = require('./src/routes/preparationBlog.routes.js')
 const previousYearPaperRoutes = require('./src/routes/previousYearPaper.routes.js')
 const { getPreparationBlogsSitemapXml } = require('./src/controllers/preparationBlog.controller.js')
-
-dotenv.config();
 
 connectDB();
 

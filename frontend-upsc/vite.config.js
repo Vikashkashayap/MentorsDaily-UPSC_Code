@@ -8,6 +8,10 @@ export default defineConfig({
     global: 'globalThis',
     'process.env': {},
   },
+  resolve: {
+    // draft-js / react-draft-wysiwyg must share the same React instance as the app
+    dedupe: ['react', 'react-dom'],
+  },
   optimizeDeps: {
     include: ['react-draft-wysiwyg', 'draft-js'],
     esbuildOptions: {
@@ -28,9 +32,18 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
+            // Keep draft-js + wysiwyg in the same chunk as React. Splitting them into
+            // vendor-editor creates a circular chunk graph (react chunk ↔ editor chunk)
+            // and runtime "Cannot set properties of undefined (setting 'Children')".
+            if (
+              id.includes('react-dom') ||
+              id.includes('/react/') ||
+              id.includes('draft-js') ||
+              id.includes('react-draft-wysiwyg')
+            ) {
+              return 'vendor-react';
+            }
             if (id.includes('react-router')) return 'vendor-router';
-            if (id.includes('draft-js') || id.includes('react-draft-wysiwyg')) return 'vendor-editor';
             if (id.includes('lucide-react')) return 'vendor-icons';
           }
           return undefined;

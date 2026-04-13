@@ -20,11 +20,28 @@ function getRegion() {
   return String(r).trim();
 }
 
+/** Prefer explicit env keys when set; otherwise use default chain (EC2 instance profile, etc.). */
+function s3ClientConfig() {
+  const region = getRegion();
+  const accessKeyId = String(process.env.AWS_ACCESS_KEY_ID || "").trim();
+  const secretAccessKey = String(process.env.AWS_SECRET_ACCESS_KEY || "").trim();
+  const sessionToken = String(process.env.AWS_SESSION_TOKEN || "").trim();
+  if (accessKeyId && secretAccessKey) {
+    return {
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+        ...(sessionToken ? { sessionToken } : {}),
+      },
+    };
+  }
+  return { region };
+}
+
 function getS3Client() {
   if (!_client) {
-    _client = new S3Client({
-      region: getRegion(),
-    });
+    _client = new S3Client(s3ClientConfig());
   }
   return _client;
 }
