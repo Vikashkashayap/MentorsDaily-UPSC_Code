@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
-import OptimizedImage from "./utility/OptimizedImage";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -17,11 +16,7 @@ export default function Navbar() {
   const [logoUnavailable, setLogoUnavailable] = useState(false);
   const closeTimeout = useRef(null);
   const mentorshipCloseTimeout = useRef(null);
-  const logoSources = [
-    "/Logo/logo.png",
-    "/logo.png",
-    "https://mentorsdaily.com/Logo/logo.png",
-  ];
+  const logoSources = ["/Logo/logo.png", "https://mentorsdaily.com/Logo/logo.png"];
   const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
 
   useEffect(() => {
@@ -130,7 +125,7 @@ export default function Navbar() {
             {logoUnavailable ? (
               <span className="text-xl font-bold text-blue-700 tracking-tight">MentorsDaily</span>
             ) : (
-              <OptimizedImage
+              <img
                 src={activeLogoSrc}
                 alt="MentorsDaily Logo"
                 className="h-10 w-auto transition-transform duration-300 hover:scale-105"
@@ -526,7 +521,7 @@ export default function Navbar() {
                 {logoUnavailable ? (
                   <span className="text-lg font-bold text-blue-700 tracking-tight">MentorsDaily</span>
                 ) : (
-                  <OptimizedImage
+                  <img
                     src={activeLogoSrc}
                     alt="MentorsDaily Logo"
                     className="h-8 w-auto"
