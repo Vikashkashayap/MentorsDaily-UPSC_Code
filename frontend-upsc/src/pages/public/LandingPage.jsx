@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { getCourses } from "../../api/coreService";
 import HeroSection from "./components/HeroSection";
 const WhyMentorsDaily = lazy(() => import("./utils/WhyMentorsDaily.jsx"));
@@ -15,6 +16,9 @@ import MentorshipBanner from "../../components/MentorshipBanner";
 // import AIStudentDashboardBanner from "../../components/AIStudentDashboardBanner";
 import ContactForm from "../../pages/public/components/Form.jsx";
 import DeferredSection from "../../components/utility/DeferredSection.jsx";
+import { SEO_CONFIG } from "../../utils/seoUtils";
+
+const DISPLAY_COURSES_LIMIT = 20;
 
 const EnhancedHorizontalCourseScroller = ({
   courses,
@@ -147,6 +151,7 @@ const EnhancedHorizontalCourseScroller = ({
         {/* Left scroll button */}
         <button
           onClick={() => handleScrollButtonClick("left")}
+          aria-label="Scroll courses left"
           className="p-3 rounded-full bg-white shadow-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 transform hover:scale-110"
         >
           <svg
@@ -191,6 +196,7 @@ const EnhancedHorizontalCourseScroller = ({
         {/* Right scroll button */}
         <button
           onClick={() => handleScrollButtonClick("right")}
+          aria-label="Scroll courses right"
           className="p-3 rounded-full bg-white shadow-md text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 transform hover:scale-110"
         >
           <svg
@@ -216,6 +222,7 @@ const EnhancedHorizontalCourseScroller = ({
         }).map((_, index) => (
           <button
             key={index}
+            aria-label={`Go to course slide group ${index + 1}`}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${index === Math.floor(currentIndex / getVisibleCards())
               ? "bg-blue-600 scale-125"
               : "bg-gray-300 hover:bg-blue-400"
@@ -270,7 +277,8 @@ const MobileCourseCarousel = ({ courses, onEnrollClick }) => {
 
     // Otherwise, use default routing
     const courseSlug = generateSlug(course.title);
-    const url = `/courses/${course._id}/${courseSlug}`;
+    const categorySlug = course.category ? generateSlug(course.category) : "course";
+    const url = `/course/${categorySlug}/${courseSlug}`;
     navigate(url);
   };
 
@@ -291,6 +299,7 @@ const MobileCourseCarousel = ({ courses, onEnrollClick }) => {
       {/* Navigation buttons */}
       <button
         onClick={prevSlide}
+        aria-label="Previous course slide"
         className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-blue-600 transition-all duration-300"
       >
         <svg
@@ -310,6 +319,7 @@ const MobileCourseCarousel = ({ courses, onEnrollClick }) => {
 
       <button
         onClick={nextSlide}
+        aria-label="Next course slide"
         className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-blue-600 transition-all duration-300"
       >
         <svg
@@ -357,6 +367,7 @@ const MobileCourseCarousel = ({ courses, onEnrollClick }) => {
         {courses.map((_, index) => (
           <button
             key={index}
+            aria-label={`Go to course slide ${index + 1}`}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentIndex
               ? "bg-blue-600 scale-125"
               : "bg-gray-300 hover:bg-blue-400"
@@ -377,6 +388,9 @@ const LandingPage = () => {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
   const navigate = useNavigate();
+  const baseUrl = SEO_CONFIG.siteUrl || "https://mentorsdaily.com";
+  const homepageUrl = `${baseUrl}/`;
+  const topCourses = courses.slice(0, DISPLAY_COURSES_LIMIT);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -414,11 +428,82 @@ const LandingPage = () => {
   };
 
   const handleViewAllCourses = () => {
-    document.getElementById("courses").scrollIntoView({ behavior: "smooth" });
+    navigate("/mentorship-courses");
+  };
+
+  const landingFaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What does MentorsDaily offer for UPSC preparation?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "MentorsDaily offers structured UPSC mentorship, current affairs support, answer writing evaluation, tests, and personalized guidance for Prelims, Mains, and Interview preparation.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Are MentorsDaily courses suitable for beginners and repeat aspirants?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. MentorsDaily courses are designed for beginners, working professionals, and repeat aspirants with guided timelines, mentor feedback, and flexible learning support.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How can I start with MentorsDaily?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "You can explore featured courses on the landing page, review program details, and enroll directly through the course cards or enquiry options.",
+        },
+      },
+    ],
+  };
+
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Featured UPSC Mentorship Courses",
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: topCourses.length,
+    itemListElement: topCourses.map((course, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: course.title || "UPSC Course",
+      description: course.description || "UPSC mentorship and preparation course",
+      url: homepageUrl,
+    })),
   };
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <meta
+          name="description"
+          content="MentorsDaily helps UPSC aspirants with expert mentorship, structured preparation, current affairs support, and focused learning for Prelims, Mains, and Interview."
+        />
+        <meta
+          name="keywords"
+          content="UPSC mentorship, UPSC preparation, IAS coaching, civil services courses, UPSC current affairs, answer writing"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="MentorsDaily - UPSC Preparation with Expert Mentorship" />
+        <meta
+          property="og:description"
+          content="Explore UPSC mentorship programs, featured courses, and result-driven preparation support from MentorsDaily."
+        />
+        <meta property="og:url" content={homepageUrl} />
+        <script type="application/ld+json">
+          {JSON.stringify(landingFaqSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(itemListSchema)}
+        </script>
+      </Helmet>
+
+      <main id="landing-page-content">
       {/* Diwali Offer Banner */}
       {/* <DiwaliOfferBanner /> */}
 
@@ -442,20 +527,25 @@ const LandingPage = () => {
 
         <section
           id="courses"
+          aria-labelledby="featured-courses-heading"
           className="w-full py-12 md:py-20 relative bg-gray-50"
         >
           <div className="max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-16 relative">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+              <h2
+                id="featured-courses-heading"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+              >
                 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   Featured Courses
                 </span>
               </h2>
               <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto rounded-full mb-4 md:mb-6"></div>
-              {/* <p className="mt-4 md:mt-6 text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-4">
-                Comprehensive courses designed by experts to help you excel in
-                your UPSC preparation journey
-              </p> */}
+              <p className="mt-4 md:mt-6 text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-4">
+                Explore high-impact UPSC mentorship programs curated for every
+                stage of your preparation journey, from foundation building to
+                final interview readiness.
+              </p>
             </div>
 
             {loading ? (
@@ -521,10 +611,10 @@ const LandingPage = () => {
                 {/* Mobile View - Carousel */}
                 <div className="block lg:hidden">
                   <MobileCourseCarousel
-                    courses={courses.slice(0, 20)}
+                    courses={topCourses}
                     onEnrollClick={handleEnrollClick}
                   />
-                  {courses.length > 20 && (
+                  {courses.length > DISPLAY_COURSES_LIMIT && (
                     <div className="text-center mt-6">
                       <button
                         onClick={handleViewAllCourses}
@@ -539,7 +629,7 @@ const LandingPage = () => {
                 {/* Desktop View - Enhanced Horizontal Scroller */}
                 <div className="hidden lg:block">
                   <EnhancedHorizontalCourseScroller
-                    courses={courses.slice(0, 20)}
+                    courses={topCourses}
                     onEnrollClick={handleEnrollClick}
                     title={null}
                   />
@@ -575,6 +665,7 @@ const LandingPage = () => {
           </Suspense>
         </DeferredSection>
       </div>
+      </main>
 
       {showPaymentForm && selectedCourse && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

@@ -13,8 +13,16 @@ export default function Navbar() {
   const [mentorshipOpen, setMentorshipOpen] = useState(false);
   const [mobileMentorshipOpen, setMobileMentorshipOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [logoSourceIndex, setLogoSourceIndex] = useState(0);
+  const [logoUnavailable, setLogoUnavailable] = useState(false);
   const closeTimeout = useRef(null);
   const mentorshipCloseTimeout = useRef(null);
+  const logoSources = [
+    "/Logo/logo.png",
+    "/logo.png",
+    "https://mentorsdaily.com/Logo/logo.png",
+  ];
+  const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -97,6 +105,14 @@ export default function Navbar() {
     location.pathname === "/current-affairs" ||
     location.pathname.startsWith("/current-affairs/");
 
+  const handleLogoError = () => {
+    setLogoSourceIndex((prev) => {
+      if (prev < logoSources.length - 1) return prev + 1;
+      setLogoUnavailable(true);
+      return prev;
+    });
+  };
+
   return (
     <nav className={`w-full sticky top-0 z-50 transition-all duration-300 ${
       scrolled 
@@ -111,15 +127,20 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center flex-shrink-0 z-50">
-            <OptimizedImage
-              src="/Logo/logo.png"
-              alt="MentorsDaily Logo"
-              className="h-10 w-auto transition-transform duration-300 hover:scale-105"
-              width={160}
-              height={40}
-              loading="eager"
-              fetchPriority="high"
-            />
+            {logoUnavailable ? (
+              <span className="text-xl font-bold text-blue-700 tracking-tight">MentorsDaily</span>
+            ) : (
+              <OptimizedImage
+                src={activeLogoSrc}
+                alt="MentorsDaily Logo"
+                className="h-10 w-auto transition-transform duration-300 hover:scale-105"
+                width={160}
+                height={40}
+                loading="eager"
+                fetchPriority="high"
+                onError={handleLogoError}
+              />
+            )}
           </Link>
 
           {/* Desktop Navigation */}
@@ -136,7 +157,7 @@ export default function Navbar() {
                     : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
-              Mentorship Courses
+              UPSC Mentorship Courses
               {isMentorshipCoursesActive && (
                 <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></span>
               )}
@@ -502,14 +523,19 @@ export default function Navbar() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <Link to="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
-                <OptimizedImage
-                  src="/Logo/logo.png"
-                  alt="MentorsDaily Logo"
-                  className="h-8 w-auto"
-                  width={128}
-                  height={32}
-                  loading="eager"
-                />
+                {logoUnavailable ? (
+                  <span className="text-lg font-bold text-blue-700 tracking-tight">MentorsDaily</span>
+                ) : (
+                  <OptimizedImage
+                    src={activeLogoSrc}
+                    alt="MentorsDaily Logo"
+                    className="h-8 w-auto"
+                    width={128}
+                    height={32}
+                    loading="eager"
+                    onError={handleLogoError}
+                  />
+                )}
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}
@@ -625,7 +651,7 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center px-4 py-3 text-base font-medium leading-snug text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md"
               >
-                🚀 UPPCS Mentorship 2025
+                🚀 UPPCS 2026 Programme
               </Link>
               <a
                 href="https://studentportal.mentorsdaily.com"

@@ -57,6 +57,10 @@ const CourseCard = ({
     thumbnailUrl ?? course.thumbnailUrl ?? thumbnail ?? course.thumbnail;
   const displayThumbnailUrl = resolveLegacyUploadThumb(rawThumb);
 
+  useEffect(() => {
+    setImageError(false);
+  }, [displayThumbnailUrl]);
+
   const {
     basePrice = 0,
     discountPercentage = 0,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { formatDate, formatRelativeTime } from "../utils/dateUtils";
 import { resolveCourseThumbnailUrl } from "../utils/mediaUrls";
@@ -34,6 +34,10 @@ const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }
   };
 
   const thumbnailUrl = resolveCourseThumbnailUrl(item);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [thumbnailUrl]);
   return (
     <div className={`group relative p-2 rounded-xl border-2 ${isDark ? 'border-gray-600 bg-gray-800' : 'border-blue-200 bg-white'} shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ${className}`}>
       {/* Category Ribbon */}

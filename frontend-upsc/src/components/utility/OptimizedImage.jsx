@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 /**
  * OptimizedImage Component for better SEO and mobile performance
@@ -28,6 +28,13 @@ const OptimizedImage = ({
 }) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const sourceKey = useMemo(() => `${String(src || "")}|${String(webpSrc || "")}`, [src, webpSrc]);
+
+  useEffect(() => {
+    // Reset local image state whenever source changes (e.g., after async API data arrives).
+    setImageError(false);
+    setIsLoading(Boolean(src || webpSrc));
+  }, [sourceKey, src, webpSrc]);
 
   const handleError = (e) => {
     setImageError(true);
@@ -63,9 +70,10 @@ const OptimizedImage = ({
       <picture>
         {webpSrc ? <source srcSet={webpSrc} type="image/webp" /> : null}
         <img
+          key={sourceKey}
           src={src}
           alt={alt || ''}
-          className={`${isLoading ? 'hidden' : ''} ${className}`}
+          className={`${className} transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           loading={loading}
           decoding={decoding}
           width={width}

@@ -61,6 +61,24 @@ function resolveImpFullPayAmountBySlug(slug) {
     return daily != null ? daily : null;
 }
 
+/** UPPCS 2026 landing checkout amounts (override DB sellingPrice when slug matches). */
+const UPPCS_CHECKOUT_AMOUNT_BY_SLUG = {
+    'uppcs-2026-complete': 30000,
+    'uppcs-2026-prelims-booster': 15000,
+    'uppcs-2026-upsc-combo': 45000,
+    'uppcs-2026-mains-booster': 20000,
+};
+
+function resolveUppcsFullPayAmountBySlug(slug) {
+    const s = String(slug || '').toLowerCase().trim();
+    const n = UPPCS_CHECKOUT_AMOUNT_BY_SLUG[s];
+    return n != null ? n : null;
+}
+
+function resolveFullPayAmountBySlug(slug) {
+    return resolveImpFullPayAmountBySlug(slug) ?? resolveUppcsFullPayAmountBySlug(slug);
+}
+
 function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
     const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
     const ps = dp && dp.pricingSection ? dp.pricingSection : null;
@@ -93,6 +111,7 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
  * Resolve Mongo course for checkout: prefer valid courseId, else findCourseBySlug (same as GET /course/slug — includes COURSE_ID_BY_SLUG fallback).
  */
 const IMP_SLUG_RE = /^integrated-mentorship-20\d{2}$/i;
+const UPPCS_SLUG_RE = /^uppcs-2026-/i;
 
 async function resolveCourseForPayment(courseId, courseSlug) {
     const idStr = courseId != null ? String(courseId).trim() : '';
@@ -114,6 +133,16 @@ async function resolveCourseForPayment(courseId, courseSlug) {
                     `paymentService.js <<resolveCourseForPayment>> slug=${slug} → PAYMENT_FALLBACK_COURSE_OBJECT_ID=${fb}`
                 );
                 return { course: byFb, resolvedCourseId: String(byFb._id) };
+            }
+        }
+        const uppcsFb = process.env.UPPCS_PAYMENT_FALLBACK_COURSE_OBJECT_ID?.trim();
+        if (uppcsFb && mongoose.Types.ObjectId.isValid(uppcsFb) && UPPCS_SLUG_RE.test(slug)) {
+            const byUppcs = await courseService.findCourseById(uppcsFb);
+            if (byUppcs && byUppcs._id) {
+                logger.info(
+                    `paymentService.js <<resolveCourseForPayment>> slug=${slug} → UPPCS_PAYMENT_FALLBACK_COURSE_OBJECT_ID=${uppcsFb}`
+                );
+                return { course: byUppcs, resolvedCourseId: String(byUppcs._id) };
             }
         }
     }
@@ -144,7 +173,7 @@ exports.initiateCoursePayment = async (data) => {
         : null;
     const fromSlugFull =
       !mentorshipPlan && courseSlug != null && String(courseSlug).trim()
-        ? resolveImpFullPayAmountBySlug(courseSlug)
+        ? resolveFullPayAmountBySlug(courseSlug)
         : null;
     const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
     const totalCourseAmount =

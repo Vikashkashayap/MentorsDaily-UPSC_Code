@@ -25,9 +25,20 @@ export function getPaymentCourseId(course) {
     "integrated-mentorship-2028": import.meta.env.VITE_IMP_2028_COURSE_ID,
     "integrated-mentorship-2029": import.meta.env.VITE_IMP_2029_COURSE_ID,
     "integrated-mentorship-2030": import.meta.env.VITE_IMP_2030_COURSE_ID,
+    "uppcs-2026-complete": import.meta.env.VITE_UPPCS_2026_COMPLETE_COURSE_ID,
+    "uppcs-2026-prelims-booster": import.meta.env.VITE_UPPCS_2026_PRELIMS_COURSE_ID,
+    "uppcs-2026-upsc-combo": import.meta.env.VITE_UPPCS_2026_COMBO_COURSE_ID,
+    "uppcs-2026-mains-booster": import.meta.env.VITE_UPPCS_2026_MAINS_COURSE_ID,
   };
   const fromSlug = bySlug[slug];
   if (typeof fromSlug === "string" && fromSlug.trim()) return fromSlug.trim();
+  if (
+    /^uppcs-2026-/.test(slug) &&
+    typeof import.meta.env.VITE_UPPCS_PAYMENT_COURSE_ID === "string" &&
+    import.meta.env.VITE_UPPCS_PAYMENT_COURSE_ID.trim()
+  ) {
+    return import.meta.env.VITE_UPPCS_PAYMENT_COURSE_ID.trim();
+  }
   const fallback = import.meta.env.VITE_PAYMENT_FALLBACK_COURSE_ID;
   if (typeof fallback === "string" && fallback.trim()) return fallback.trim();
   return null;

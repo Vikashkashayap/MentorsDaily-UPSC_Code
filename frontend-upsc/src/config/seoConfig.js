@@ -94,9 +94,9 @@ export const PAGE_SEO_CONFIGS = {
   
   // Mentorship Programs
   '/uppcs-mentorship': {
-    title: 'UPPCS Mentorship 2025 | State PCS Preparation | MentorsDaily',
-    description: 'Comprehensive UPPCS preparation program for 2025 with expert mentorship, study materials, and personalized guidance for state civil services.',
-    keywords: 'UPPCS 2025, state PCS preparation, UPPSC mentorship, state civil services, PCS coaching',
+    title: 'UPPCS 2026 Programme | MentorsDaily',
+    description: 'Structured UPPCS 2026 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    keywords: 'UPPCS 2026, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     priority: 0.9,
     changefreq: 'weekly'
   },
