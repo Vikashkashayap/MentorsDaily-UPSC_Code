@@ -44,7 +44,7 @@ export function getDefaultImp2027DetailPage() {
     },
     announcement: {
       strong: "🎉 Early Bird:",
-      text: "Enroll now and save ₹30,000 — only limited seats available in this batch.",
+      text: "Enroll now and save ₹48,000 — only limited seats available in this batch.",
       ctaText: "Grab Your Seat →",
       ctaHref: "#enroll",
     },

@@ -921,7 +921,14 @@ export const generateMetaTags = (pageData, pathname) => {
   const baseUrl = SEO_CONFIG.siteUrl;
   const path = normalizeSeoPath(pathname);
   const currentUrl = `${baseUrl}${path}`;
-  const imageUrl = pageData.ogImage ? `${baseUrl}${pageData.ogImage}` : `${baseUrl}/images/hero.png`;
+  const imageUrl = (() => {
+    const raw = String(pageData.ogImage || "").trim();
+    if (!raw) return `${baseUrl}/images/hero.png`;
+    if (/^https?:\/\//i.test(raw)) return raw.replace(/^http:\/\//i, "https://");
+    if (raw.startsWith("//")) return `https:${raw}`;
+    if (raw.startsWith("/")) return `${baseUrl}${raw}`;
+    return `${baseUrl}/${raw.replace(/^\/+/, "")}`;
+  })();
 
   // Optimize title and description lengths
   const optimizedTitle = optimizeTitle(pageData.title, SEO_LENGTHS.TITLE_MAX);

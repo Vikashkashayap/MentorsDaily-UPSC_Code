@@ -18,6 +18,53 @@ export default function Navbar() {
   const mentorshipCloseTimeout = useRef(null);
   const logoSources = ["/Logo/logo.png", "https://mentorsdaily.com/Logo/logo.png"];
   const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
+  const mentorshipYearItems = [
+    {
+      path: "/integrated-mentorship-2026",
+      label: "Integrated Mentorship 2026",
+      timeline: "18M",
+      dotClass: "bg-blue-500",
+      hoverClass: "hover:bg-blue-50 hover:text-blue-700",
+      badgeClass: "bg-blue-100 text-blue-700",
+      mobileAccentClass: "bg-blue-50 border-blue-100",
+    },
+    {
+      path: "/integrated-mentorship-2027",
+      label: "Integrated Mentorship 2027",
+      timeline: "30M",
+      dotClass: "bg-emerald-500",
+      hoverClass: "hover:bg-emerald-50 hover:text-emerald-700",
+      badgeClass: "bg-emerald-100 text-emerald-700",
+      mobileAccentClass: "bg-emerald-50 border-emerald-100",
+    },
+    {
+      path: "/integrated-mentorship-2028",
+      label: "Integrated Mentorship 2028",
+      timeline: "42M",
+      dotClass: "bg-violet-500",
+      hoverClass: "hover:bg-violet-50 hover:text-violet-700",
+      badgeClass: "bg-violet-100 text-violet-700",
+      mobileAccentClass: "bg-violet-50 border-violet-100",
+    },
+    {
+      path: "/integrated-mentorship-2029",
+      label: "Integrated Mentorship 2029",
+      timeline: "54M",
+      dotClass: "bg-amber-500",
+      hoverClass: "hover:bg-amber-50 hover:text-amber-700",
+      badgeClass: "bg-amber-100 text-amber-700",
+      mobileAccentClass: "bg-amber-50 border-amber-100",
+    },
+    {
+      path: "/integrated-mentorship-2030",
+      label: "Integrated Mentorship 2030",
+      timeline: "66M",
+      dotClass: "bg-cyan-500",
+      hoverClass: "hover:bg-cyan-50 hover:text-cyan-700",
+      badgeClass: "bg-cyan-100 text-cyan-700",
+      mobileAccentClass: "bg-cyan-50 border-cyan-100",
+    },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -335,41 +382,23 @@ export default function Navbar() {
                   onMouseEnter={handleMentorshipEnter}
                   onMouseLeave={handleMentorshipLeave}
                 >
-                  <Link
-                    to="/integrated-mentorship-2026"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-                  >
-                    <span className="w-2 h-2 bg-blue-400 rounded-full mr-3 group-hover:bg-blue-600 transition-colors"></span>
-                    Integrated Mentorship 2026
-                  </Link>
-                  <Link
-                    to="/integrated-mentorship-2027"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-                  >
-                    <span className="w-2 h-2 bg-green-400 rounded-full mr-3 group-hover:bg-blue-600 transition-colors"></span>
-                    Integrated Mentorship 2027
-                  </Link>
-                  <Link
-                    to="/integrated-mentorship-2028"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-                  >
-                    <span className="w-2 h-2 bg-purple-400 rounded-full mr-3 group-hover:bg-blue-600 transition-colors"></span>
-                    Integrated Mentorship 2028
-                  </Link>
-                  <Link
-                    to="/integrated-mentorship-2029"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-                  >
-                    <span className="w-2 h-2 bg-orange-400 rounded-full mr-3 group-hover:bg-blue-600 transition-colors"></span>
-                    Integrated Mentorship 2029
-                  </Link>
-                  <Link
-                    to="/integrated-mentorship-2030"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-                  >
-                    <span className="w-2 h-2 bg-teal-400 rounded-full mr-3 group-hover:bg-blue-600 transition-colors"></span>
-                    Integrated Mentorship 2030
-                  </Link>
+                  {mentorshipYearItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center justify-between px-4 py-3 text-sm rounded-lg transition-all duration-200 group ${
+                        isDark
+                          ? "text-gray-200 hover:bg-gray-700 hover:text-white"
+                          : `text-gray-700 ${item.hoverClass}`
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
+                        {item.label}
+                      </span>
+                      
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
@@ -621,20 +650,20 @@ export default function Navbar() {
                 </button>
                 {mobileMentorshipOpen && (
                   <div className="ml-4 mt-1 space-y-1 bg-gray-50 rounded-lg p-2">
-                    {[
-                      { path: "/integrated-mentorship-2026", label: "Integrated Mentorship 2026" },
-                      { path: "/integrated-mentorship-2027", label: "Integrated Mentorship 2027" },
-                      { path: "/integrated-mentorship-2028", label: "Integrated Mentorship 2028" },
-                      { path: "/integrated-mentorship-2029", label: "Integrated Mentorship 2029" },
-                      { path: "/integrated-mentorship-2030", label: "Integrated Mentorship 2030" }
-                    ].map((item) => (
+                    {mentorshipYearItems.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
                         onClick={() => setMobileOpen(false)}
-                        className="block px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-200"
+                        className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
                       >
-                        {item.label}
+                        <span className="flex items-center">
+                          <span className={`w-2 h-2 rounded-full mr-2.5 ${item.dotClass}`}></span>
+                          {item.label}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}>
+                          {item.timeline}
+                        </span>
                       </Link>
                     ))}
                   </div>

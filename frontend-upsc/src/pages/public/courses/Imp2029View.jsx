@@ -36,7 +36,7 @@ function renderHeroTitleLine(line, i) {
   if (line.fragment) {
     return (
       <span key={i} className="block">
-        <span className="text-[#E86B2A]">{line.accentText}</span>
+        <span className="text-[#34D399]">{line.accentText}</span>
         {line.after}
       </span>
     );
@@ -46,7 +46,7 @@ function renderHeroTitleLine(line, i) {
     a === true || a === "orange" || a === "purple" || a === "gold" || a === "sky";
   return (
     <span key={i} className="block">
-      {accented ? <span className="text-[#E86B2A]">{line.text}</span> : line.text}
+      {accented ? <span className="text-[#34D399]">{line.text}</span> : line.text}
     </span>
   );
 }
@@ -161,11 +161,11 @@ export default function Imp2029View({
   return (
     <div className="imp2027-root bg-white overflow-x-hidden pb-24 md:pb-0">
       {/* Announcement */}
-      <div className="bg-[#0D2240] text-[#D5E8F0] text-center py-2 px-6 text-sm font-medium">
-        <strong className="text-[#E86B2A]">{d.announcement.strong}</strong> {d.announcement.text}{" "}
+      <div className="bg-[#064E3B] text-[#D1FAE5] text-center py-2 px-6 text-sm font-medium">
+        <strong className="text-[#34D399]">{d.announcement.strong}</strong> {d.announcement.text}{" "}
         <button
           type="button"
-          className="text-[#E86B2A] font-bold ml-3 bg-transparent border-0 cursor-pointer p-0 font-inherit underline-offset-2 hover:underline"
+          className="text-[#34D399] font-bold ml-3 bg-transparent border-0 cursor-pointer p-0 font-inherit underline-offset-2 hover:underline"
           onClick={() => onEnroll?.("daily")}
         >
           {d.announcement.ctaText}
@@ -173,11 +173,11 @@ export default function Imp2029View({
       </div>
 
       {/* Hero — site Navbar + Footer come from PublicLayout */}
-      <section className="relative bg-gradient-to-br from-[#0D2240] via-[#1A3C6E] to-[#1e4d82] pt-16 pb-14 overflow-hidden" id="top">
-        <div className="pointer-events-none absolute -top-[120px] -right-[120px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(232,107,42,0.12)_0%,transparent_70%)]" />
+      <section className="relative bg-gradient-to-br from-[#064E3B] via-[#065F46] to-[#0F766E] pt-16 pb-14 overflow-hidden" id="top">
+        <div className="pointer-events-none absolute -top-[120px] -right-[120px] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(52,211,153,0.2)_0%,transparent_70%)]" />
         <div className="max-w-[1180px] mx-auto px-6 grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-16 items-center">
           <div>
-            <div className="imp-fade-up inline-flex items-center gap-1.5 bg-[rgba(232,107,42,0.18)] border border-[rgba(232,107,42,0.4)] text-[#E86B2A] text-[0.82rem] font-bold px-3.5 py-1.5 rounded-full mb-5">
+            <div className="imp-fade-up inline-flex items-center gap-1.5 bg-[rgba(52,211,153,0.2)] border border-[rgba(52,211,153,0.45)] text-[#34D399] text-[0.82rem] font-bold px-3.5 py-1.5 rounded-full mb-5">
               <DynIcon name={d.hero.badgeIcon || "Star"} size={12} /> {d.hero.badge}
             </div>
             <h1 className="imp-fade-up delay-1 font-['Poppins'] font-black text-[clamp(1.9rem,4vw,2.9rem)] text-white leading-[1.18] mb-4">
@@ -193,7 +193,7 @@ export default function Imp2029View({
                   key={i}
                   className="flex items-center gap-1.5 bg-white/8 border border-white/14 px-3.5 py-1.5 rounded-full text-sm text-[#D5E8F0]"
                 >
-                  <DynIcon name="CheckCircle" className="text-[#E86B2A] w-3.5 h-3.5" />
+                  <DynIcon name="CheckCircle" className="text-[#34D399] w-3.5 h-3.5" />
                   {p}
                 </div>
               ))}
@@ -202,7 +202,7 @@ export default function Imp2029View({
               <button
                 type="button"
                 onClick={() => onEnroll?.("daily")}
-                className="inline-flex items-center gap-2 bg-[#E86B2A] text-white font-['Poppins'] font-bold px-8 py-3.5 rounded-lg shadow-[0_4px_16px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e] transition-colors duration-200"
+                className="inline-flex items-center gap-2 bg-[#10B981] text-white font-['Poppins'] font-bold px-8 py-3.5 rounded-lg shadow-[0_4px_16px_rgba(16,185,129,0.35)] hover:bg-[#059669] transition-colors duration-200"
               >
                 Enroll Now — {heroPrice} <DynIcon name="ArrowRight" size={18} />
               </button>
@@ -228,8 +228,8 @@ export default function Imp2029View({
           </div>
 
           <div className="imp-fade-up delay-2 bg-white rounded-[20px] shadow-[0_24px_80px_rgba(0,0,0,0.28)] overflow-hidden" id="enroll">
-            <div className="bg-gradient-to-br from-[#1A3C6E] to-[#24527A] px-6 py-6 text-center">
-              <div className="w-16 h-16 rounded-[14px] bg-[#E86B2A] mx-auto mb-3 flex items-center justify-center text-white text-3xl shadow-[0_8px_20px_rgba(232,107,42,0.4)]">
+            <div className="bg-gradient-to-br from-[#065F46] to-[#0F766E] px-6 py-6 text-center">
+              <div className="w-16 h-16 rounded-[14px] bg-[#10B981] mx-auto mb-3 flex items-center justify-center text-white text-3xl shadow-[0_8px_20px_rgba(16,185,129,0.4)]">
                 <DynIcon name="GraduationCap" size={32} />
               </div>
               <h3 className="text-white text-[1.05rem] font-bold mb-1">{d.hero.cardTitle}</h3>
@@ -259,7 +259,7 @@ export default function Imp2029View({
               <button
                 type="button"
                 onClick={() => onEnroll?.("daily")}
-                className="block w-full text-center bg-[#E86B2A] text-white font-['Poppins'] font-bold py-4 rounded-[10px] shadow-[0_4px_14px_rgba(232,107,42,0.35)] hover:bg-[#d05a1e] transition-colors duration-200"
+                className="block w-full text-center bg-[#10B981] text-white font-['Poppins'] font-bold py-4 rounded-[10px] shadow-[0_4px_14px_rgba(16,185,129,0.35)] hover:bg-[#059669] transition-colors duration-200"
               >
                 {d.hero.enrollCta}
               </button>
@@ -279,11 +279,11 @@ export default function Imp2029View({
       </section>
 
       {/* Trust bar */}
-      <div className="bg-[#1A3C6E] py-5">
+      <div className="bg-[#065F46] py-5">
         <div className="max-w-[1180px] mx-auto px-6 flex flex-wrap justify-around gap-5 items-center">
           {d.trustBar.map((t, i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-[10px] bg-white/10 flex items-center justify-center text-[#E86B2A]">
+              <div className="w-11 h-11 rounded-[10px] bg-white/10 flex items-center justify-center text-[#34D399]">
                 <DynIcon name={t.icon} size={20} />
               </div>
               <div>
@@ -297,10 +297,10 @@ export default function Imp2029View({
       </div>
 
       {/* Pricing */}
-      <section className="bg-[#0D2240] py-20" id="pricing">
+      <section className="bg-[#064E3B] py-20" id="pricing">
         <div className="max-w-[1180px] mx-auto px-6">
           <div className="text-center mb-3">
-            <span className="inline-block bg-[#FDE8D8] text-[#E86B2A] text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3.5">
+            <span className="inline-block bg-[#D1FAE5] text-[#047857] text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full mb-3.5">
               {d.pricingSection.tag}
             </span>
             <h2 className="font-['Poppins'] font-extrabold text-[clamp(1.6rem,3vw,2.1rem)] text-white leading-tight whitespace-pre-line">
@@ -309,7 +309,7 @@ export default function Imp2029View({
             <p className="text-[#D5E8F0] mt-3 max-w-xl mx-auto leading-relaxed">{d.pricingSection.sub}</p>
           </div>
           <p className="text-center text-sm text-white/45 mb-12">
-            Scroll down for a <strong className="text-[#E86B2A]">feature-by-feature comparison</strong> table ↓
+            Scroll down for a <strong className="text-[#34D399]">feature-by-feature comparison</strong> table ↓
           </p>
 
           <div className="grid md:grid-cols-2 gap-7 mb-12 items-stretch">

@@ -30,65 +30,36 @@ function escapeAttr(s) {
     .replace(/>/g, '&gt;');
 }
 
-export default async function middleware(request) {
-  const ua = request.headers.get('user-agent') || '';
-  if (!BOT_UA.test(ua)) {
-    return next();
-  }
+function normalizeToHttps(url, fallback) {
+  const raw = String(url || '').trim();
+  if (!raw) return fallback;
+  if (/^http:\/\//i.test(raw)) return `https://${raw.slice(7)}`;
+  if (/^https:\/\//i.test(raw)) return raw;
+  if (raw.startsWith('//')) return `https:${raw}`;
+  if (raw.startsWith('/')) return `${SITE_URL}${raw}`;
+  return `${SITE_URL}/${raw.replace(/^\/+/, '')}`;
+}
 
-  const url = new URL(request.url);
-  const match = url.pathname.match(/^\/preparation-blog\/([^/]+)\/?$/);
-  if (!match) {
-    return next();
-  }
-
-  const slug = decodeURIComponent(match[1]);
-
-  try {
-    const metaRes = await fetch(
-      `${API_BASE}/api/v1/preparation/meta/${encodeURIComponent(slug)}`,
-      { headers: { Accept: 'application/json' } },
-    );
-
-    if (!metaRes.ok) {
-      return next();
-    }
-
-    const body = await metaRes.json();
-    const meta = body?.data?.data;
-    if (!meta || typeof meta.title !== 'string') {
-      return next();
-    }
-
-    const desc =
-      (meta.description && String(meta.description).trim()) ||
-      stripHtml(meta.title);
-    const canonical = meta.url || `${SITE_URL}/preparation-blog/${encodeURIComponent(slug)}`;
-
-    let imageUrl = meta.image || `${SITE_URL}/images/hero.png`;
-    if (/^http:\/\//i.test(imageUrl)) {
-      imageUrl = `https://${imageUrl.slice(7)}`;
-    }
-
-    const docTitle = escapeAttr(meta.title);
-    const plainForAlt = escapeAttr(
-      meta.plainTitle || stripHtml(meta.title).replace(/\s*\|\s*MentorsDaily\s*$/i, ''),
-    );
-
-    const html = `<!DOCTYPE html>
+function makeBotHtml({ title, description, canonical, imageUrl, type = 'article' }) {
+  const docTitle = escapeAttr(title);
+  const desc = escapeAttr(description || stripHtml(title));
+  const url = escapeAttr(canonical);
+  const img = escapeAttr(imageUrl);
+  const plainForAlt = escapeAttr(stripHtml(title).replace(/\s*\|\s*MentorsDaily\s*$/i, ''));
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>${docTitle}</title>
-  <meta name="description" content="${escapeAttr(desc)}" />
-  <link rel="canonical" href="${escapeAttr(canonical)}" />
+  <meta name="description" content="${desc}" />
+  <link rel="canonical" href="${url}" />
   <meta property="og:title" content="${docTitle}" />
-  <meta property="og:description" content="${escapeAttr(desc)}" />
-  <meta property="og:url" content="${escapeAttr(canonical)}" />
-  <meta property="og:type" content="article" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:url" content="${url}" />
+  <meta property="og:type" content="${escapeAttr(type)}" />
   <meta property="og:site_name" content="MentorsDaily" />
-  <meta property="og:image" content="${escapeAttr(imageUrl)}" />
-  ${/^https:\/\//i.test(imageUrl) ? `<meta property="og:image:secure_url" content="${escapeAttr(imageUrl)}" />` : ''}
+  <meta property="og:image" content="${img}" />
+  ${/^https:\/\//i.test(imageUrl) ? `<meta property="og:image:secure_url" content="${img}" />` : ''}
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="${plainForAlt}" />
@@ -96,27 +67,113 @@ export default async function middleware(request) {
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@mentorsdaily" />
   <meta name="twitter:title" content="${docTitle}" />
-  <meta name="twitter:description" content="${escapeAttr(desc)}" />
-  <meta name="twitter:image" content="${escapeAttr(imageUrl)}" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${img}" />
   <meta name="twitter:image:alt" content="${plainForAlt}" />
 </head>
 <body>
-  <p><a href="${escapeAttr(canonical)}">${docTitle}</a> — MentorsDaily</p>
+  <p><a href="${url}">${docTitle}</a> — MentorsDaily</p>
 </body>
 </html>`;
+}
 
-    return new Response(html, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      },
-    });
+export default async function middleware(request) {
+  const ua = request.headers.get('user-agent') || '';
+  if (!BOT_UA.test(ua)) {
+    return next();
+  }
+
+  const url = new URL(request.url);
+  const prepMatch = url.pathname.match(/^\/preparation-blog\/([^/]+)\/?$/);
+  const currentAffairMatch = url.pathname.match(/^\/current-affairs\/([^/]+)\/?$/);
+  const courseMatch = url.pathname.match(/^\/(integrated-mentorship-\d{4})\/?$/);
+  if (!prepMatch && !currentAffairMatch && !courseMatch) return next();
+
+  try {
+    if (prepMatch) {
+      const slug = decodeURIComponent(prepMatch[1]);
+      const metaRes = await fetch(
+        `${API_BASE}/api/v1/preparation/meta/${encodeURIComponent(slug)}`,
+        { headers: { Accept: 'application/json' } },
+      );
+      if (!metaRes.ok) return next();
+      const body = await metaRes.json();
+      const meta = body?.data?.data;
+      if (!meta || typeof meta.title !== 'string') return next();
+      const html = makeBotHtml({
+        title: meta.title,
+        description: (meta.description && String(meta.description).trim()) || stripHtml(meta.title),
+        canonical: meta.url || `${SITE_URL}/preparation-blog/${encodeURIComponent(slug)}`,
+        imageUrl: normalizeToHttps(meta.image, `${SITE_URL}/images/hero.png`),
+        type: 'article',
+      });
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      });
+    }
+
+    if (currentAffairMatch) {
+      const slug = decodeURIComponent(currentAffairMatch[1]);
+      const detailRes = await fetch(
+        `${API_BASE}/api/v1/get-affairs?slug=${encodeURIComponent(slug)}`,
+        { headers: { Accept: 'application/json' } },
+      );
+      if (!detailRes.ok) return next();
+      const body = await detailRes.json();
+      const post = body?.data?.data;
+      if (!post || typeof post.title !== 'string') return next();
+      const html = makeBotHtml({
+        title: `${stripHtml(post.title)} | Current Affairs for UPSC`,
+        description: stripHtml(post.description || post.content || post.title).slice(0, 180),
+        canonical: `${SITE_URL}/current-affairs/${encodeURIComponent(slug)}`,
+        imageUrl: normalizeToHttps(post.thumbnailUrl, `${SITE_URL}/images/hero.png`),
+        type: 'article',
+      });
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900',
+        },
+      });
+    }
+
+    if (courseMatch) {
+      const slug = decodeURIComponent(courseMatch[1]);
+      const courseRes = await fetch(
+        `${API_BASE}/api/v1/course/slug/${encodeURIComponent(slug)}`,
+        { headers: { Accept: 'application/json' } },
+      );
+      if (!courseRes.ok) return next();
+      const body = await courseRes.json();
+      const course = body?.data?.data;
+      if (!course || typeof course.title !== 'string') return next();
+      const html = makeBotHtml({
+        title: stripHtml(course.title),
+        description: stripHtml(course.description || course.title).slice(0, 180),
+        canonical: `${SITE_URL}/${encodeURIComponent(slug)}`,
+        imageUrl: normalizeToHttps(course.thumbnailUrl, `${SITE_URL}/images/hero.png`),
+        type: 'website',
+      });
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900',
+        },
+      });
+    }
+
+    return next();
   } catch {
     return next();
   }
 }
 
 export const config = {
-  matcher: '/preparation-blog/:path*',
+  matcher: ['/preparation-blog/:path*', '/current-affairs/:path*', '/integrated-mentorship-:year*'],
 };

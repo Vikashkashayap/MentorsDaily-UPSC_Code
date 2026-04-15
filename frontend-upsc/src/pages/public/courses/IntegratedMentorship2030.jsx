@@ -209,7 +209,7 @@ export default function IMPPage() {
       <SEOHead pathname={location.pathname} />
       <main className="min-h-screen bg-white">
       {/* Enhanced Hero Section with Image */}
-      <section className="relative bg-gradient-to-br from-white via-blue-50 to-white py-8 lg:py-12 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-white via-cyan-50 to-violet-50 py-8 lg:py-12 overflow-hidden">
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -217,21 +217,21 @@ export default function IMPPage() {
           }}></div>
         </div>
         {/* Animated Blur Circles */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-violet-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
         
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white px-5 py-2.5 rounded-full shadow-lg border border-blue-100 mb-4">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-              <span className="text-blue-700 font-semibold text-sm tracking-wide">Most Popular Program</span>
+            <div className="inline-flex items-center gap-2 bg-white px-5 py-2.5 rounded-full shadow-lg border border-cyan-100 mb-4">
+              <div className="w-2 h-2 bg-cyan-600 rounded-full animate-pulse"></div>
+              <span className="text-cyan-700 font-semibold text-sm tracking-wide">Future Leaders Edition</span>
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 leading-tight text-gray-900">
               Integrated Mentorship Program
-              <span className="block bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-cyan-600 via-cyan-700 to-violet-600 bg-clip-text text-transparent">
                 (IMP) 2030
               </span>
             </h1>
@@ -259,14 +259,14 @@ export default function IMPPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <button
                 onClick={handleEnrollClick}
-                className="group relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden text-center"
+                className="group relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-600 to-violet-600 text-white font-bold px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden text-center"
               >
                 <span className="relative z-10">Enroll Now</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-800 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-700 to-violet-700 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
               </button>
               <a
                 href="#program-highlights"
-                className="inline-flex items-center justify-center gap-3 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-center"
+                className="inline-flex items-center justify-center gap-3 bg-white border-2 border-cyan-600 text-cyan-700 hover:bg-cyan-600 hover:text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-center"
               >
                 Learn More
               </a>
@@ -291,7 +291,7 @@ export default function IMPPage() {
                 </p>
                 <p className="font-semibold text-gray-900 text-base md:text-lg">
                   The best time to start preparing for UPSC 2030?{" "}
-                  <em className="text-blue-600">
+                  <em className="text-cyan-700">
                     Right now. And the best way to do it? With a mentor who's as committed to your success as you are.
                   </em>
                 </p>
