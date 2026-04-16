@@ -108,21 +108,26 @@ const keyFeatures = [
 
 const testimonials = [
   {
-    name: "Sanya Gupta",
-    location: "Jaipur",
-    text: "IMP 2026 was perfect timing for me. The 18-month program gave me enough time to cover everything without rushing. My mentor helped me create a realistic study plan that worked with my schedule. The regular feedback on answer writing transformed my approach completely.",
+    name: "Shiva Prasad",
+    location: "Bangalore",
+    initials: "SP",
+    text: "Before enroll in mentorsdaily I thought i was in right direction and path, but they made me to understand that i was in right path and in wrong direction. It’s the place where aspirants are created by them rather than making.",
     rating: 5
   },
   {
-    name: "Vishal Singh",
-    location: "Patna",
-    text: "Being a repeater, I needed structure. IMP 2026 provided exactly that - a mentor who understood my past mistakes and helped me avoid them. The mock tests and performance analysis helped me understand where I was going wrong. Cleared Prelims this year!",
+    name: "phibha Bheri",
+    location: "Tamil Nadu",
+    text: "Before I joined MentorDaily, I had zero knowledge of UPSC Midha. They told me from time to time what to study and how to study, and when I was in personal problems, they supported me and helped me get out of my barriers. The best decision in life is to join MentorDaily. My heartfull thanks to my mentor Govind Sir and Rithika Mam",
     rating: 5
   },
   {
-    name: "Kavita Sharma",
-    location: "Chennai",
-    text: "The 18-month timeline of IMP 2026 was ideal for someone like me who wanted to balance preparation with other commitments. The mentorship sessions were incredibly supportive, especially during tough phases. The fee refund guarantee gave me confidence to invest.",
+    name: "Vidharthi Vinay lal",
+    location: "Deoria",
+    text: `MentorsDaily ने मेरी तैयारी के सफर को बहुत ही आसान और प्रभावी बना दिया। शुरू में मुझे कई टॉपिक्स में दिक्कतें आती थीं, लेकिन यहाँ के मेंटर्स की मदद से मैं उन मुश्किलों को समझ पाया और उन्हें सही तरीके से हल कर सका।
+
+MentorsDaily का वातावरण बहुत ही सकारात्मक और सहयोगी है। यहाँ mentors सिर्फ पढ़ाने वाले नहीं, बल्कि मेरे साथी बने, जिन्होंने मेरी समस्याओं को समझकर मेरे साथ लगातार जुड़े रहे। उनकी सलाह से मेरी सोच और पढ़ाई की रणनीति दोनों में सुधार हुआ।
+
+मुझे यहाँ जो सबसे खास लगा, वह था उनकी समय पर प्रतिक्रिया और व्यक्तिगत ध्यान। इसने मुझे अपनी कमजोरियों पर काम करने का मौका दिया और मेरी तैयारी को बेहतर बनाया।`,
     rating: 5
   }
 ];
@@ -135,6 +140,7 @@ export default function IMPPage() {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [expandedReviewIndex, setExpandedReviewIndex] = useState(null);
 
   // Fetch course data based on year
   useEffect(() => {
@@ -203,6 +209,12 @@ export default function IMPPage() {
   const savings = basePrice - sellingPrice;
 
   const formatPrice = (p) => (p === 0 ? "Free" : `₹${p?.toLocaleString?.('en-IN')}`);
+  const REVIEW_PREVIEW_LENGTH = 260;
+
+  const getPreviewText = (text) => {
+    if (!text || text.length <= REVIEW_PREVIEW_LENGTH) return text;
+    return `${text.slice(0, REVIEW_PREVIEW_LENGTH).trim()}...`;
+  };
 
   return (
     <>
@@ -645,7 +657,7 @@ export default function IMPPage() {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col"
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -659,10 +671,27 @@ export default function IMPPage() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4 leading-relaxed italic">
-                  "{testimonial.text}"
+                <p className="text-gray-700 mb-3 leading-relaxed italic whitespace-pre-line">
+                  "
+                  {expandedReviewIndex === index
+                    ? testimonial.text
+                    : getPreviewText(testimonial.text)}
+                  "
                 </p>
-                <div className="border-t border-gray-300 pt-4">
+
+                {testimonial.text.length > REVIEW_PREVIEW_LENGTH && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedReviewIndex(expandedReviewIndex === index ? null : index)
+                    }
+                    className="w-fit text-sm font-semibold text-blue-600 hover:text-blue-700 mb-4"
+                  >
+                    {expandedReviewIndex === index ? "View Less" : "View More"}
+                  </button>
+                )}
+
+                <div className="border-t border-gray-300 pt-4 mt-auto">
                   <p className="font-semibold text-gray-900">{testimonial.name}</p>
                   <p className="text-sm text-gray-600">{testimonial.location}</p>
                 </div>

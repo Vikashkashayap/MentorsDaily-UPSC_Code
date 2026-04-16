@@ -324,9 +324,9 @@ export function getDefaultImp2028DetailPage() {
       title: "Aspirants Who Chose IMP",
       sub: "Hear from students who transformed their UPSC preparation with a dedicated mentor by their side.",
       items: [
-        { stage: "IMP 2027 Student", quote: "Having a mentor who reviews my progress every day changed everything. I stopped wasting time on irrelevant topics and started focusing on what actually matters for UPSC. The Student Dashboard is genuinely a game-changer.", name: "Arjun Mehta", loc: "Lucknow, UP · Prelims 2026 Aspirant", initial: "A", avBg: "#1A3C6E" },
-        { stage: "IMP 2027 Student", quote: "The MAP Report every 15 days gives me a crystal-clear picture of where I stand and exactly what to fix. My mentor doesn't just track me — he genuinely understands my preparation and guides me accordingly.", name: "Priya Nair", loc: "Kochi, Kerala · Working Professional", initial: "P", avBg: "#5B8DB8" },
-        { stage: "IMP 2027 Student", quote: "The 3 guarantees removed all my hesitation. And now 8 months in, I can say MentorsDaily delivers on every promise. The fault analysis showed me patterns in my mistakes I never noticed myself.", name: "Rohan Sharma", loc: "Jaipur, Rajasthan · Fresh Graduate", initial: "R", avBg: "#2D7D4E" },
+        { stage: "IMP 2028 Student", quote: "It’s just been a month that I’ve started studying here, and the best thing about the institute is the way the teachers emphasis on conceptual clarity and make the topics very easy to understand.", name: "Avira Banerjee", loc: "SRCC, DU", initial: "A", avBg: "#1A3C6E" },
+        { stage: "IMP 2028 Student", quote: "The MAP Report every 15 days gives me a crystal-clear picture of where I stand and exactly what to fix. My mentor doesn't just track me — he genuinely understands my preparation and guides me accordingly.", name: "Rishita Sharma", loc: "SRCC, DU", initial: "RS", avBg: "#5B8DB8" },
+        { stage: "IMP 2028 Student", quote: "Truly the Best Mentorship one can get. The Team, The Mentors especially guide you on a Daily Basis. I would like to Congratulate the Mentors Daily Team for the efforts they are literally giving to bring the best out of the Aspirants. ❤️✨", name: "Shubham Singh", loc: "Chhattishgarkh", initial: "SS", avBg: "#2D7D4E" },
       ],
     },
     faqSection: {
