@@ -9,11 +9,11 @@ const testimonials = [
     rating: 5,
   },
   {
-    name: "Pawan Chauhan",
+    name: "Pawan Singh",
     badge: "IMP 2027",
     location: "Jaipur",
-    initials: "PC",
-    text: "\"As a final-year engineering student, I was worried about balancing both. IMP 2027 fits UPSC prep around my college schedule - not against it. The accountability sessions every week keep me from slipping.\"",
+    initials: "PS",
+    text: "\"Mentors Daily is an an excellent platform for learning and guidance. They told me from time to time what to study and how to study and they are always ready to solve the doubts.\"",
     rating: 5,
   },
   {

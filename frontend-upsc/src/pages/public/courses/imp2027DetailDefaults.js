@@ -241,7 +241,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Sprout",
           color: "#5B8DB8",
-          dates: "APR – DEC 2026",
+          dates: "Phase 1",
           label: "Foundation & Mains-Ready",
           detail:
             "Full syllabus · NCERTs & reference books · Note-making · Answer writing · Static + CA links · 50+ tests (50Q) + 20 tests (100Q)",
@@ -251,7 +251,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Zap",
           color: "#3B7AB8",
-          dates: "JAN – FEB 2027",
+          dates: "Phase 2",
           label: "Prelims Focus Batch",
           detail:
             "Prelims-pivoted revision · Group sessions · Quick revision material · 100-Test series (7,500+ Qs) begins",
@@ -261,7 +261,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Timer",
           color: "#8B5CF6",
-          dates: "MAR – MAY 2027",
+          dates: "Phase 3",
           label: "Prelims Simulators",
           detail:
             "10 Sundays at UPSC timing · GS 9:30–11:30 · CSAT 2:30–4:30 · Full exam environment training",
@@ -271,7 +271,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Flag",
           color: "var(--imp-orange)",
-          dates: "MAY 2027",
+          dates: "Phase 4",
           label: "UPSC Prelims Exam",
           detail:
             "GS Paper I + CSAT · Fee refund triggered on clearing · Hostel, meals & stationery activated",
@@ -282,7 +282,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "House",
           color: "var(--imp-green)",
-          dates: "MAY – AUG 2027",
+          dates: "Phase 5",
           label: "Mains Residential Batch",
           detail:
             "Free hostel · Meals · Stationery · 24×7 mentors · Mains test series & simulators · Quick revision material",
@@ -292,7 +292,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "NotebookPen",
           color: "#0D9488",
-          dates: "AUG – SEP 2027",
+          dates: "Phase 6",
           label: "UPSC Mains Exam",
           detail:
             "All 9 papers · Essay · Ethics · GS I–IV · Optional subject — fully supported from the hostel",
@@ -302,7 +302,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Mic",
           color: "#CA8A04",
-          dates: "DEC 2027 – JAN 2028",
+          dates: "Phase 7",
           label: "5+ Mock Interviews",
           detail:
             "UPSC board simulation · DAF review · Communication coaching · Personality test preparation",
@@ -312,7 +312,7 @@ export function getDefaultImp2027DetailPage() {
         {
           icon: "Trophy",
           color: "#9D8DF1",
-          dates: "APR 2028",
+          dates: "Phase 8",
           label: "Final Result",
           detail:
             "UPSC Final Result announced · 24 months of structured preparation complete · Your IAS/IPS journey begins",
