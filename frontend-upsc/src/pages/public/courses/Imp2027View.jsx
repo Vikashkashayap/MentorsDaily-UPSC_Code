@@ -42,6 +42,18 @@ export default function Imp2027View({
   couponApplying,
   couponError,
   appliedCoupon,
+  onApplyCouponDaily,
+  onClearCouponDaily,
+  couponApplyingDaily,
+  couponErrorDaily,
+  appliedCouponDaily,
+  onApplyCouponWeekly,
+  onClearCouponWeekly,
+  couponApplyingWeekly,
+  couponErrorWeekly,
+  appliedCouponWeekly,
+  discountedDailyPrice,
+  discountedWeeklyPrice,
   showCouponInput = true,
 }) {
   const [tab, setTab] = useState("foundation");
@@ -72,6 +84,10 @@ export default function Imp2027View({
 
   const heroPrice = fmt(sellingPrice);
   const heroOld = basePrice > sellingPrice ? fmt(basePrice) : null;
+  const dailyDisplayPrice =
+    discountedDailyPrice != null ? Number(discountedDailyPrice) : Number(d.pricingSection.daily.price);
+  const weeklyDisplayPrice =
+    discountedWeeklyPrice != null ? Number(discountedWeeklyPrice) : Number(d.pricingSection.weekly.price);
   const saveLine =
     discountPercentage > 0 && savings > 0
       ? `🎉 ${discountPercentage}% OFF · Early Bird — Save ${fmt(savings)}`
@@ -319,9 +335,14 @@ export default function Imp2027View({
               <div className="px-8 pt-8 pb-5 border-b border-[#F2F4F7] bg-gradient-to-br from-[#1A3C6E] to-[#24527A]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-white mb-2">{d.pricingSection.daily.name}</div>
                 <div className="flex items-end gap-2 flex-wrap">
-                  <span className="font-['Poppins'] text-4xl font-black text-white">{fmt(d.pricingSection.daily.price)}</span>
+                  <span className="font-['Poppins'] text-4xl font-black text-white">{fmt(dailyDisplayPrice)}</span>
                   <span className="text-white/45 line-through text-base mb-1">{fmt(d.pricingSection.daily.oldPrice)}</span>
                 </div>
+                {discountedDailyPrice != null ? (
+                  <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
+                    Coupon Applied
+                  </div>
+                ) : null}
                 <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[rgba(245,158,11,0.2)] text-[#F59E0B]">
                   {d.pricingSection.daily.saveLabel}
                 </div>
@@ -347,6 +368,18 @@ export default function Imp2027View({
                   ))}
                 </ul>
                 <div className="mt-auto">
+                  {showCouponInput ? (
+                    <div className="mb-3">
+                      <CouponApplyBox
+                        onApply={onApplyCouponDaily || onApplyCoupon}
+                        onClear={onClearCouponDaily || onClearCoupon}
+                        loading={Boolean(couponApplyingDaily ?? couponApplying)}
+                        appliedCoupon={appliedCouponDaily || appliedCoupon}
+                        errorMessage={couponErrorDaily || couponError}
+                        compact
+                      />
+                    </div>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => onEnroll?.("daily")}
@@ -366,9 +399,14 @@ export default function Imp2027View({
               <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
                 <div className="flex items-end gap-2 flex-wrap">
-                  <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(d.pricingSection.weekly.price)}</span>
+                  <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(weeklyDisplayPrice)}</span>
                   <span className="text-[#6B7280] line-through text-base mb-1">{fmt(d.pricingSection.weekly.oldPrice)}</span>
                 </div>
+                {discountedWeeklyPrice != null ? (
+                  <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
+                    Coupon Applied
+                  </div>
+                ) : null}
                 <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
                   {d.pricingSection.weekly.saveLabel}
                 </div>
@@ -403,6 +441,18 @@ export default function Imp2027View({
                   ))}
                 </ul>
                 <div className="mt-auto">
+                  {showCouponInput ? (
+                    <div className="mb-3">
+                      <CouponApplyBox
+                        onApply={onApplyCouponWeekly || onApplyCoupon}
+                        onClear={onClearCouponWeekly || onClearCoupon}
+                        loading={Boolean(couponApplyingWeekly ?? couponApplying)}
+                        appliedCoupon={appliedCouponWeekly}
+                        errorMessage={couponErrorWeekly}
+                        compact
+                      />
+                    </div>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => onEnroll?.("weekly")}

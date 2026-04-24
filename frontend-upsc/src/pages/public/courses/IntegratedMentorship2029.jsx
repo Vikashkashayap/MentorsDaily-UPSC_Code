@@ -52,10 +52,14 @@ export default function IntegratedMentorship2029() {
   const [loading, setLoading] = useState(true);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
-  const [couponApplying, setCouponApplying] = useState(false);
-  const [couponError, setCouponError] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponApplyingDaily, setCouponApplyingDaily] = useState(false);
+  const [couponApplyingWeekly, setCouponApplyingWeekly] = useState(false);
+  const [couponErrorDaily, setCouponErrorDaily] = useState("");
+  const [couponErrorWeekly, setCouponErrorWeekly] = useState("");
+  const [appliedCouponDaily, setAppliedCouponDaily] = useState(null);
+  const [appliedCouponWeekly, setAppliedCouponWeekly] = useState(null);
   const [couponAdjustedDailyPrice, setCouponAdjustedDailyPrice] = useState(null);
+  const [couponAdjustedWeeklyPrice, setCouponAdjustedWeeklyPrice] = useState(null);
   const [showCouponInput, setShowCouponInput] = useState(true);
   /** @type {null | 'daily' | 'weekly'} */
   const [enrollPlan, setEnrollPlan] = useState(null);
@@ -121,28 +125,34 @@ export default function IntegratedMentorship2029() {
 
   useEffect(() => {
     setCouponAdjustedDailyPrice(null);
-    setAppliedCoupon(null);
-    setCouponError("");
+    setCouponAdjustedWeeklyPrice(null);
+    setAppliedCouponDaily(null);
+    setAppliedCouponWeekly(null);
+    setCouponErrorDaily("");
+    setCouponErrorWeekly("");
   }, [course?._id, heroSelling, heroBase]);
 
   useEffect(() => {
-    const autoApply = async () => {
+    const autoApply = async (orderValue, setCoupon, setPrice) => {
       if (!resolvedCourseId) return;
       try {
         const res = await getAutoApplyCoupon({
           courseId: resolvedCourseId,
-          orderValue: heroSelling,
+          orderValue,
         });
         const autoData = res?.data?.data;
         if (!autoData?.coupon || autoData?.pricing?.final_price == null) return;
-        setAppliedCoupon(autoData.coupon);
-        setCouponAdjustedDailyPrice(Number(autoData.pricing.final_price));
+        setCoupon(autoData.coupon);
+        setPrice(Number(autoData.pricing.final_price));
       } catch {
         // optional
       }
     };
-    autoApply();
-  }, [resolvedCourseId, heroSelling]);
+    const weeklyBase =
+      weeklyPlan?.price != null ? Number(weeklyPlan.price) : Number(sellingPrice || 0);
+    autoApply(heroSelling, setAppliedCouponDaily, setCouponAdjustedDailyPrice);
+    autoApply(weeklyBase, setAppliedCouponWeekly, setCouponAdjustedWeeklyPrice);
+  }, [resolvedCourseId, heroSelling, weeklyPlan?.price, sellingPrice]);
 
   useEffect(() => {
     const checkAvailability = async () => {
@@ -168,41 +178,65 @@ export default function IntegratedMentorship2029() {
       : heroDiscountPct;
   const displayedHeroSavings = Math.max(0, heroBase - displayedHeroSelling);
 
-  const handleApplyCoupon = async (code) => {
+  const handleApplyCoupon = async (plan, code) => {
+    const isWeekly = plan === "weekly";
+    const orderValue = isWeekly
+      ? Number(weeklyPlan?.price ?? sellingPrice ?? 0)
+      : heroSelling;
     try {
       if (!resolvedCourseId) {
-        setCouponError("Coupon is available after course is loaded.");
+        if (isWeekly) setCouponErrorWeekly("Coupon is available after course is loaded.");
+        else setCouponErrorDaily("Coupon is available after course is loaded.");
         return;
       }
-      setCouponApplying(true);
-      setCouponError("");
+      if (isWeekly) {
+        setCouponApplyingWeekly(true);
+        setCouponErrorWeekly("");
+      } else {
+        setCouponApplyingDaily(true);
+        setCouponErrorDaily("");
+      }
       const res = await applyCoupon({
         code,
         courseId: resolvedCourseId,
-        orderValue: heroSelling,
+        orderValue,
       });
       const payload = res?.data?.data;
       if (payload?.pricing?.final_price == null || !payload?.coupon) {
-        setCouponError("Invalid coupon response.");
+        if (isWeekly) setCouponErrorWeekly("Invalid coupon response.");
+        else setCouponErrorDaily("Invalid coupon response.");
         return;
       }
-      setAppliedCoupon(payload.coupon);
-      setCouponAdjustedDailyPrice(Number(payload.pricing.final_price));
+      if (isWeekly) {
+        setAppliedCouponWeekly(payload.coupon);
+        setCouponAdjustedWeeklyPrice(Number(payload.pricing.final_price));
+      } else {
+        setAppliedCouponDaily(payload.coupon);
+        setCouponAdjustedDailyPrice(Number(payload.pricing.final_price));
+      }
     } catch (err) {
-      setCouponError(
+      const msg =
         err?.response?.data?.data?.message ||
-          err?.response?.data?.message ||
-          "Invalid or expired coupon."
-      );
+        err?.response?.data?.message ||
+        "Invalid or expired coupon.";
+      if (isWeekly) setCouponErrorWeekly(msg);
+      else setCouponErrorDaily(msg);
     } finally {
-      setCouponApplying(false);
+      if (isWeekly) setCouponApplyingWeekly(false);
+      else setCouponApplyingDaily(false);
     }
   };
 
-  const clearAppliedCoupon = () => {
+  const clearAppliedCoupon = (plan) => {
+    if (plan === "weekly") {
+      setCouponAdjustedWeeklyPrice(null);
+      setAppliedCouponWeekly(null);
+      setCouponErrorWeekly("");
+      return;
+    }
     setCouponAdjustedDailyPrice(null);
-    setAppliedCoupon(null);
-    setCouponError("");
+    setAppliedCouponDaily(null);
+    setCouponErrorDaily("");
   };
 
   const handleEnrollClick = (plan) => {
@@ -236,7 +270,9 @@ export default function IntegratedMentorship2029() {
         : basePrice;
   const selectedSellingPrice =
     enrollPlan === "weekly" && weeklyPlan?.price != null
-      ? Number(weeklyPlan.price)
+      ? couponAdjustedWeeklyPrice != null
+        ? Number(couponAdjustedWeeklyPrice)
+        : Number(weeklyPlan.price)
       : enrollPlan === "daily" && dailyPlan?.price != null
         ? couponAdjustedDailyPrice != null
           ? Number(couponAdjustedDailyPrice)
@@ -277,11 +313,23 @@ export default function IntegratedMentorship2029() {
         savings={displayedHeroSavings}
         onEnroll={handleEnrollClick}
         onEnquire={() => setShowEnquiryForm(true)}
-        onApplyCoupon={handleApplyCoupon}
-        onClearCoupon={clearAppliedCoupon}
-        couponApplying={couponApplying}
-        couponError={couponError}
-        appliedCoupon={appliedCoupon}
+        onApplyCoupon={(code) => handleApplyCoupon("daily", code)}
+        onClearCoupon={() => clearAppliedCoupon("daily")}
+        couponApplying={couponApplyingDaily}
+        couponError={couponErrorDaily}
+        appliedCoupon={appliedCouponDaily}
+        onApplyCouponDaily={(code) => handleApplyCoupon("daily", code)}
+        onClearCouponDaily={() => clearAppliedCoupon("daily")}
+        couponApplyingDaily={couponApplyingDaily}
+        couponErrorDaily={couponErrorDaily}
+        appliedCouponDaily={appliedCouponDaily}
+        onApplyCouponWeekly={(code) => handleApplyCoupon("weekly", code)}
+        onClearCouponWeekly={() => clearAppliedCoupon("weekly")}
+        couponApplyingWeekly={couponApplyingWeekly}
+        couponErrorWeekly={couponErrorWeekly}
+        appliedCouponWeekly={appliedCouponWeekly}
+        discountedDailyPrice={couponAdjustedDailyPrice}
+        discountedWeeklyPrice={couponAdjustedWeeklyPrice}
         showCouponInput={showCouponInput}
       />
 
@@ -317,7 +365,11 @@ export default function IntegratedMentorship2029() {
                 basePrice: selectedBasePrice,
                 sellingPrice: selectedSellingPrice,
                 appliedCoupon:
-                  enrollPlan === "daily" && appliedCoupon?.code ? appliedCoupon : null,
+                  enrollPlan === "weekly" && appliedCouponWeekly?.code
+                    ? appliedCouponWeekly
+                    : enrollPlan === "daily" && appliedCouponDaily?.code
+                      ? appliedCouponDaily
+                      : null,
                 discountPercentage:
                   selectedBasePrice > selectedSellingPrice && selectedBasePrice > 0
                     ? Math.round(((selectedBasePrice - selectedSellingPrice) / selectedBasePrice) * 100)
