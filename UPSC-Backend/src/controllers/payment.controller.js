@@ -11,6 +11,7 @@ exports.initiateCoursePayment = async (req, res) => {
       isEmi,
       emiDurationMonths,
       mentorshipPlan,
+      couponCode,
     } = req.body;
 
     const hasCourseId = courseId != null && String(courseId).trim() !== '';
@@ -42,6 +43,7 @@ exports.initiateCoursePayment = async (req, res) => {
       isEmi: !!isEmi,
       emiDurationMonths: parseInt(emiDurationMonths) || null,
       mentorshipPlan: mentorshipPlan === 'weekly' || mentorshipPlan === 'daily' ? mentorshipPlan : null,
+      couponCode: couponCode != null ? String(couponCode).trim().toUpperCase() : null,
     });
 
     logger.info('paymentController.js < initiateCoursePayment: Payment initiated successfully');

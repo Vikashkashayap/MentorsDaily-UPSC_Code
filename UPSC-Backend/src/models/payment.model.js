@@ -21,6 +21,8 @@ const paymentSchema = new mongoose.Schema({
   razorpayPaymentId: { type: String, unique: true, sparse: true },
   razorpaySignature: { type: String },
   amount: { type: Number, required: true, min: 0 }, 
+  couponCode: { type: String, default: null },
+  couponDiscountAmount: { type: Number, default: 0, min: 0 },
   currency: { type: String, default: 'INR' },
   paymentMethod: {
     type: String,

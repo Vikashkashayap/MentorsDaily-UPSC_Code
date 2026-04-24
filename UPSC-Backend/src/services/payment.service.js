@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const paymentRepo = require('../repositories/payment.repository');
 const courseService = require('./course.service');
+const couponService = require('./coupon.service');
 
 const emiInstallmentRepo = require('../repositories/emi.installment.repository'); 
 const logger = require('../utility/logger');
@@ -155,6 +156,7 @@ exports.initiateCoursePayment = async (data) => {
         isEmi = false, 
         emiDurationMonths,
         mentorshipPlan = null,
+        couponCode = null,
     } = data;
 
     const { course, resolvedCourseId } = await resolveCourseForPayment(courseId, courseSlug);
@@ -176,7 +178,7 @@ exports.initiateCoursePayment = async (data) => {
         ? resolveFullPayAmountBySlug(courseSlug)
         : null;
     const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
-    const totalCourseAmount =
+    let totalCourseAmount =
       fromPlan != null
         ? fromPlan
         : fromSlugFull != null
@@ -185,7 +187,23 @@ exports.initiateCoursePayment = async (data) => {
             ? fromCourse
             : NaN;
 
-    if (!Number.isFinite(totalCourseAmount) || totalCourseAmount < 1) {
+    let appliedCouponCode = null;
+    let couponDiscountAmount = 0;
+    if (couponCode && String(couponCode).trim()) {
+        const couponResult = await couponService.applyCoupon({
+            code: String(couponCode).trim().toUpperCase(),
+            courseId: resolvedCourseId,
+            orderValue: totalCourseAmount,
+        });
+        if (!couponResult?.valid || !couponResult?.pricing) {
+            throw new Error(couponResult?.message || 'Invalid coupon code.');
+        }
+        appliedCouponCode = couponResult.coupon?.code || String(couponCode).trim().toUpperCase();
+        couponDiscountAmount = Number(couponResult.pricing.discount_amount || 0);
+        totalCourseAmount = Number(couponResult.pricing.final_price ?? totalCourseAmount);
+    }
+
+    if (!Number.isFinite(totalCourseAmount) || totalCourseAmount < 0) {
         throw new Error(
             `Invalid payment amount (${String(totalCourseAmount)}). Set course sellingPrice or detailPage.pricingSection for plan "${mentorshipPlan || "default"}".`
         );
@@ -210,6 +228,8 @@ exports.initiateCoursePayment = async (data) => {
     const paymentDataFinal = {
         studentName, mobile, email, courseId: resolvedCourseId, orderId,
         amount: totalCourseAmount, 
+        couponCode: appliedCouponCode,
+        couponDiscountAmount: couponDiscountAmount,
         paymentMethod,
         paymentGateway: RAZORPAY,
         status: PENDING,
@@ -234,6 +254,19 @@ exports.initiateCoursePayment = async (data) => {
     // --- End Installment Creation ---
     
     if (paymentMethod !== CASH && paymentMethod !== CHEQUE) {
+        if (Number(amountForRazorpayOrder) === 0) {
+            const freeUpdatedPayment = await paymentRepo.updatePaymentStatus(newPayment._id, {
+                status: SUCCESS,
+                paymentDate: new Date(),
+                gatewayResponse: {
+                    type: 'FREE_COUPON_CHECKOUT',
+                    couponCode: appliedCouponCode,
+                    couponDiscountAmount,
+                },
+            });
+            return { payment: freeUpdatedPayment, course, razorpayOrder: null, freeCheckout: true };
+        }
+
         if (!process.env.RAZORPAY_KEY_ID?.trim() || !process.env.RAZORPAY_KEY_SECRET?.trim()) {
             throw new Error(
                 "Razorpay is not configured: set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in UPSC-Backend/.env and restart the API."

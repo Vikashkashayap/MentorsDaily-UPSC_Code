@@ -10,6 +10,7 @@ const MentorshipCourses = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [expandedIdx, setExpandedIdx] = useState(null);
+  const [couponTargetCourseId, setCouponTargetCourseId] = useState(null);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
@@ -108,6 +109,9 @@ const MentorshipCourses = () => {
                         inlineExpand={false}
                         onToggle={() => setExpandedIdx(isExpanded ? null : idx)}
                         overlayMode={isExpanded}
+                        couponTargetCourseId={couponTargetCourseId}
+                        onCouponTargetSelect={setCouponTargetCourseId}
+                        couponRadioName="mentorship-coupon-target"
                       />
                     </div>
                   );

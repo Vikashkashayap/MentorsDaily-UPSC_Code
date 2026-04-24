@@ -6,6 +6,8 @@ import { formatDateRange } from '../../../utils/dateUtils';
 import ContactForm from '../components/Form';
 import OptimizedImage from '../../../components/utility/OptimizedImage';
 import { resolveCourseThumbnailUrl } from '../../../utils/mediaUrls';
+import CouponApplyBox from '../../../components/coupon/CouponApplyBox';
+import { applyCoupon, getAutoApplyCoupon } from '../../../api/coreService';
 
 const CourseDetails = () => {
   const { courseId, category, title } = useParams();
@@ -15,6 +17,10 @@ const CourseDetails = () => {
   const [error, setError] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [pricing, setPricing] = useState({ original: 0, final: 0, discountPercent: 0 });
   
   const generateSlug = (text) => {
     return text
@@ -80,7 +86,38 @@ const CourseDetails = () => {
 
   const basePrice = course?.basePrice || 0;
   const sellingPrice = course?.sellingPrice || 0;
-  const discountPercentage = course?.discountPercentage || 0;
+
+  useEffect(() => {
+    const original = Number(basePrice || 0);
+    const final = Number(sellingPrice || original);
+    const discountPercent = original > 0 ? Math.round(((original - final) / original) * 100) : 0;
+    setPricing({ original, final, discountPercent });
+    setCouponError("");
+    setAppliedCoupon(null);
+  }, [course?._id, basePrice, sellingPrice]);
+
+  useEffect(() => {
+    const fetchAutoCoupon = async () => {
+      if (!course?._id) return;
+      try {
+        const res = await getAutoApplyCoupon({
+          courseId: course._id,
+          orderValue: Number(sellingPrice || basePrice || 0),
+        });
+        const autoData = res?.data?.data;
+        if (autoData?.pricing?.final_price == null || !autoData?.coupon) return;
+        setAppliedCoupon(autoData.coupon);
+        setPricing({
+          original: Number(autoData.pricing.original_price ?? pricing.original),
+          final: Number(autoData.pricing.final_price ?? pricing.final),
+          discountPercent: Number(autoData.pricing.effective_discount_percent ?? 0),
+        });
+      } catch {
+        // Ignore if endpoint unavailable.
+      }
+    };
+    fetchAutoCoupon();
+  }, [course?._id, sellingPrice, basePrice]);
 
   const formatPrice = (p) => (p === 0 ? "Free" : `₹${p?.toLocaleString?.()}`);
   
@@ -142,6 +179,43 @@ const CourseDetails = () => {
 
   const handleCloseEnquiry = () => {
     setShowEnquiryForm(false);
+  };
+
+  const handleApplyCoupon = async (code) => {
+    try {
+      setCouponApplying(true);
+      setCouponError("");
+      const res = await applyCoupon({
+        code,
+        courseId: course?._id,
+        orderValue: pricing.final,
+      });
+      const payload = res?.data?.data;
+      if (!payload?.pricing) return;
+      setAppliedCoupon(payload.coupon);
+      setPricing({
+        original: Number(payload.pricing.original_price ?? pricing.original),
+        final: Number(payload.pricing.final_price ?? pricing.final),
+        discountPercent: Number(payload.pricing.effective_discount_percent ?? 0),
+      });
+    } catch (err) {
+      setCouponError(
+        err?.response?.data?.data?.message ||
+          err?.response?.data?.message ||
+          "Invalid or expired coupon."
+      );
+    } finally {
+      setCouponApplying(false);
+    }
+  };
+
+  const clearCoupon = () => {
+    const original = Number(basePrice || 0);
+    const final = Number(sellingPrice || original);
+    const discountPercent = original > 0 ? Math.round(((original - final) / original) * 100) : 0;
+    setPricing({ original, final, discountPercent });
+    setCouponError("");
+    setAppliedCoupon(null);
   };
 
   if (loading) {
@@ -324,25 +398,35 @@ const CourseDetails = () => {
               {/* Pricing */}
               <div className="mb-6">
                 <div className="flex items-baseline mb-2">
-                  {discountPercentage > 0 && (
+                  {pricing.discountPercent > 0 && (
                     <span className="text-lg text-gray-500 line-through mr-2">
-                      {formatPrice(basePrice)}
+                      {formatPrice(pricing.original)}
                     </span>
                   )}
                   <span className="text-3xl font-bold text-blue-600">
-                    {formatPrice(sellingPrice)}
+                    {formatPrice(pricing.final)}
                   </span>
-                  {discountPercentage > 0 && (
+                  {pricing.discountPercent > 0 && (
                     <span className="ml-2 text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold border border-green-200">
-                      {discountPercentage}% OFF
+                      {pricing.discountPercent}% OFF
                     </span>
                   )}
                 </div>
-                {discountPercentage > 0 && (
+                {pricing.discountPercent > 0 && (
                   <p className="text-sm text-green-600 font-medium">
-                    Save ₹{(basePrice - sellingPrice).toLocaleString()}
+                    Save ₹{Math.max(pricing.original - pricing.final, 0).toLocaleString()}
                   </p>
                 )}
+              </div>
+
+              <div className="mb-6">
+                <CouponApplyBox
+                  onApply={handleApplyCoupon}
+                  onClear={clearCoupon}
+                  loading={couponApplying}
+                  appliedCoupon={appliedCoupon}
+                  errorMessage={couponError}
+                />
               </div>
 
               {/* Enrollment Button */}
@@ -351,7 +435,7 @@ const CourseDetails = () => {
                   onClick={handleEnrollClick}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
                 >
-                  {sellingPrice === 0 ? "Start Learning Free" : "Enroll Now"}
+                  {pricing.final === 0 ? "Start Learning Free" : "Enroll Now"}
                 </button>
                 <button
                   onClick={handleEnquiryClick}
@@ -445,7 +529,13 @@ const CourseDetails = () => {
                 </button>
               </div>
               <PaymentForm
-                course={{...course, basePrice, sellingPrice, discountPercentage}}
+                course={{
+                  ...course,
+                  basePrice: pricing.original,
+                  sellingPrice: pricing.final,
+                  discountPercentage: pricing.discountPercent,
+                  appliedCoupon,
+                }}
                 onSuccess={handlePaymentSuccess}
                 onClose={handleClosePayment}
               />

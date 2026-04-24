@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 import CreateCourseForm from "../../components/CreateCourseForm";
 import CourseList from "./CourseList";
+import AdminCoupons from "./AdminCoupons";
 
 export default function AdminCourses() {
   const { isDark } = useTheme();
@@ -46,6 +47,18 @@ export default function AdminCourses() {
           >
             Create Course
           </button>
+          <button
+            onClick={() => setActiveTab("coupons")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === "coupons"
+                ? "bg-purple-600 text-white"
+                : isDark
+                  ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Coupons
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -61,6 +74,7 @@ export default function AdminCourses() {
             />
           </div>
         )}
+        {activeTab === "coupons" && <AdminCoupons />}
       </div>
     </div>
   );

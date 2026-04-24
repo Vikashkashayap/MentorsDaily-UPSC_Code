@@ -347,6 +347,79 @@ export const fetchCourseById = async (id) => {
   }
 };
 
+export const createCoupon = async (payload) => {
+  const response = await callApi({
+    endpoint: "api/v1/admin/coupons",
+    method: "POST",
+    body: payload,
+    requiresAuth: true,
+  });
+  return response.data;
+};
+
+export const getCoupons = async () => {
+  const response = await callApi({
+    endpoint: "api/v1/admin/coupons",
+    method: "GET",
+    requiresAuth: true,
+  });
+  return response.data;
+};
+
+export const toggleCouponStatus = async (id, is_active) => {
+  const response = await callApi({
+    endpoint: `api/v1/admin/coupons/${id}/toggle`,
+    method: "PATCH",
+    body: { is_active },
+    requiresAuth: true,
+  });
+  return response.data;
+};
+
+export const deleteCoupon = async (id) => {
+  const response = await callApi({
+    endpoint: `api/v1/admin/coupons/${id}`,
+    method: "DELETE",
+    requiresAuth: true,
+  });
+  return response.data;
+};
+
+export const applyCoupon = async (payload) => {
+  const response = await callApi({
+    endpoint: "api/v1/apply-coupon",
+    method: "POST",
+    body: payload,
+    requiresAuth: false,
+  });
+  return response.data;
+};
+
+export const getAutoApplyCoupon = async ({ courseId, orderValue }) => {
+  const query = new URLSearchParams({
+    courseId: String(courseId || ""),
+    orderValue: String(orderValue || 0),
+  }).toString();
+  const response = await callApi({
+    endpoint: `api/v1/coupon/auto-apply?${query}`,
+    method: "GET",
+    requiresAuth: false,
+  });
+  return response.data;
+};
+
+export const getCouponAvailability = async ({ courseId }) => {
+  const query = new URLSearchParams({
+    courseId: String(courseId || ""),
+  }).toString();
+  const response = await callApi({
+    endpoint: `api/v1/coupon/availability?${query}`,
+    method: "GET",
+    requiresAuth: false,
+  });
+  return response.data;
+};
+
 // Utility: Get available subjects for current affairs
 export const getAvailableSubjects = () => {
   return [

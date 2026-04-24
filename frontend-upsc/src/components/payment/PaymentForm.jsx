@@ -59,6 +59,7 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         ? "Weekly Mentorship"
         : null;
   const cleanCourseTitle = String(course?.title || "").replace(/\s*\((daily|weekly)\)\s*/gi, " ").trim();
+  const payableAmount = Math.max(0, Number(course?.sellingPrice || 0));
 
   const paymentCourseId = getPaymentCourseId(course);
 
@@ -114,6 +115,9 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         ...(mentorshipPlan === "weekly" || mentorshipPlan === "daily"
           ? { mentorshipPlan }
           : {}),
+        ...(course?.appliedCoupon?.code
+          ? { couponCode: String(course.appliedCoupon.code).trim().toUpperCase() }
+          : {}),
       });
 
       let orderData;
@@ -133,11 +137,28 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         return;
       }
 
-      if (!orderData || !orderData.razorpayOrder || !orderData.payment) {
+      if (!orderData || !orderData.payment) {
         console.error("Missing required data in orderData");
         alert("Failed to initiate payment. Please try again.");
         setLoading(false);
         setPaymentStatus("failed");
+        return;
+      }
+
+      // 100% coupon / free checkout: server completes without Razorpay order.
+      if (!orderData.razorpayOrder && orderData.payment?.status === "SUCCESS") {
+        const completePaymentData = {
+          ...orderData.payment,
+          studentName: orderData.payment.studentName || studentName,
+          mobile: orderData.payment.mobile || mobile,
+          email: orderData.payment.email || email,
+          amount: orderData.payment.amount ?? payableAmount,
+          status: orderData.payment.status,
+        };
+        setPaymentData(completePaymentData);
+        setShowReceipt(true);
+        setPaymentStatus("success");
+        setLoading(false);
         return;
       }
 
@@ -182,7 +203,7 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
                 studentName: verifiedPayment.studentName || studentName,
                 mobile: verifiedPayment.mobile || mobile,
                 email: verifiedPayment.email || email,
-                amount: verifiedPayment.amount || course.sellingPrice,
+                amount: verifiedPayment.amount || payableAmount,
                 status: verifiedPayment.status,
                 razorpayPaymentId: razorpayResponse.razorpay_payment_id,
                 razorpayOrderId: razorpayResponse.razorpay_order_id,
@@ -305,8 +326,13 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Amount</p>
                   <p className="text-4xl font-bold text-orange-600">
-                    ₹{course.sellingPrice?.toLocaleString()}
+                    ₹{payableAmount.toLocaleString()}
                   </p>
+                  {course?.appliedCoupon?.code ? (
+                    <p className="text-xs text-green-700 font-semibold mt-1">
+                      Coupon applied: {course.appliedCoupon.code}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -402,7 +428,7 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
                       d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                     />
                   </svg>
-                  Proceed to Pay ₹{course.sellingPrice?.toLocaleString()}
+                  Proceed to Pay ₹{payableAmount.toLocaleString()}
                 </>
               )}
             </button>

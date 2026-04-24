@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DynIcon } from "./impViewLucideIcons.jsx";
+import CouponApplyBox from "../../../components/coupon/CouponApplyBox";
 
 function fmt(n) {
   if (n == null || n === "") return "—";
@@ -59,6 +60,12 @@ export default function Imp2029View({
   savings,
   onEnroll,
   onEnquire,
+  onApplyCoupon,
+  onClearCoupon,
+  couponApplying,
+  couponError,
+  appliedCoupon,
+  showCouponInput = true,
 }) {
   const [tab, setTab] = useState(d.includedSection.tabs[0]?.id ?? "foundation");
   const [openFaq, setOpenFaq] = useState(-1);
@@ -245,6 +252,18 @@ export default function Imp2029View({
                   {saveLine}
                 </div>
               )}
+              {showCouponInput ? (
+                <div className="mb-4">
+                  <CouponApplyBox
+                    onApply={onApplyCoupon}
+                    onClear={onClearCoupon}
+                    loading={couponApplying}
+                    appliedCoupon={appliedCoupon}
+                    errorMessage={couponError}
+                    compact
+                  />
+                </div>
+              ) : null}
               <ul className="list-none mb-5 space-y-0">
                 {d.hero.cardFeatures.map((line, i) => (
                   <li

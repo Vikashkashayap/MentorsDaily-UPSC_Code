@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { getCourseBySlug, unwrapCourseFromSlugResponse } from "../../../api/coreService";
+import {
+  applyCoupon,
+  getCouponAvailability,
+  getAutoApplyCoupon,
+  getCourseBySlug,
+  unwrapCourseFromSlugResponse,
+} from "../../../api/coreService";
 import { IMP_2029_SLUG } from "./imp2029DetailDefaults";
 import PaymentForm from "../../../components/payment/PaymentForm";
 import Form from "../components/Form";
@@ -46,6 +52,11 @@ export default function IntegratedMentorship2029() {
   const [loading, setLoading] = useState(true);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponAdjustedDailyPrice, setCouponAdjustedDailyPrice] = useState(null);
+  const [showCouponInput, setShowCouponInput] = useState(true);
   /** @type {null | 'daily' | 'weekly'} */
   const [enrollPlan, setEnrollPlan] = useState(null);
 
@@ -102,6 +113,97 @@ export default function IntegratedMentorship2029() {
       ? Math.round(((heroBase - heroSelling) / heroBase) * 100)
       : discountPercentage;
   const heroSavings = Math.max(0, heroBase - heroSelling);
+  const resolvedCourseId =
+    course?._id ||
+    (typeof import.meta.env.VITE_IMP_2029_COURSE_ID === "string"
+      ? import.meta.env.VITE_IMP_2029_COURSE_ID.trim()
+      : "");
+
+  useEffect(() => {
+    setCouponAdjustedDailyPrice(null);
+    setAppliedCoupon(null);
+    setCouponError("");
+  }, [course?._id, heroSelling, heroBase]);
+
+  useEffect(() => {
+    const autoApply = async () => {
+      if (!resolvedCourseId) return;
+      try {
+        const res = await getAutoApplyCoupon({
+          courseId: resolvedCourseId,
+          orderValue: heroSelling,
+        });
+        const autoData = res?.data?.data;
+        if (!autoData?.coupon || autoData?.pricing?.final_price == null) return;
+        setAppliedCoupon(autoData.coupon);
+        setCouponAdjustedDailyPrice(Number(autoData.pricing.final_price));
+      } catch {
+        // optional
+      }
+    };
+    autoApply();
+  }, [resolvedCourseId, heroSelling]);
+
+  useEffect(() => {
+    const checkAvailability = async () => {
+      if (!resolvedCourseId) {
+        setShowCouponInput(true);
+        return;
+      }
+      try {
+        await getCouponAvailability({ courseId: resolvedCourseId });
+        setShowCouponInput(true);
+      } catch {
+        setShowCouponInput(true);
+      }
+    };
+    checkAvailability();
+  }, [resolvedCourseId]);
+
+  const displayedHeroSelling =
+    couponAdjustedDailyPrice != null ? couponAdjustedDailyPrice : heroSelling;
+  const displayedHeroDiscountPct =
+    heroBase > 0 && displayedHeroSelling >= 0 && heroBase > displayedHeroSelling
+      ? Math.round(((heroBase - displayedHeroSelling) / heroBase) * 100)
+      : heroDiscountPct;
+  const displayedHeroSavings = Math.max(0, heroBase - displayedHeroSelling);
+
+  const handleApplyCoupon = async (code) => {
+    try {
+      if (!resolvedCourseId) {
+        setCouponError("Coupon is available after course is loaded.");
+        return;
+      }
+      setCouponApplying(true);
+      setCouponError("");
+      const res = await applyCoupon({
+        code,
+        courseId: resolvedCourseId,
+        orderValue: heroSelling,
+      });
+      const payload = res?.data?.data;
+      if (payload?.pricing?.final_price == null || !payload?.coupon) {
+        setCouponError("Invalid coupon response.");
+        return;
+      }
+      setAppliedCoupon(payload.coupon);
+      setCouponAdjustedDailyPrice(Number(payload.pricing.final_price));
+    } catch (err) {
+      setCouponError(
+        err?.response?.data?.data?.message ||
+          err?.response?.data?.message ||
+          "Invalid or expired coupon."
+      );
+    } finally {
+      setCouponApplying(false);
+    }
+  };
+
+  const clearAppliedCoupon = () => {
+    setCouponAdjustedDailyPrice(null);
+    setAppliedCoupon(null);
+    setCouponError("");
+  };
 
   const handleEnrollClick = (plan) => {
     setEnrollPlan(plan === "weekly" || plan === "daily" ? plan : "daily");
@@ -136,7 +238,9 @@ export default function IntegratedMentorship2029() {
     enrollPlan === "weekly" && weeklyPlan?.price != null
       ? Number(weeklyPlan.price)
       : enrollPlan === "daily" && dailyPlan?.price != null
-        ? Number(dailyPlan.price)
+        ? couponAdjustedDailyPrice != null
+          ? Number(couponAdjustedDailyPrice)
+          : Number(dailyPlan.price)
         : sellingPrice;
 
   const handlePaymentSuccess = () => {
@@ -167,12 +271,18 @@ export default function IntegratedMentorship2029() {
 
       <Imp2029View
         d={detail}
-        sellingPrice={heroSelling}
+        sellingPrice={displayedHeroSelling}
         basePrice={heroBase}
-        discountPercentage={heroDiscountPct}
-        savings={heroSavings}
+        discountPercentage={displayedHeroDiscountPct}
+        savings={displayedHeroSavings}
         onEnroll={handleEnrollClick}
         onEnquire={() => setShowEnquiryForm(true)}
+        onApplyCoupon={handleApplyCoupon}
+        onClearCoupon={clearAppliedCoupon}
+        couponApplying={couponApplying}
+        couponError={couponError}
+        appliedCoupon={appliedCoupon}
+        showCouponInput={showCouponInput}
       />
 
       {showPaymentForm && (
@@ -206,6 +316,8 @@ export default function IntegratedMentorship2029() {
                 ...paymentCourseBase,
                 basePrice: selectedBasePrice,
                 sellingPrice: selectedSellingPrice,
+                appliedCoupon:
+                  enrollPlan === "daily" && appliedCoupon?.code ? appliedCoupon : null,
                 discountPercentage:
                   selectedBasePrice > selectedSellingPrice && selectedBasePrice > 0
                     ? Math.round(((selectedBasePrice - selectedSellingPrice) / selectedBasePrice) * 100)

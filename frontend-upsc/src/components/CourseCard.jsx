@@ -4,6 +4,8 @@ import PaymentForm from "./payment/PaymentForm";
 import { formatDateRange } from "../utils/dateUtils";
 import OptimizedImage from "./utility/OptimizedImage";
 import { resolveLegacyUploadThumb } from "../utils/mediaUrls";
+import CouponApplyBox from "./coupon/CouponApplyBox";
+import { applyCoupon, getAutoApplyCoupon } from "../api/coreService";
 
 const CourseCard = ({
   title,
@@ -22,6 +24,9 @@ const CourseCard = ({
   inlineExpand = true,
   overlayMode = false,
   onEnrollClick,
+  couponTargetCourseId,
+  onCouponTargetSelect,
+  couponRadioName = "course-coupon-target",
   _id,
   showPaymentForm: externalShowPaymentForm,
   onPaymentFormClose,
@@ -31,6 +36,14 @@ const CourseCard = ({
   const [showDetails, setShowDetails] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [couponApplying, setCouponApplying] = useState(false);
+  const [couponError, setCouponError] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [pricing, setPricing] = useState({
+    original: 0,
+    final: 0,
+    discountPercent: 0,
+  });
 
   useEffect(() => {
     if (typeof expanded === "boolean") setShowDetails(expanded);
@@ -66,6 +79,48 @@ const CourseCard = ({
     discountPercentage = 0,
     sellingPrice = 0,
   } = course;
+
+  useEffect(() => {
+    const original = Number(basePrice || 0);
+    const final = Number(sellingPrice || original);
+    const discountPercent = original > 0 ? Math.round(((original - final) / original) * 100) : 0;
+    setPricing({ original, final, discountPercent });
+    setAppliedCoupon(null);
+    setCouponError("");
+  }, [_id, basePrice, sellingPrice]);
+
+  const isCouponSelected =
+    !couponTargetCourseId || String(couponTargetCourseId) === String(_id || "");
+
+  useEffect(() => {
+    const tryAutoApply = async () => {
+      if (!_id) return;
+      try {
+        const res = await getAutoApplyCoupon({
+          courseId: _id,
+          orderValue: Number(sellingPrice || basePrice || 0),
+        });
+        const autoData = res?.data?.data;
+        if (autoData?.pricing?.final_price == null || !autoData?.coupon) return;
+        setAppliedCoupon(autoData.coupon);
+        setPricing({
+          original: Number(autoData.pricing.original_price ?? pricing.original),
+          final: Number(autoData.pricing.final_price ?? pricing.final),
+          discountPercent: Number(autoData.pricing.effective_discount_percent ?? 0),
+        });
+      } catch {
+        // optional UX enhancement; ignore if unavailable
+      }
+    };
+    tryAutoApply();
+  }, [_id, sellingPrice, basePrice]);
+
+  useEffect(() => {
+    if (couponTargetCourseId && !isCouponSelected) {
+      setCouponError("");
+      setAppliedCoupon(null);
+    }
+  }, [couponTargetCourseId, isCouponSelected]);
 
   const formatPrice = (p) => (p === 0 ? "Free" : `₹${p?.toLocaleString?.()}`);
   
@@ -152,6 +207,46 @@ const CourseCard = ({
     }
   };
 
+  const handleApplyCoupon = async (couponCode) => {
+    try {
+      setCouponApplying(true);
+      setCouponError("");
+      const res = await applyCoupon({
+        code: couponCode,
+        courseId: _id,
+        orderValue: pricing.final,
+      });
+      const payload = res?.data?.data;
+      if (!payload?.pricing) {
+        setCouponError("Invalid coupon response.");
+        return;
+      }
+      setAppliedCoupon(payload.coupon);
+      setPricing({
+        original: Number(payload.pricing.original_price ?? pricing.original),
+        final: Number(payload.pricing.final_price ?? pricing.final),
+        discountPercent: Number(payload.pricing.effective_discount_percent ?? 0),
+      });
+    } catch (err) {
+      setCouponError(
+        err?.response?.data?.data?.message ||
+          err?.response?.data?.message ||
+          "Invalid or expired coupon."
+      );
+    } finally {
+      setCouponApplying(false);
+    }
+  };
+
+  const clearCoupon = () => {
+    const original = Number(basePrice || 0);
+    const final = Number(sellingPrice || original);
+    const discountPercent = original > 0 ? Math.round(((original - final) / original) * 100) : 0;
+    setPricing({ original, final, discountPercent });
+    setAppliedCoupon(null);
+    setCouponError("");
+  };
+
   const handleClosePayment = () => {
     setShowPaymentForm(false);
     if (typeof onPaymentFormClose === "function") {
@@ -201,7 +296,16 @@ const CourseCard = ({
             &times;
           </button>
           <PaymentForm
-            course={{ ...course, title, basePrice, discountPercentage, sellingPrice, _id, thumbnail }}
+            course={{
+              ...course,
+              title,
+              basePrice: pricing.original,
+              discountPercentage: pricing.discountPercent,
+              sellingPrice: pricing.final,
+              _id,
+              thumbnail,
+              appliedCoupon,
+            }}
             onPaymentSuccess={handlePaymentSuccess}
             onClose={handleClosePayment}
           />
@@ -319,17 +423,17 @@ const CourseCard = ({
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
                 <div className="flex items-baseline justify-between">
                   <div className="flex items-baseline space-x-4">
-                    {discountPercentage > 0 && (
+                    {pricing.discountPercent > 0 && (
                       <span className="text-gray-500 text-lg line-through">
-                        {formatPrice(basePrice)}
+                        {formatPrice(pricing.original)}
                       </span>
                     )}
                     <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      {formatPrice(sellingPrice)}
+                      {formatPrice(pricing.final)}
                     </div>
-                    {discountPercentage > 0 && (
+                    {pricing.discountPercent > 0 && (
                       <span className="ml-3 text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-semibold border border-green-200">
-                        {discountPercentage}% OFF
+                        {pricing.discountPercent}% OFF
                       </span>
                     )}
                   </div>
@@ -337,8 +441,24 @@ const CourseCard = ({
                     className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                     onClick={handleEnrollClick}
                   >
-                    {sellingPrice === 0 ? "Start Learning Free" : "Enroll Now"}
+                    {pricing.final === 0 ? "Start Learning Free" : "Enroll Now"}
                   </button>
+                </div>
+                <div className="mt-3">
+                  <CouponApplyBox
+                    onApply={handleApplyCoupon}
+                    onClear={clearCoupon}
+                    loading={couponApplying}
+                    appliedCoupon={appliedCoupon}
+                    errorMessage={couponError}
+                    isSelected={isCouponSelected}
+                    onSelect={
+                      typeof onCouponTargetSelect === "function" && _id
+                        ? () => onCouponTargetSelect(String(_id))
+                        : undefined
+                    }
+                    radioName={couponRadioName}
+                  />
                 </div>
               </div>
             </div>
@@ -460,21 +580,36 @@ const CourseCard = ({
 
             <div className="mb-2 mt-2">
               <div className="flex items-baseline space-x-3">
-                {discountPercentage > 0 && (
+                {pricing.discountPercent > 0 && (
                   <span className="text-gray-500 text-2xl line-through font-medium">
-                    {formatPrice(basePrice)}
+                    {formatPrice(pricing.original)}
                   </span>
                 )}
                 <div className="text-xl font-semibold text-gray-800">
-                  {formatPrice(sellingPrice)}
+                  {formatPrice(pricing.final)}
                 </div>
-                {discountPercentage > 0 && (
+                {pricing.discountPercent > 0 && (
                   <span className="ml-2 text-sm px-3 py-1 rounded-full bg-green-100 text-green-800 font-bold border border-green-200">
-                    {discountPercentage}% OFF
+                    {pricing.discountPercent}% OFF
                   </span>
                 )}
               </div>
             </div>
+            <CouponApplyBox
+              onApply={handleApplyCoupon}
+              onClear={clearCoupon}
+              loading={couponApplying}
+              appliedCoupon={appliedCoupon}
+              errorMessage={couponError}
+              compact
+              isSelected={isCouponSelected}
+              onSelect={
+                typeof onCouponTargetSelect === "function" && _id
+                  ? () => onCouponTargetSelect(String(_id))
+                  : undefined
+              }
+              radioName={couponRadioName}
+            />
 
             <div className="mt-auto">
               <button
@@ -485,7 +620,7 @@ const CourseCard = ({
                 }`}
                 onClick={handleEnrollClick}
               >
-                {sellingPrice === 0 ? "Start Learning Free" : "Enroll Now"}
+                {pricing.final === 0 ? "Start Learning Free" : "Enroll Now"}
               </button>
             </div>
           </div>
