@@ -140,9 +140,9 @@ export function getDefaultImp2027DetailPage() {
       comparisonHead: {
         left: "Feature",
         midLabel: "Daily",
-        midPrice: "₹48,000",
+        midPrice: "₹60,000",
         rightLabel: "Weekly",
-        rightPrice: "₹30,000",
+        rightPrice: "₹35,000",
       },
       comparisonRows: [
         { type: "cat", label: "Mentoring & Guidance" },
