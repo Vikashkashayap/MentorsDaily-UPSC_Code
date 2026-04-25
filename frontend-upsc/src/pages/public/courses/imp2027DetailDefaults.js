@@ -44,7 +44,7 @@ export function getDefaultImp2027DetailPage() {
     },
     announcement: {
       strong: "🎉 Early Bird:",
-      text: "Enroll now and save ₹48,000 — only limited seats available in this batch.",
+      text: "Enroll now and save ₹ 60000 — only limited seats available in this batch.",
       ctaText: "Grab Your Seat →",
       ctaHref: "#enroll",
     },
@@ -99,7 +99,7 @@ export function getDefaultImp2027DetailPage() {
         name: "Weekly Mentorship",
         price: 35000,
         oldPrice: 70000,
-        saveLabel: "Save ₹30,000 (50% off) — Limited Seats",
+        saveLabel: "Save ₹35,000 (50% off) — Limited Seats",
         // durationLine: "30-Month Full Program · Batch Starts June 2025",
         features: [
           // { ok: true, cls: "green", text: "All NCERT Books Provided" },
@@ -118,9 +118,9 @@ export function getDefaultImp2027DetailPage() {
       daily: {
         name: "Daily Mentorship",
         popularRibbon: "Most Popular",
-        price: 48000,
+        price: 60000,
         oldPrice: 120000,
-        saveLabel: "Save ₹72,000 (60% off) — Early Bird Price",
+        saveLabel: "Save ₹60,000 (50% off) — Early Bird Price",
         // durationLine: "30-Month Full Program · Batch Starts June 2025",
         features: [
           { ok: true, cls: "green", text: "All NCERTs & Standard Books Provided" },
