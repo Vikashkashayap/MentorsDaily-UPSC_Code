@@ -97,8 +97,8 @@ export function getDefaultImp2027DetailPage() {
       toggleHint: "Scroll down for a feature-by-feature comparison table ↓",
       weekly: {
         name: "Weekly Mentorship",
-        price: 30000,
-        oldPrice: 60000,
+        price: 35000,
+        oldPrice: 70000,
         saveLabel: "Save ₹30,000 (50% off) — Limited Seats",
         // durationLine: "30-Month Full Program · Batch Starts June 2025",
         features: [

@@ -216,62 +216,112 @@ export default function IntegratedMentorship2027() {
       : heroDiscountPct;
   const displayedHeroSavings = Math.max(0, heroBase - displayedHeroSelling);
 
+  const dailyOrderValue = heroSelling;
+  const weeklyOrderValue = Number(weeklyPlan?.price ?? sellingPrice ?? 0);
+
+  const parseApplyPayload = (res) => {
+    const payload = res?.data?.data;
+    if (payload?.pricing?.final_price == null || !payload?.coupon) return null;
+    return payload;
+  };
+
+  const couponErrMsg = (err) =>
+    err?.response?.data?.data?.message ||
+    err?.response?.data?.message ||
+    (typeof err?.message === "string" ? err.message : null) ||
+    "Invalid or expired coupon.";
+
   const handleApplyCoupon = async (plan, code) => {
-    const isWeekly = plan === "weekly";
-    const orderValue = isWeekly
-      ? Number(weeklyPlan?.price ?? sellingPrice ?? 0)
-      : heroSelling;
+    const originWeekly = plan === "weekly";
+    const primaryOrder = originWeekly ? weeklyOrderValue : dailyOrderValue;
+    const secondaryOrder = originWeekly ? dailyOrderValue : weeklyOrderValue;
+
+    if (!resolvedCourseId) {
+      if (originWeekly) {
+        setCouponErrorWeekly("Coupon is available after course is loaded.");
+        setCouponErrorDaily("");
+      } else {
+        setCouponErrorDaily("Coupon is available after course is loaded.");
+        setCouponErrorWeekly("");
+      }
+      return;
+    }
+
+    setCouponApplyingDaily(true);
+    setCouponApplyingWeekly(true);
+    setCouponErrorDaily("");
+    setCouponErrorWeekly("");
+
     try {
-      if (!resolvedCourseId) {
-        if (isWeekly) setCouponErrorWeekly("Coupon is available after course is loaded.");
-        else setCouponErrorDaily("Coupon is available after course is loaded.");
+      let primaryRes;
+      try {
+        primaryRes = await applyCoupon({
+          code,
+          courseId: resolvedCourseId,
+          orderValue: primaryOrder,
+        });
+      } catch (err) {
+        if (originWeekly) setCouponErrorWeekly(couponErrMsg(err));
+        else setCouponErrorDaily(couponErrMsg(err));
         return;
       }
-      if (isWeekly) {
-        setCouponApplyingWeekly(true);
-        setCouponErrorWeekly("");
-      } else {
-        setCouponApplyingDaily(true);
-        setCouponErrorDaily("");
-      }
-      const res = await applyCoupon({
-        code,
-        courseId: resolvedCourseId,
-        orderValue,
-      });
-      const payload = res?.data?.data;
-      if (payload?.pricing?.final_price == null || !payload?.coupon) {
-        if (isWeekly) setCouponErrorWeekly("Invalid coupon response.");
+
+      const primaryPayload = parseApplyPayload(primaryRes);
+      if (!primaryPayload) {
+        if (originWeekly) setCouponErrorWeekly("Invalid coupon response.");
         else setCouponErrorDaily("Invalid coupon response.");
         return;
       }
-      if (isWeekly) {
-        setAppliedCouponWeekly(payload.coupon);
-        setCouponAdjustedWeeklyPrice(Number(payload.pricing.final_price));
+
+      if (originWeekly) {
+        setAppliedCouponWeekly(primaryPayload.coupon);
+        setCouponAdjustedWeeklyPrice(Number(primaryPayload.pricing.final_price));
       } else {
-        setAppliedCouponDaily(payload.coupon);
-        setCouponAdjustedDailyPrice(Number(payload.pricing.final_price));
+        setAppliedCouponDaily(primaryPayload.coupon);
+        setCouponAdjustedDailyPrice(Number(primaryPayload.pricing.final_price));
       }
-    } catch (err) {
-      const msg =
-        err?.response?.data?.data?.message ||
-        err?.response?.data?.message ||
-        "Invalid or expired coupon.";
-      if (isWeekly) setCouponErrorWeekly(msg);
-      else setCouponErrorDaily(msg);
+
+      try {
+        const secondaryRes = await applyCoupon({
+          code,
+          courseId: resolvedCourseId,
+          orderValue: secondaryOrder,
+        });
+        const secondaryPayload = parseApplyPayload(secondaryRes);
+        if (secondaryPayload) {
+          if (originWeekly) {
+            setAppliedCouponDaily(secondaryPayload.coupon);
+            setCouponAdjustedDailyPrice(Number(secondaryPayload.pricing.final_price));
+          } else {
+            setAppliedCouponWeekly(secondaryPayload.coupon);
+            setCouponAdjustedWeeklyPrice(Number(secondaryPayload.pricing.final_price));
+          }
+        } else if (originWeekly) {
+          setAppliedCouponDaily(null);
+          setCouponAdjustedDailyPrice(null);
+        } else {
+          setAppliedCouponWeekly(null);
+          setCouponAdjustedWeeklyPrice(null);
+        }
+      } catch {
+        if (originWeekly) {
+          setAppliedCouponDaily(null);
+          setCouponAdjustedDailyPrice(null);
+        } else {
+          setAppliedCouponWeekly(null);
+          setCouponAdjustedWeeklyPrice(null);
+        }
+      }
     } finally {
-      if (isWeekly) setCouponApplyingWeekly(false);
-      else setCouponApplyingDaily(false);
+      setCouponApplyingDaily(false);
+      setCouponApplyingWeekly(false);
     }
   };
 
-  const clearAppliedCoupon = (plan) => {
-    if (plan === "weekly") {
-      setCouponAdjustedWeeklyPrice(null);
-      setAppliedCouponWeekly(null);
-      setCouponErrorWeekly("");
-      return;
-    }
+  const clearAppliedCoupon = () => {
+    setCouponAdjustedWeeklyPrice(null);
+    setAppliedCouponWeekly(null);
+    setCouponErrorWeekly("");
     setCouponAdjustedDailyPrice(null);
     setAppliedCouponDaily(null);
     setCouponErrorDaily("");
