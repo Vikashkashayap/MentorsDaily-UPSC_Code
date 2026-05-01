@@ -48,8 +48,8 @@ const generateEmiInstallments = (totalAmount, months, paymentId) => {
 
 /** When checkout slug is integrated-mentorship-20xx but Mongo row is missing or is another year, still charge correct plan amounts (must match frontend defaults). */
 const IMP_PLAN_AMOUNTS_BY_YEAR = {
-    '2027': { weekly: 30000, daily: 48000 },
-    '2028': { weekly: 60000, daily: 90000 },
+    '2027': { weekly: 35000, daily: 60000 },
+    '2028': { weekly: 65000, daily: 90000 },
     '2029': { weekly: 90000, daily: 120000 },
 };
 
@@ -81,14 +81,6 @@ function resolveFullPayAmountBySlug(slug) {
 }
 
 function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
-    const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
-    const ps = dp && dp.pricingSection ? dp.pricingSection : null;
-    if (mentorshipPlan === 'weekly' && ps && ps.weekly && ps.weekly.price != null) {
-        return Number(ps.weekly.price);
-    }
-    if (mentorshipPlan === 'daily' && ps && ps.daily && ps.daily.price != null) {
-        return Number(ps.daily.price);
-    }
     const slug = (requestedSlug != null ? String(requestedSlug) : String(course.slug || '')).toLowerCase().trim();
     const title = ((course.title || '') + '').toLowerCase();
     const yearMatch = slug.match(/integrated-mentorship-(20\d{2})\b/);
@@ -98,12 +90,21 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
         if (mentorshipPlan === 'weekly') return byYear.weekly;
         if (mentorshipPlan === 'daily') return byYear.daily;
     }
+
+    const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
+    const ps = dp && dp.pricingSection ? dp.pricingSection : null;
+    if (mentorshipPlan === 'weekly' && ps && ps.weekly && ps.weekly.price != null) {
+        return Number(ps.weekly.price);
+    }
+    if (mentorshipPlan === 'daily' && ps && ps.daily && ps.daily.price != null) {
+        return Number(ps.daily.price);
+    }
     const isImp2027 =
         slug === 'integrated-mentorship-2027' ||
         (title.includes('integrated') && title.includes('2027'));
     if (isImp2027) {
-        if (mentorshipPlan === 'weekly') return 30000;
-        if (mentorshipPlan === 'daily') return 48000;
+        if (mentorshipPlan === 'weekly') return 35000;
+        if (mentorshipPlan === 'daily') return 60000;
     }
     return null;
 }
