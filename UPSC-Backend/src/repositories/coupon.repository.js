@@ -5,6 +5,14 @@ exports.createCoupon = async (payload) => {
   return Coupon.findById(coupon._id).lean();
 };
 
+exports.deactivateExpiredCoupons = async () => {
+  const now = new Date();
+  return Coupon.updateMany(
+    { is_active: true, expiry_date: { $lt: now } },
+    { $set: { is_active: false } }
+  );
+};
+
 exports.listCoupons = async () => {
   return Coupon.find({}).sort({ createdAt: -1 }).lean();
 };

@@ -37,8 +37,8 @@ function isCouponApplicableToCourse(coupon, course) {
 
 async function validateCouponForCourse({ coupon, course, orderValue }) {
   if (!coupon) return { valid: false, message: "Invalid coupon code." };
-  if (!coupon.is_active) return { valid: false, message: "Coupon is inactive." };
   if (isCouponExpired(coupon)) return { valid: false, message: "Coupon has expired." };
+  if (!coupon.is_active) return { valid: false, message: "Coupon is inactive." };
   if (!isCouponApplicableToCourse(coupon, course)) {
     return { valid: false, message: "Coupon is not applicable for this course." };
   }
@@ -123,10 +123,21 @@ exports.createCoupon = async (payload) => {
   });
 };
 
-exports.listCoupons = async () => couponRepository.listCoupons();
+exports.listCoupons = async () => {
+  await couponRepository.deactivateExpiredCoupons();
+  return couponRepository.listCoupons();
+};
 
 exports.toggleCoupon = async (id, is_active) => {
-  return couponRepository.updateById(id, { is_active: Boolean(is_active) });
+  const wantActive = Boolean(is_active);
+  if (wantActive) {
+    const existing = await couponRepository.findById(id);
+    if (!existing) throw new Error("Coupon not found.");
+    if (isCouponExpired(existing)) {
+      throw new Error("Cannot activate an expired coupon. Create a new coupon with a future expiry.");
+    }
+  }
+  return couponRepository.updateById(id, { is_active: wantActive });
 };
 
 exports.deleteCoupon = async (id) => {
@@ -153,6 +164,8 @@ exports.applyCoupon = async ({ code, courseId, orderValue }) => {
   const amountToEvaluate = Number.isFinite(Number(orderValue))
     ? Number(orderValue)
     : Number(course.sellingPrice ?? course.basePrice ?? 0);
+
+  await couponRepository.deactivateExpiredCoupons();
 
   const coupon = await couponRepository.findByCode(normalizedCode);
   const validation = await validateCouponForCourse({
@@ -182,6 +195,7 @@ exports.applyCoupon = async ({ code, courseId, orderValue }) => {
 exports.findBestAutoApplyCoupon = async ({ courseId, orderValue }) => {
   const course = await courseRepository.findCourseById(courseId);
   if (!course) return null;
+  await couponRepository.deactivateExpiredCoupons();
   const coupons = await couponRepository.listActiveAutoApplyCoupons();
   let best = null;
 
@@ -214,6 +228,7 @@ exports.getCouponAvailability = async ({ courseId }) => {
   }
   const course = await courseRepository.findCourseById(courseId);
   if (!course) return { available: false };
+  await couponRepository.deactivateExpiredCoupons();
   const activeCoupons = await couponRepository.listActiveCoupons();
   const available = activeCoupons.some((coupon) =>
     isCouponApplicableToCourse(coupon, course)

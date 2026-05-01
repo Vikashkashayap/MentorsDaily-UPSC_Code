@@ -1,11 +1,29 @@
 // src/components/Footer.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const UPI_ID = "mentorsdaily@idfcbank";
+const UPI_CARD_IMAGE = "/images/upi-payment-card.png";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [hoveredSocial, setHoveredSocial] = useState(null);
+  const [upiModalOpen, setUpiModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!upiModalOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setUpiModalOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [upiModalOpen]);
 
   const socialLinks = [
     {
@@ -428,12 +446,39 @@ export default function Footer() {
           className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8"
         >
           {/* Copyright */}
-          <div className="text-gray-500 text-sm">
+          <div className="text-gray-500 text-sm text-center md:text-left">
             © {new Date().getFullYear()}{" "}
             <span className="text-white font-semibold bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
               Sempiternity Technologies .
             </span> All rights reserved.
           </div>
+
+          <motion.button
+            type="button"
+            onClick={() => setUpiModalOpen(true)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            aria-haspopup="dialog"
+            aria-expanded={upiModalOpen}
+            className="flex items-center gap-3 rounded-xl border border-gray-700/80 bg-gray-900/60 px-3 py-2 text-left shadow-md backdrop-blur-sm transition-colors hover:border-emerald-500/40 hover:bg-gray-800/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+          >
+            <img
+              src={UPI_CARD_IMAGE}
+              alt=""
+              width={44}
+              height={44}
+              className="h-11 w-11 shrink-0 rounded-md border border-gray-600/50 object-cover object-top"
+            />
+            <div className="min-w-0">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                Pay via UPI
+              </div>
+              <div className="truncate text-xs font-medium text-red-300/95 sm:max-w-[200px]">
+                {UPI_ID}
+              </div>
+              <div className="text-[10px] text-gray-500">Tap to enlarge</div>
+            </div>
+          </motion.button>
 
           {/* Additional Links */}
           {/* <div className="flex flex-wrap gap-6 text-sm">
@@ -468,6 +513,51 @@ export default function Footer() {
           </motion.button> */}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {upiModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+            onClick={() => setUpiModalOpen(false)}
+            role="presentation"
+          >
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.94, opacity: 0 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="upi-modal-title"
+              className="relative w-full max-w-[min(92vw,440px)] rounded-2xl bg-white p-4 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="upi-modal-title" className="sr-only">
+                UPI payment — {UPI_ID}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setUpiModalOpen(false)}
+                aria-label="Close"
+                className="absolute -right-1 -top-1 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-lg leading-none text-white shadow-md transition hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              >
+                ×
+              </button>
+              <img
+                src={UPI_CARD_IMAGE}
+                alt={`UPI QR code and payment details for ${UPI_ID}`}
+                width={400}
+                height={600}
+                className="mx-auto block h-auto w-full max-h-[min(78vh,640px)] rounded-lg object-contain"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 } 

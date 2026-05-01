@@ -10,6 +10,19 @@ import { messageHandler } from "../../utils/messageHandler";
 import { useTheme } from "../../contexts/ThemeContext";
 
 const stripHtml = (text = "") => String(text).replace(/<[^>]*>/g, "").trim();
+
+/** datetime-local is wall-clock in the browser; send ISO UTC so the server stores the same instant everywhere. */
+function expiryLocalInputToIso(localDatetime) {
+  if (!localDatetime) return "";
+  const ms = new Date(localDatetime).getTime();
+  if (Number.isNaN(ms)) return localDatetime;
+  return new Date(ms).toISOString();
+}
+
+function isCouponPastExpiry(expiryDate) {
+  if (!expiryDate) return true;
+  return new Date(expiryDate).getTime() < Date.now();
+}
 const yearFromCourse = (course) => {
   const source = [course?.slug, course?.title, course?.category].filter(Boolean).join(" ");
   const match = String(source).match(/\b(20\d{2})\b/);
@@ -85,7 +98,7 @@ const AdminCoupons = () => {
         discount_value: Number(form.discount_value || 0),
         max_discount: form.max_discount ? Number(form.max_discount) : null,
         min_order_value: form.min_order_value ? Number(form.min_order_value) : null,
-        expiry_date: form.expiry_date,
+        expiry_date: expiryLocalInputToIso(form.expiry_date),
         is_active: form.is_active,
         auto_apply: form.auto_apply,
         applicable_courses: form.appliesToAll ? "all" : form.applicable_courses,
@@ -106,11 +119,19 @@ const AdminCoupons = () => {
   };
 
   const toggleStatus = async (coupon) => {
+    if (!coupon.is_active && isCouponPastExpiry(coupon.expiry_date)) {
+      messageHandler.error("This coupon has expired. Create a new one with a future expiry.");
+      return;
+    }
     try {
       await toggleCouponStatus(coupon._id, !coupon.is_active);
       await loadData();
-    } catch {
-      messageHandler.error("Failed to toggle coupon status.");
+    } catch (err) {
+      messageHandler.error(
+        err?.response?.data?.data?.message ||
+          err?.response?.data?.message ||
+          "Failed to toggle coupon status."
+      );
     }
   };
 
@@ -145,7 +166,14 @@ const AdminCoupons = () => {
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Discount value" value={form.discount_value} onChange={(e) => setForm((p) => ({ ...p, discount_value: e.target.value }))} required />
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Max discount (optional)" value={form.max_discount} onChange={(e) => setForm((p) => ({ ...p, max_discount: e.target.value }))} />
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Min order value (optional)" value={form.min_order_value} onChange={(e) => setForm((p) => ({ ...p, min_order_value: e.target.value }))} />
-          <input className="border rounded-lg px-3 py-2" type="datetime-local" value={form.expiry_date} onChange={(e) => setForm((p) => ({ ...p, expiry_date: e.target.value }))} required />
+          <input
+            className="border rounded-lg px-3 py-2"
+            type="datetime-local"
+            title="Coupon is valid until this date and time (your local time), then it deactivates."
+            value={form.expiry_date}
+            onChange={(e) => setForm((p) => ({ ...p, expiry_date: e.target.value }))}
+            required
+          />
 
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={form.appliesToAll} onChange={(e) => setForm((p) => ({ ...p, appliesToAll: e.target.checked, applicable_courses: [] }))} />
@@ -221,7 +249,9 @@ const AdminCoupons = () => {
               </tr>
             </thead>
             <tbody>
-              {coupons.map((coupon) => (
+              {coupons.map((coupon) => {
+                const expired = isCouponPastExpiry(coupon.expiry_date);
+                return (
                 <tr key={coupon._id} className="border-b">
                   <td className="py-2 font-semibold uppercase">{coupon.code}</td>
                   <td className="py-2">{coupon.discount_type}</td>
@@ -235,19 +265,22 @@ const AdminCoupons = () => {
                   <td className="py-2">
                     <span
                       className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${
-                        coupon.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-200 text-gray-700"
+                        expired
+                          ? "bg-amber-100 text-amber-800"
+                          : coupon.is_active
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-200 text-gray-700"
                       }`}
                     >
-                      {coupon.is_active ? "Active" : "Inactive"}
+                      {expired ? "Expired" : coupon.is_active ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td className="py-2 flex items-center gap-3">
                     <button
                       type="button"
                       onClick={() => toggleStatus(coupon)}
-                      className="text-blue-600 underline"
+                      disabled={expired && !coupon.is_active}
+                      className="text-blue-600 underline disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
                     >
                       {coupon.is_active ? "Deactivate" : "Activate"}
                     </button>
@@ -261,7 +294,8 @@ const AdminCoupons = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>
