@@ -549,12 +549,12 @@ export default function Footer() {
               </button>
               <img
                 src={UPI_CARD_IMAGE}
-                alt={`UPI QR code and payment details for ${UPI_ID}`}
+                alt={`UPI QR code and payment details for ${UPI_ID} - Sempiternity Technologies`}
                 width={400}
                 height={600}
                 className="mx-auto block h-auto w-full max-h-[min(78vh,640px)] rounded-lg object-contain"
               />
-              
+
             </motion.div>
           </motion.div>
         )}
