@@ -8,7 +8,7 @@ exports.createCoupon = async (payload) => {
 exports.deactivateExpiredCoupons = async () => {
   const now = new Date();
   return Coupon.updateMany(
-    { is_active: true, expiry_date: { $lt: now } },
+    { is_active: true, expiry_date: { $lte: now } },
     { $set: { is_active: false } }
   );
 };

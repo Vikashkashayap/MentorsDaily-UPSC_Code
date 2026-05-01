@@ -333,6 +333,43 @@ exports.verifyCoursePayment = async ({ paymentId, razorpayPaymentId, razorpayOrd
         return { verified: false };
     }
 
+    const couponCodeRaw = payment.couponCode != null ? String(payment.couponCode).trim() : '';
+    const discountStored = Number(payment.couponDiscountAmount || 0);
+    if (couponCodeRaw && discountStored > 0) {
+        const cid = payment.courseId;
+        const courseIdStr =
+            cid && typeof cid === 'object' && cid._id != null ? String(cid._id) : String(cid);
+        const orderValueBeforeDiscount = Number(payment.amount) + discountStored;
+        const couponResult = await couponService.applyCoupon({
+            code: couponCodeRaw,
+            courseId: courseIdStr,
+            orderValue: orderValueBeforeDiscount,
+        });
+        if (!couponResult?.valid || !couponResult?.pricing) {
+            logger.warn(
+                `paymentService.js <<verifyCoursePayment>> Coupon invalid at verify: ${couponResult?.message || 'unknown'} paymentId=${paymentId}`
+            );
+            await paymentRepo.updatePaymentStatus(paymentId, {
+                status: 'FAILED',
+                failureReason: couponResult?.message || 'Coupon expired or invalid.',
+            });
+            return { verified: false };
+        }
+        const expDisc = Math.round(Number(couponResult.pricing.discount_amount));
+        const expFinal = Math.round(Number(couponResult.pricing.final_price));
+        if (
+            expDisc !== Math.round(discountStored) ||
+            expFinal !== Math.round(Number(payment.amount))
+        ) {
+            logger.warn(`paymentService.js <<verifyCoursePayment>> Coupon pricing mismatch paymentId=${paymentId}`);
+            await paymentRepo.updatePaymentStatus(paymentId, {
+                status: 'FAILED',
+                failureReason: 'Coupon amount mismatch at verification.',
+            });
+            return { verified: false };
+        }
+    }
+
     // --- Verification Update Fields ---
     const updateFields = {
         status: SUCCESS, // Overall payment status is SUCCESS

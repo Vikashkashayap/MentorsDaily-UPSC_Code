@@ -7,9 +7,10 @@ function sanitizeCouponCode(code) {
   return String(code || "").trim().toUpperCase();
 }
 
+/** Coupon is valid only strictly before this instant; at/after expiry it must not apply. */
 function isCouponExpired(coupon) {
   if (!coupon?.expiry_date) return true;
-  return new Date(coupon.expiry_date).getTime() < Date.now();
+  return Date.now() >= new Date(coupon.expiry_date).getTime();
 }
 
 function extractCourseYear(course) {
@@ -72,6 +73,9 @@ exports.createCoupon = async (payload) => {
   const expiry = new Date(payload.expiry_date);
   if (Number.isNaN(expiry.getTime())) {
     throw new Error("expiry_date must be a valid date.");
+  }
+  if (expiry.getTime() <= Date.now()) {
+    throw new Error("expiry_date must be in the future. Choose a later date and time.");
   }
 
   const appliesToAll =

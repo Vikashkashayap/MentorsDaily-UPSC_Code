@@ -21,7 +21,7 @@ function expiryLocalInputToIso(localDatetime) {
 
 function isCouponPastExpiry(expiryDate) {
   if (!expiryDate) return true;
-  return new Date(expiryDate).getTime() < Date.now();
+  return Date.now() >= new Date(expiryDate).getTime();
 }
 const yearFromCourse = (course) => {
   const source = [course?.slug, course?.title, course?.category].filter(Boolean).join(" ");
@@ -91,6 +91,15 @@ const AdminCoupons = () => {
         messageHandler.error("Please select at least one course or year for this coupon.");
         return;
       }
+      const expiryIso = expiryLocalInputToIso(form.expiry_date);
+      if (!expiryIso || Number.isNaN(new Date(expiryIso).getTime())) {
+        messageHandler.error("Please set a valid expiry date and time.");
+        return;
+      }
+      if (new Date(expiryIso).getTime() <= Date.now()) {
+        messageHandler.error("Expiry must be in the future. The coupon stops working at the time you pick.");
+        return;
+      }
       setLoading(true);
       await createCoupon({
         code: form.code,
@@ -98,7 +107,7 @@ const AdminCoupons = () => {
         discount_value: Number(form.discount_value || 0),
         max_discount: form.max_discount ? Number(form.max_discount) : null,
         min_order_value: form.min_order_value ? Number(form.min_order_value) : null,
-        expiry_date: expiryLocalInputToIso(form.expiry_date),
+        expiry_date: expiryIso,
         is_active: form.is_active,
         auto_apply: form.auto_apply,
         applicable_courses: form.appliesToAll ? "all" : form.applicable_courses,
@@ -166,14 +175,22 @@ const AdminCoupons = () => {
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Discount value" value={form.discount_value} onChange={(e) => setForm((p) => ({ ...p, discount_value: e.target.value }))} required />
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Max discount (optional)" value={form.max_discount} onChange={(e) => setForm((p) => ({ ...p, max_discount: e.target.value }))} />
           <input className="border rounded-lg px-3 py-2" type="number" placeholder="Min order value (optional)" value={form.min_order_value} onChange={(e) => setForm((p) => ({ ...p, min_order_value: e.target.value }))} />
-          <input
-            className="border rounded-lg px-3 py-2"
-            type="datetime-local"
-            title="Coupon is valid until this date and time (your local time), then it deactivates."
-            value={form.expiry_date}
-            onChange={(e) => setForm((p) => ({ ...p, expiry_date: e.target.value }))}
-            required
-          />
+          <div className="md:col-span-1">
+            <label className={`block text-xs font-medium mb-1 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+              Valid until (your device time)
+            </label>
+            <input
+              className="border rounded-lg px-3 py-2 w-full"
+              type="datetime-local"
+              title="Until this moment the coupon works on checkout; after it, apply and payment will reject it."
+              value={form.expiry_date}
+              onChange={(e) => setForm((p) => ({ ...p, expiry_date: e.target.value }))}
+              required
+            />
+            <p className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+              After this date &amp; time the code expires and cannot be used.
+            </p>
+          </div>
 
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={form.appliesToAll} onChange={(e) => setForm((p) => ({ ...p, appliesToAll: e.target.checked, applicable_courses: [] }))} />
