@@ -554,6 +554,7 @@ export default function Footer() {
                 height={600}
                 className="mx-auto block h-auto w-full max-h-[min(78vh,640px)] rounded-lg object-contain"
               />
+              
             </motion.div>
           </motion.div>
         )}
