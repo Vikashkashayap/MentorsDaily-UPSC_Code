@@ -250,7 +250,8 @@ export default function Footer() {
               <div className="space-y-3">
                 {[
                   { name: "UPSC Mentorship", href: "/integrated-mentorship", icon: "🎯" },
-                  { name: "UPPCS Mentorship", href: "/uppcs-mentorship", icon: "🏛️" },
+                  { name: "UPPCS Mentorship 2026", href: "/uppcs-mentorship", icon: "🏛️" },
+                  { name: "UPPCS Mentorship 2027", href: "/uppcs-mentorship-2027", icon: "🏛️" },
                   // { name: "Study Materials", href: "/", icon: "📖" },
                   // { name: "Test Series", href: "/", icon: "📊" },
                   { name: "Success Stories", href: "/success-stories", icon: "🏆" },

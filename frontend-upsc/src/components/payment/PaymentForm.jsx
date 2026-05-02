@@ -29,11 +29,15 @@ export function getPaymentCourseId(course) {
     "uppcs-2026-prelims-booster": import.meta.env.VITE_UPPCS_2026_PRELIMS_COURSE_ID,
     "uppcs-2026-upsc-combo": import.meta.env.VITE_UPPCS_2026_COMBO_COURSE_ID,
     "uppcs-2026-mains-booster": import.meta.env.VITE_UPPCS_2026_MAINS_COURSE_ID,
+    "uppcs-2027-daily": import.meta.env.VITE_UPPCS_2027_DAILY_COURSE_ID,
+    "uppcs-2027-bns-prelims": import.meta.env.VITE_UPPCS_2027_BNS_PRELIMS_COURSE_ID,
+    "uppcs-2027-upsc-combo": import.meta.env.VITE_UPPCS_2027_COMBO_COURSE_ID,
+    "uppcs-2027-mains-booster": import.meta.env.VITE_UPPCS_2027_MAINS_COURSE_ID,
   };
   const fromSlug = bySlug[slug];
   if (typeof fromSlug === "string" && fromSlug.trim()) return fromSlug.trim();
   if (
-    /^uppcs-2026-/.test(slug) &&
+    /^uppcs-20(26|27)-/.test(slug) &&
     typeof import.meta.env.VITE_UPPCS_PAYMENT_COURSE_ID === "string" &&
     import.meta.env.VITE_UPPCS_PAYMENT_COURSE_ID.trim()
   ) {

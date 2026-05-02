@@ -62,12 +62,16 @@ function resolveImpFullPayAmountBySlug(slug) {
     return daily != null ? daily : null;
 }
 
-/** UPPCS 2026 landing checkout amounts (override DB sellingPrice when slug matches). */
+/** UPPCS landing checkout amounts (override DB sellingPrice when slug matches). */
 const UPPCS_CHECKOUT_AMOUNT_BY_SLUG = {
     'uppcs-2026-complete': 30000,
     'uppcs-2026-prelims-booster': 15000,
     'uppcs-2026-upsc-combo': 45000,
     'uppcs-2026-mains-booster': 20000,
+    'uppcs-2027-daily': 60000,
+    'uppcs-2027-bns-prelims': 15000,
+    'uppcs-2027-upsc-combo': 45000,
+    'uppcs-2027-mains-booster': 20000,
 };
 
 function resolveUppcsFullPayAmountBySlug(slug) {
@@ -113,7 +117,7 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
  * Resolve Mongo course for checkout: prefer valid courseId, else findCourseBySlug (same as GET /course/slug — includes COURSE_ID_BY_SLUG fallback).
  */
 const IMP_SLUG_RE = /^integrated-mentorship-20\d{2}$/i;
-const UPPCS_SLUG_RE = /^uppcs-2026-/i;
+const UPPCS_SLUG_RE = /^uppcs-20(26|27)-/i;
 
 async function resolveCourseForPayment(courseId, courseSlug) {
     const idStr = courseId != null ? String(courseId).trim() : '';

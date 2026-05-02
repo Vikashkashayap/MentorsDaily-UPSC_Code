@@ -86,6 +86,12 @@ export const PAGE_SEO_DATA = {
     keywords: 'UPPCS 2026, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship'
   },
+  '/uppcs-mentorship-2027': {
+    title: 'UPPCS 2027 Programme | MentorsDaily',
+    description: 'Structured UPPCS 2027 batch — syllabus tree, module tests, Daily complete programme, BNS for Prelims (BNS/BNSS/BSA), and MentorsDaily portal.',
+    keywords: 'UPPCS 2027, BNS, BNSS, BSA, Bharatiya Nyaya Sanhita, UPPSC Prelims, legal GK, mentorship, MentorsDaily',
+    canonical: '/uppcs-mentorship-2027'
+  },
   '/integrated-mentorship': {
     title: 'Integrated Mentorship Program | Complete UPSC Preparation | MentorsDaily',
     description: 'Comprehensive integrated mentorship program covering all aspects of UPSC preparation - prelims, mains, and interview with expert guidance.',

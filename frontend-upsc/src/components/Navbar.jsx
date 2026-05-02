@@ -10,12 +10,15 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [mentorshipOpen, setMentorshipOpen] = useState(false);
+  const [uppcsOpen, setUppcsOpen] = useState(false);
   const [mobileMentorshipOpen, setMobileMentorshipOpen] = useState(false);
+  const [mobileUppcsOpen, setMobileUppcsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [logoSourceIndex, setLogoSourceIndex] = useState(0);
   const [logoUnavailable, setLogoUnavailable] = useState(false);
   const closeTimeout = useRef(null);
   const mentorshipCloseTimeout = useRef(null);
+  const uppcsCloseTimeout = useRef(null);
   const logoSources = ["/Logo/logo.png", "https://mentorsdaily.com/Logo/logo.png"];
   const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
   const mentorshipYearItems = [
@@ -66,6 +69,27 @@ export default function Navbar() {
     },
   ];
 
+  const uppcsYearItems = [
+    {
+      path: "/uppcs-mentorship",
+      label: "UPPCS Mentorship 2026",
+      timeline: "2026",
+      dotClass: "bg-blue-500",
+      hoverClass: "hover:bg-blue-50 hover:text-blue-700",
+      badgeClass: "bg-blue-100 text-blue-700",
+      mobileAccentClass: "bg-blue-50 border-blue-100",
+    },
+    {
+      path: "/uppcs-mentorship-2027",
+      label: "UPPCS Mentorship 2027",
+      timeline: "2027",
+      dotClass: "bg-indigo-500",
+      hoverClass: "hover:bg-indigo-50 hover:text-indigo-800",
+      badgeClass: "bg-indigo-100 text-indigo-800",
+      mobileAccentClass: "bg-indigo-50 border-indigo-100",
+    },
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -79,6 +103,7 @@ export default function Navbar() {
     setMobileOpen(false);
     setMobileResourcesOpen(false);
     setMobileMentorshipOpen(false);
+    setMobileUppcsOpen(false);
   }, [location.pathname]);
 
   // Close mobile menu on escape key
@@ -99,7 +124,11 @@ export default function Navbar() {
     if (mentorshipCloseTimeout.current) {
       clearTimeout(mentorshipCloseTimeout.current);
     }
+    if (uppcsCloseTimeout.current) {
+      clearTimeout(uppcsCloseTimeout.current);
+    }
     setMentorshipOpen(false);
+    setUppcsOpen(false);
     setResourcesOpen(true);
   };
 
@@ -116,13 +145,38 @@ export default function Navbar() {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
     }
+    if (uppcsCloseTimeout.current) {
+      clearTimeout(uppcsCloseTimeout.current);
+    }
     setResourcesOpen(false);
+    setUppcsOpen(false);
     setMentorshipOpen(true);
   };
 
   const handleMentorshipLeave = () => {
     mentorshipCloseTimeout.current = setTimeout(() => {
       setMentorshipOpen(false);
+    }, 200);
+  };
+
+  const handleUppcsEnter = () => {
+    if (uppcsCloseTimeout.current) {
+      clearTimeout(uppcsCloseTimeout.current);
+    }
+    if (closeTimeout.current) {
+      clearTimeout(closeTimeout.current);
+    }
+    if (mentorshipCloseTimeout.current) {
+      clearTimeout(mentorshipCloseTimeout.current);
+    }
+    setResourcesOpen(false);
+    setMentorshipOpen(false);
+    setUppcsOpen(true);
+  };
+
+  const handleUppcsLeave = () => {
+    uppcsCloseTimeout.current = setTimeout(() => {
+      setUppcsOpen(false);
     }, 200);
   };
 
@@ -358,7 +412,7 @@ export default function Navbar() {
               onMouseLeave={handleMentorshipLeave}
             >
               <button className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                mentorshipOpen || location.pathname.includes("mentorship")
+                mentorshipOpen || location.pathname.startsWith("/integrated-mentorship")
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
                     : "text-blue-700 bg-blue-50 font-semibold"
@@ -403,13 +457,61 @@ export default function Navbar() {
               )}
             </div>
 
-            <div className="flex items-stretch gap-1.5 flex-shrink-0 pl-1">
-              <Link
-                to="/uppcs-mentorship"
-                className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+            {/* UPPCS Programme Dropdown (same pattern as Mentorship Program) */}
+            <div
+              className="relative"
+              onMouseEnter={handleUppcsEnter}
+              onMouseLeave={handleUppcsLeave}
+            >
+              <button
+                type="button"
+                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  uppcsOpen || location.pathname.startsWith("/uppcs-mentorship")
+                    ? isDark
+                      ? "text-blue-400 bg-blue-900/50 font-semibold"
+                      : "text-blue-700 bg-blue-50 font-semibold"
+                    : isDark
+                      ? "text-gray-300 hover:text-blue-400 hover:bg-gray-700"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+                }`}
               >
-                UPPCS Mentorship
-              </Link>
+                UPPCS Programme
+                <svg
+                  className={`ml-2 w-4 h-4 transition-transform duration-200 ${uppcsOpen ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {uppcsOpen && (
+                <div
+                  className={`absolute left-0 mt-2 w-72 ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} rounded-xl shadow-2xl py-2 z-50 border backdrop-blur-md`}
+                  onMouseEnter={handleUppcsEnter}
+                  onMouseLeave={handleUppcsLeave}
+                >
+                  {uppcsYearItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center justify-between px-4 py-3 text-sm rounded-lg transition-all duration-200 group ${
+                        isDark
+                          ? "text-gray-200 hover:bg-gray-700 hover:text-white"
+                          : `text-gray-700 ${item.hoverClass}`
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
+                        {item.label}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-stretch gap-1.5 flex-shrink-0 pl-1">
               {/* Same tab → browser Back returns to this site */}
               <a
                 href="https://studentportal.mentorsdaily.com"
@@ -670,13 +772,45 @@ export default function Navbar() {
                 )}
               </div>
 
-              <Link
-                to="/uppcs-mentorship"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center px-4 py-3 text-base font-medium leading-snug text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md"
-              >
-                🚀 UPPCS 2026 Programme
-              </Link>
+              {/* Mobile UPPCS Programme Dropdown */}
+              <div className="border-b border-gray-100 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setMobileUppcsOpen((prev) => !prev)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-base font-medium text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
+                >
+                  <span>🏛️ UPPCS Programme</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${mobileUppcsOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {mobileUppcsOpen && (
+                  <div className="ml-4 mt-1 space-y-1 bg-gray-50 rounded-lg p-2">
+                    {uppcsYearItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
+                      >
+                        <span className="flex items-center">
+                          <span className={`w-2 h-2 rounded-full mr-2.5 ${item.dotClass}`}></span>
+                          {item.label}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}>
+                          {item.timeline}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <a
                 href="https://studentportal.mentorsdaily.com"
                 onClick={() => setMobileOpen(false)}

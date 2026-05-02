@@ -18,6 +18,7 @@ const NotFound = lazy(() => import("../pages/public/NotFound"));
 const CourseDetails = lazy(() => import("../pages/public/mentorship/CourseDetails"));
 const MentorshipCourses = lazy(() => import("../pages/public/mentorship/MentorshipCourses"));
 const UPPCSMentorshipProgram = lazy(() => import("../pages/public/courses/UPPCSMentorship2025"));
+const UPPCSMentorship2027 = lazy(() => import("../pages/public/courses/UPPCSMentorship2027"));
 const IntegratedMentorship = lazy(() => import("../pages/public/courses/IntegratedMentorship"));
 const IntegratedMentorship2026 = lazy(() => import("../pages/public/courses/IntegratedMentorship2026"));
 const IntegratedMentorship2027 = lazy(() => import("../pages/public/courses/IntegratedMentorship2027"));
@@ -94,6 +95,11 @@ const PublicRoutes = () => {
       <Route path="/uppcs-mentorship" element={
         <PublicLayout>
           <UPPCSMentorshipProgram />
+        </PublicLayout>
+      } />
+      <Route path="/uppcs-mentorship-2027" element={
+        <PublicLayout>
+          <UPPCSMentorship2027 />
         </PublicLayout>
       } />
       <Route path="/integrated-mentorship" element={

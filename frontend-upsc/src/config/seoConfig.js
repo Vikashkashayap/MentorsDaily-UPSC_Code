@@ -100,6 +100,14 @@ export const PAGE_SEO_CONFIGS = {
     priority: 0.9,
     changefreq: 'weekly'
   },
+
+  '/uppcs-mentorship-2027': {
+    title: 'UPPCS 2027 Programme | MentorsDaily',
+    description: 'Structured UPPCS 2027 batch — syllabus tree, module tests, Daily complete programme, BNS for Prelims (BNS/BNSS/BSA), and MentorsDaily portal.',
+    keywords: 'UPPCS 2027, BNS, BNSS, BSA, Bharatiya Nyaya Sanhita, UPPSC Prelims, legal GK, mentorship, MentorsDaily',
+    priority: 0.9,
+    changefreq: 'weekly'
+  },
   
   '/integrated-mentorship': {
     title: 'Integrated Mentorship Program | Complete UPSC Preparation | MentorsDaily',
