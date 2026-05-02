@@ -69,8 +69,8 @@ const UPPCS_CHECKOUT_AMOUNT_BY_SLUG = {
     'uppcs-2026-upsc-combo': 45000,
     'uppcs-2026-mains-booster': 20000,
     'uppcs-2027-daily': 60000,
-    'uppcs-2027-bns-prelims': 15000,
-    'uppcs-2027-upsc-combo': 45000,
+    'uppcs-2027-bns-prelims': 25000,
+    'uppcs-2027-upsc-combo': 75000,
     'uppcs-2027-mains-booster': 20000,
 };
 

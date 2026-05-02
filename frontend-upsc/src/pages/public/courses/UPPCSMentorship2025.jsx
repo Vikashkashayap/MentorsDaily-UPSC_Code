@@ -96,7 +96,7 @@ const TIMELINE = [
   {
     phase: "Phase 1",
     title: "Full Syllabus Coverage",
-    dates: "April 13 → August 10, 2026  |  120 Days",
+    dates: "120 Days",
     body:
       "All 15 GS subjects + UP State Section covered module by module. Daily targets assigned on the portal. Module test after every module. Mentor review throughout.",
     align: "left",
@@ -104,7 +104,7 @@ const TIMELINE = [
   {
     phase: "Phase 2",
     title: "Subject-Wise Revision",
-    dates: "August 11 → September 20, 2026  |  40 Days",
+    dates: "40 Days",
     body:
       "Quick subject-by-subject revision using your test analysis as a guide. Focus on weak topics flagged in Phase 1. Speed and consolidation — not new content.",
     align: "right",
@@ -112,7 +112,7 @@ const TIMELINE = [
   {
     phase: "Phase 3",
     title: "Full Syllabus Rapid Revision",
-    dates: "September 21 → October 7, 2026  |  17 Days",
+    dates: "17 Days",
     body:
       "Complete syllabus rapid-fire revision. Short notes, high-yield facts, and full-mock practice. Syllabus 100% done by 1st week of October.",
     align: "left",
@@ -120,7 +120,7 @@ const TIMELINE = [
   {
     phase: "Phase 4",
     title: "Prelims Focus Mode",
-    dates: "October 8 → December 2026  |  ~80 Days",
+    dates: "~80 Days",
     body:
       "Intensive MCQ practice, PYQ series (2015–2024), full mock tests, UP GK sprints, and CSAT revision. You enter the exam hall fully prepared.",
     align: "right",

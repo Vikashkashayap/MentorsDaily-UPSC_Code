@@ -16,23 +16,23 @@ export const UPPCS_2027_SLUGS = {
 const PAYMENT_PLANS = {
   daily: {
     slug: UPPCS_2027_SLUGS.daily,
-    title: "UPPCS 2027 — Complete (Daily)",
+    title: "UPPCS 2027 — Complete Programme",
     sellingPrice: 60000,
     basePrice: 120000,
     discountPercentage: 50,
   },
   bnsPrelims: {
     slug: UPPCS_2027_SLUGS.bnsPrelims,
-    title: "UPPCS 2027 — BNS for Prelims",
-    sellingPrice: 15000,
-    basePrice: 15000,
+    title: "UPPCS 2027 — Prelims Booster",
+    sellingPrice: 25000,
+    basePrice: 25000,
     discountPercentage: 0,
   },
   combo: {
     slug: UPPCS_2027_SLUGS.combo,
     title: "UPPCS + UPSC Combo 2027",
-    sellingPrice: 45000,
-    basePrice: 45000,
+    sellingPrice: 75000,
+    basePrice: 75000,
     discountPercentage: 0,
   },
   mains: {
@@ -47,7 +47,6 @@ const PAYMENT_PLANS = {
 const HERO_PILLS = [
   "Structured Syllabus Tree",
   "Daily Targets",
-  "BNS / BNSS / BSA — Prelims Legal GK",
   "Module Tests",
   "Q-by-Q Test Analysis",
   "Mentor-Led Batches",
@@ -97,7 +96,7 @@ const TIMELINE = [
   {
     phase: "Phase 1",
     title: "Full Syllabus Coverage",
-    dates: "April 13 → August 10, 2027  |  120 Days",
+    dates: "120 Days",
     body:
       "All 15 GS subjects + UP State Section covered module by module. Daily targets assigned on the portal. Module test after every module. Mentor review throughout.",
     align: "left",
@@ -105,7 +104,7 @@ const TIMELINE = [
   {
     phase: "Phase 2",
     title: "Subject-Wise Revision",
-    dates: "August 11 → September 20, 2027  |  40 Days",
+    dates: "40 Days",
     body:
       "Quick subject-by-subject revision using your test analysis as a guide. Focus on weak topics flagged in Phase 1. Speed and consolidation — not new content.",
     align: "right",
@@ -113,7 +112,7 @@ const TIMELINE = [
   {
     phase: "Phase 3",
     title: "Full Syllabus Rapid Revision",
-    dates: "September 21 → October 7, 2027  |  17 Days",
+    dates: "17 Days",
     body:
       "Complete syllabus rapid-fire revision. Short notes, high-yield facts, and full-mock practice. Syllabus 100% done by 1st week of October.",
     align: "left",
@@ -121,9 +120,9 @@ const TIMELINE = [
   {
     phase: "Phase 4",
     title: "Prelims Focus Mode",
-    dates: "October 8 → December 2027  |  ~80 Days",
+    dates: "~80 Days",
     body:
-      "Intensive MCQ practice, PYQ series (2015–2024), full mock tests, UP GK sprints, CSAT revision, and dedicated BNS / BNSS / BSA legal-GK drills aligned with UPPSC. You enter the exam hall fully prepared.",
+      "Intensive MCQ practice, PYQ series (2015–2024), full mock tests, UP GK sprints, and CSAT revision. You enter the exam hall fully prepared.",
     align: "right",
   },
 ];
@@ -135,12 +134,6 @@ const SUBJECTS = [
   { tag: "GS Paper 1", tagClass: "uppcs-tag-gs1", title: "Art & Culture", mods: "3 Modules + Full Test" },
   { tag: "GS Paper 1", tagClass: "uppcs-tag-gs1", title: "World Geography", mods: "3 Modules + Full Test" },
   { tag: "GS Paper 1", tagClass: "uppcs-tag-gs1", title: "Indian Geography", mods: "4 Modules + Full Test" },
-  {
-    tag: "Prelims Legal GK",
-    tagClass: "uppcs-tag-gs2",
-    title: "BNS, BNSS & BSA (New Criminal Laws)",
-    mods: "Capsule modules + Legal GK MCQ Test",
-  },
   { tag: "GS Paper 2", tagClass: "uppcs-tag-gs2", title: "Indian Polity", mods: "6 Modules + Full Test" },
   { tag: "GS Paper 2", tagClass: "uppcs-tag-gs2", title: "International Relations", mods: "2 Modules + Full Test" },
   { tag: "GS Paper 2", tagClass: "uppcs-tag-gs2", title: "Social Issues & Governance", mods: "2 Modules + Full Test" },
@@ -207,20 +200,19 @@ const COMPLETE_FEATURES = [
   "PYQ Practice Bank (2015–2024)",
   "5 Full Mock Tests in Prelims Phase",
   "UP-specific GK & Current Affairs module",
-  "BNS / BNSS / BSA legal-GK module mapped to UPPSC Prelims pattern",
   "Valid through UPPCS Dec 2027 exam",
 ];
 
-const BNS_PRELIMS_FEATURES = [
-  "BNS (Bharatiya Nyaya Sanhita) — structured topic list to exam depth",
-  "BNSS & BSA high-yield capsules where UPPSC asks MCQs",
-  "IPC vs BNS comparison notes only where still exam-relevant",
-  "Chapter- and offence-type MCQ sets after every capsule",
-  "Mixed Legal GK tests — statutes, definitions, punishments, exceptions",
-  "UP-specific legal current affairs tie-ins (notifications, rules)",
-  "Portal access — progress tracker for legal GK completion",
-  "Mentor support for statute-based doubts",
-  "Flexible start — complete in 4–5 months alongside GS/CSAT",
+const PRELIMS_FEATURES = [
+  "Prelims-focused modules (GS Paper 1 + CSAT)",
+  "High-yield topic modules only",
+  "MCQ practice after each module",
+  "UP-specific GK module included",
+  "PYQ Practice series (2015–2024)",
+  "3 Full Prelims Mock Tests",
+  "Portal access — Syllabus Tree & Progress Tracker",
+  "Mentor support for doubt resolution",
+  "Flexible — join anytime, complete in ~120–150 Days",
 ];
 
 function scrollToId(id) {
@@ -326,7 +318,7 @@ export default function UPPCSMentorship2027() {
           <div className="uppcs-container">
             <div className="uppcs-text-center">
               <div className="uppcs-section-label">Study Plan</div>
-              <div className="uppcs-section-title">Roadmap to UPPCS 2027</div>
+              <div className="uppcs-section-title">8-Month Roadmap to UPPCS 2027</div>
               <p className="uppcs-section-sub-center">
                 Full syllabus completed by 1st week of October 2027 — leaving 2 full months of dedicated Prelims
                 preparation before the December exam.
@@ -430,8 +422,8 @@ export default function UPPCSMentorship2027() {
                 </div>
                 <div className="uppcs-pm-today">
                   <div className="uppcs-label">Today&apos;s Target</div>
-                  <div className="uppcs-task">Legal GK — BNS Capsule 2</div>
-                  <div className="uppcs-sub">Offences against body &amp; person — MCQ drill + mentor notes</div>
+                  <div className="uppcs-task">Modern History — Module 3</div>
+                  <div className="uppcs-sub">1857 Revolt: Causes, Events &amp; Consequences</div>
                 </div>
               </div>
             </div>
@@ -444,22 +436,21 @@ export default function UPPCSMentorship2027() {
               <div className="uppcs-section-label">Enrol Now</div>
               <div className="uppcs-section-title">Choose Your Course</div>
               <p className="uppcs-section-sub-center">
-                Full Daily programme for UPPCS 2027, plus a focused <strong>BNS for Prelims</strong> add-on track for the new criminal law stack (BNS / BNSS / BSA).
+                Two focused programmes built around the UPPCS 2027 timeline — pick what fits your goal.
               </p>
             </div>
             <div className="uppcs-pricing-grid">
               <div className="uppcs-price-card uppcs-featured">
                 <span className="uppcs-pc-badge">Most Popular · 50% OFF</span>
                 <div className="uppcs-pc-head">
-                  <div className="uppcs-pc-name">Complete Programme — Daily</div>
+                  <div className="uppcs-pc-name">UPPCS Complete Programme</div>
                   <div className="uppcs-pc-price uppcs-pc-price--stacked">
                     <span className="uppcs-pc-mrp">&#8377;1,20,000</span>
                     <span className="uppcs-pc-sale">
                       &#8377;60,000<span>/course</span>
                     </span>
                   </div>
-                  {/* <div className="uppcs-pc-duration">April 2027 – December 2027</div> */}
-                  <div className="uppcs-pc-tagline">Prelims + Mains Foundation — Full Syllabus · Daily mentor rhythm</div>
+                  <div className="uppcs-pc-tagline">Prelims + Mains Foundation — Full Syllabus</div>
                 </div>
                 <div className="uppcs-pc-body">
                   <ul className="uppcs-pc-features">
@@ -471,7 +462,7 @@ export default function UPPCSMentorship2027() {
                     ))}
                   </ul>
                   <button type="button" className="uppcs-pc-cta" onClick={() => openCheckout("daily")}>
-                    Enrol — Daily Plan →
+                    Enrol in Complete Programme →
                   </button>
                   <div className="uppcs-pc-emi">
                     Easy EMI available: <strong>&#8377;20,000 × 3 months</strong>
@@ -481,18 +472,16 @@ export default function UPPCSMentorship2027() {
 
               <div className="uppcs-price-card">
                 <div className="uppcs-pc-head uppcs-prelims">
-                  <div className="uppcs-pc-name">BNS for Prelims</div>
+                  <div className="uppcs-pc-name">UPPCS Prelims Booster</div>
                   <div className="uppcs-pc-price">
-                    &#8377;15,000<span>/course</span>
+                    ₹25,000<span>/course</span>
                   </div>
-                  <div className="uppcs-pc-duration">Flexible Start  |  4–5 Months</div>
-                  <div className="uppcs-pc-tagline">
-                    Bharatiya Nyaya Sanhita + BNSS &amp; BSA — MCQ-first, UPPSC-aligned legal GK
-                  </div>
+                  <div className="uppcs-pc-duration">Flexible Start  |  ~120–150 Days</div>
+                  <div className="uppcs-pc-tagline">Prelims-Only — High Yield &amp; MCQ Focused</div>
                 </div>
                 <div className="uppcs-pc-body">
                   <ul className="uppcs-pc-features">
-                    {BNS_PRELIMS_FEATURES.map((line) => (
+                    {PRELIMS_FEATURES.map((line) => (
                       <li key={line}>
                         <span className="uppcs-check">&#10003;</span>
                         {line}
@@ -500,10 +489,10 @@ export default function UPPCSMentorship2027() {
                     ))}
                   </ul>
                   <button type="button" className="uppcs-pc-cta uppcs-pc-cta--navy" onClick={() => openCheckout("bnsPrelims")}>
-                    Enrol — BNS for Prelims →
+                    Enrol in Prelims Booster →
                   </button>
                   <div className="uppcs-pc-emi">
-                    Add to Daily or study standalone — <strong>upgrade paths available</strong>
+                    Upgrade to Complete anytime — <strong>pay the difference</strong>
                   </div>
                 </div>
               </div>
@@ -524,13 +513,10 @@ export default function UPPCSMentorship2027() {
               <div className="uppcs-sug-card">
                 <span className="uppcs-sug-tag">Best Value</span>
                 <h3 style={{ marginTop: 12 }}>UPPCS + UPSC Combo</h3>
-                <div className="uppcs-sug-price">
-                  ₹45,000{" "}
-                  <span style={{ fontSize: 14, color: "var(--uppcs-muted)", fontWeight: 400 }}>Save ₹15,000</span>
-                </div>
+                <div className="uppcs-sug-price">₹75,000</div>
                 <p>
-                  Study common GS modules once — UPPCS track finishes by Oct 2027, then you seamlessly continue on the
-                  UPSC track towards May 2028. One fee, two exams. Best for aspirants targeting both.
+                  Study common GS modules once — when the UPPCS track segment wraps in 2027, you seamlessly continue on
+                  the UPSC track towards May 2028. One fee, two exams. Best for aspirants targeting both.
                 </p>
                 <button type="button" className="uppcs-sug-cta" onClick={() => openCheckout("combo")}>
                   Enrol — Combo →
