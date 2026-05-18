@@ -92,6 +92,12 @@ export const PAGE_SEO_DATA = {
     keywords: 'UPPCS 2027, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship-2027'
   },
+  '/mppsc-mentorship-2027': {
+    title: 'MPPSC 2027 Programme | MentorsDaily',
+    description: 'MPPSC 2027 daily mentorship — structured syllabus, module tests, MP state focus, and Razorpay enrolment at ₹35,000.',
+    keywords: 'MPPSC 2027, Madhya Pradesh PCS, state PCS, daily sessions, mentorship, MentorsDaily',
+    canonical: '/mppsc-mentorship-2027'
+  },
   '/integrated-mentorship': {
     title: 'Integrated Mentorship Program | Complete UPSC Preparation | MentorsDaily',
     description: 'Comprehensive integrated mentorship program covering all aspects of UPSC preparation - prelims, mains, and interview with expert guidance.',

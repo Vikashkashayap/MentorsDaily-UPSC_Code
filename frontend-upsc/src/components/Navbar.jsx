@@ -10,15 +10,15 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [mentorshipOpen, setMentorshipOpen] = useState(false);
-  const [uppcsOpen, setUppcsOpen] = useState(false);
+  const [statePcsOpen, setStatePcsOpen] = useState(false);
   const [mobileMentorshipOpen, setMobileMentorshipOpen] = useState(false);
-  const [mobileUppcsOpen, setMobileUppcsOpen] = useState(false);
+  const [mobileStatePcsOpen, setMobileStatePcsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [logoSourceIndex, setLogoSourceIndex] = useState(0);
   const [logoUnavailable, setLogoUnavailable] = useState(false);
   const closeTimeout = useRef(null);
   const mentorshipCloseTimeout = useRef(null);
-  const uppcsCloseTimeout = useRef(null);
+  const statePcsCloseTimeout = useRef(null);
   const logoSources = ["/Logo/logo.png", "https://mentorsdaily.com/Logo/logo.png"];
   const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
   const mentorshipYearItems = [
@@ -90,6 +90,27 @@ export default function Navbar() {
     },
   ];
 
+  const mppscYearItems = [
+    {
+      path: "/mppsc-mentorship-2027",
+      label: "MPPSC Mentorship 2027",
+      timeline: "2027",
+      dotClass: "bg-teal-500",
+      hoverClass: "hover:bg-teal-50 hover:text-teal-800",
+      badgeClass: "bg-teal-100 text-teal-800",
+      mobileAccentClass: "bg-teal-50 border-teal-100",
+    },
+  ];
+
+  const statePcsGroups = [
+    { label: "UPPCS", items: uppcsYearItems },
+    { label: "MPPSC", items: mppscYearItems },
+  ];
+
+  const isStatePcsActive =
+    location.pathname.startsWith("/uppcs-mentorship") ||
+    location.pathname.startsWith("/mppsc-mentorship");
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -103,7 +124,8 @@ export default function Navbar() {
     setMobileOpen(false);
     setMobileResourcesOpen(false);
     setMobileMentorshipOpen(false);
-    setMobileUppcsOpen(false);
+    setMobileStatePcsOpen(false);
+    setStatePcsOpen(false);
   }, [location.pathname]);
 
   // Close mobile menu on escape key
@@ -124,11 +146,11 @@ export default function Navbar() {
     if (mentorshipCloseTimeout.current) {
       clearTimeout(mentorshipCloseTimeout.current);
     }
-    if (uppcsCloseTimeout.current) {
-      clearTimeout(uppcsCloseTimeout.current);
+    if (statePcsCloseTimeout.current) {
+      clearTimeout(statePcsCloseTimeout.current);
     }
     setMentorshipOpen(false);
-    setUppcsOpen(false);
+    setStatePcsOpen(false);
     setResourcesOpen(true);
   };
 
@@ -145,11 +167,11 @@ export default function Navbar() {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
     }
-    if (uppcsCloseTimeout.current) {
-      clearTimeout(uppcsCloseTimeout.current);
+    if (statePcsCloseTimeout.current) {
+      clearTimeout(statePcsCloseTimeout.current);
     }
     setResourcesOpen(false);
-    setUppcsOpen(false);
+    setStatePcsOpen(false);
     setMentorshipOpen(true);
   };
 
@@ -159,24 +181,18 @@ export default function Navbar() {
     }, 200);
   };
 
-  const handleUppcsEnter = () => {
-    if (uppcsCloseTimeout.current) {
-      clearTimeout(uppcsCloseTimeout.current);
-    }
-    if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
-    }
-    if (mentorshipCloseTimeout.current) {
-      clearTimeout(mentorshipCloseTimeout.current);
-    }
+  const handleStatePcsEnter = () => {
+    if (statePcsCloseTimeout.current) clearTimeout(statePcsCloseTimeout.current);
+    if (closeTimeout.current) clearTimeout(closeTimeout.current);
+    if (mentorshipCloseTimeout.current) clearTimeout(mentorshipCloseTimeout.current);
     setResourcesOpen(false);
     setMentorshipOpen(false);
-    setUppcsOpen(true);
+    setStatePcsOpen(true);
   };
 
-  const handleUppcsLeave = () => {
-    uppcsCloseTimeout.current = setTimeout(() => {
-      setUppcsOpen(false);
+  const handleStatePcsLeave = () => {
+    statePcsCloseTimeout.current = setTimeout(() => {
+      setStatePcsOpen(false);
     }, 200);
   };
 
@@ -219,8 +235,8 @@ export default function Navbar() {
           ? "bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 shadow-lg" 
           : "bg-gradient-to-r from-blue-50 via-white to-blue-100 shadow-lg"
     }`}>
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-[88rem] mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
+        <div className="flex justify-between items-center h-16 gap-2">
           {/* Logo */}
           <Link to="/" className="flex items-center flex-shrink-0 z-50">
             {logoUnavailable ? (
@@ -240,10 +256,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
+          <div className="hidden lg:flex items-center min-w-0 flex-1 justify-end xl:justify-center gap-0.5 xl:gap-1">
             <Link
               to="/mentorship-courses"
-              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+              className={`relative px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                 isMentorshipCoursesActive
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
@@ -253,7 +269,8 @@ export default function Navbar() {
                     : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
-              UPSC Mentorship Courses
+              <span className="2xl:hidden">UPSC Courses</span>
+              <span className="hidden 2xl:inline">UPSC Mentorship Courses</span>
               {isMentorshipCoursesActive && (
                 <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></span>
               )}
@@ -261,7 +278,7 @@ export default function Navbar() {
 
             <Link
               to="/current-affairs"
-              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+              className={`relative px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                 isPublicCurrentAffairsActive
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
@@ -283,7 +300,7 @@ export default function Navbar() {
               onMouseEnter={handleResourcesEnter}
               onMouseLeave={handleResourcesLeave}
             >
-              <button className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+              <button className={`flex items-center px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                 resourcesOpen || location.pathname.includes("resources")
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
@@ -411,7 +428,7 @@ export default function Navbar() {
               onMouseEnter={handleMentorshipEnter}
               onMouseLeave={handleMentorshipLeave}
             >
-              <button className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+              <button className={`flex items-center px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                 mentorshipOpen || location.pathname.startsWith("/integrated-mentorship")
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
@@ -457,16 +474,16 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* UPPCS Programme Dropdown (same pattern as Mentorship Program) */}
+            {/* State PCS: UPPCS + MPPSC */}
             <div
               className="relative"
-              onMouseEnter={handleUppcsEnter}
-              onMouseLeave={handleUppcsLeave}
+              onMouseEnter={handleStatePcsEnter}
+              onMouseLeave={handleStatePcsLeave}
             >
               <button
                 type="button"
-                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  uppcsOpen || location.pathname.startsWith("/uppcs-mentorship")
+                className={`flex items-center px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
+                  statePcsOpen || isStatePcsActive
                     ? isDark
                       ? "text-blue-400 bg-blue-900/50 font-semibold"
                       : "text-blue-700 bg-blue-50 font-semibold"
@@ -475,9 +492,9 @@ export default function Navbar() {
                       : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 }`}
               >
-                UPPCS Programme
+                State PCS
                 <svg
-                  className={`ml-2 w-4 h-4 transition-transform duration-200 ${uppcsOpen ? "rotate-180" : ""}`}
+                  className={`ml-1.5 w-4 h-4 transition-transform duration-200 ${statePcsOpen ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -485,45 +502,61 @@ export default function Navbar() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              {uppcsOpen && (
+              {statePcsOpen && (
                 <div
-                  className={`absolute left-0 mt-2 w-72 ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} rounded-xl shadow-2xl py-2 z-50 border backdrop-blur-md`}
-                  onMouseEnter={handleUppcsEnter}
-                  onMouseLeave={handleUppcsLeave}
+                  className={`absolute right-0 xl:left-0 xl:right-auto mt-2 w-72 ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} rounded-xl shadow-2xl py-2 z-50 border backdrop-blur-md`}
+                  onMouseEnter={handleStatePcsEnter}
+                  onMouseLeave={handleStatePcsLeave}
                 >
-                  {uppcsYearItems.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={`flex items-center justify-between px-4 py-3 text-sm rounded-lg transition-all duration-200 group ${
-                        isDark
-                          ? "text-gray-200 hover:bg-gray-700 hover:text-white"
-                          : `text-gray-700 ${item.hoverClass}`
-                      }`}
-                    >
-                      <span className="flex items-center">
-                        <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
-                        {item.label}
-                      </span>
-                    </Link>
+                  {statePcsGroups.map((group, groupIndex) => (
+                    <div key={group.label}>
+                      {groupIndex > 0 && (
+                        <div className={`my-1 border-t ${isDark ? "border-gray-700" : "border-gray-100"}`} />
+                      )}
+                      <p
+                        className={`px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider ${
+                          isDark ? "text-gray-500" : "text-gray-400"
+                        }`}
+                      >
+                        {group.label}
+                      </p>
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          className={`flex items-center justify-between px-4 py-2.5 text-sm rounded-lg transition-all duration-200 ${
+                            isDark
+                              ? "text-gray-200 hover:bg-gray-700 hover:text-white"
+                              : `text-gray-700 ${item.hoverClass}`
+                          }`}
+                        >
+                          <span className="flex items-center min-w-0">
+                            <span className={`w-2.5 h-2.5 rounded-full mr-3 flex-shrink-0 ${item.dotClass}`}></span>
+                            <span className="truncate">{item.label}</span>
+                          </span>
+                          <span
+                            className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${item.badgeClass}`}
+                          >
+                            {item.timeline}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
                   ))}
                 </div>
               )}
             </div>
-
-            <div className="flex items-stretch gap-1.5 flex-shrink-0 pl-1">
-              {/* Same tab → browser Back returns to this site */}
-              <a
-                href="https://studentportal.mentorsdaily.com"
-                className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
-              >
-                Student Portal
-              </a>
-            </div>
           </div>
 
+          <a
+            href="https://studentportal.mentorsdaily.com"
+            className="hidden lg:inline-flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+          >
+            Student Portal
+          </a>
+
           {/* Desktop Auth Buttons */}
-          <div className="hidden lg:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
             {/* Theme Toggle Button */}
             {/* <button
               onClick={toggleTheme}
@@ -772,16 +805,16 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Mobile UPPCS Programme Dropdown */}
+              {/* Mobile State PCS Dropdown */}
               <div className="border-b border-gray-100 pb-2">
                 <button
                   type="button"
-                  onClick={() => setMobileUppcsOpen((prev) => !prev)}
+                  onClick={() => setMobileStatePcsOpen((prev) => !prev)}
                   className="flex items-center justify-between w-full px-4 py-3 text-base font-medium text-gray-700 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
                 >
-                  <span>🏛️ UPPCS Programme</span>
+                  <span>🏛️ State PCS Programme</span>
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${mobileUppcsOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 transition-transform duration-200 ${mobileStatePcsOpen ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -789,23 +822,34 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {mobileUppcsOpen && (
-                  <div className="ml-4 mt-1 space-y-1 bg-gray-50 rounded-lg p-2">
-                    {uppcsYearItems.map((item) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        onClick={() => setMobileOpen(false)}
-                        className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
-                      >
-                        <span className="flex items-center">
-                          <span className={`w-2 h-2 rounded-full mr-2.5 ${item.dotClass}`}></span>
-                          {item.label}
-                        </span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}>
-                          {item.timeline}
-                        </span>
-                      </Link>
+                {mobileStatePcsOpen && (
+                  <div className="ml-4 mt-1 space-y-2 bg-gray-50 rounded-lg p-2">
+                    {statePcsGroups.map((group) => (
+                      <div key={group.label}>
+                        <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                          {group.label}
+                        </p>
+                        <div className="space-y-1">
+                          {group.items.map((item) => (
+                            <Link
+                              key={item.path}
+                              to={item.path}
+                              onClick={() => setMobileOpen(false)}
+                              className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
+                            >
+                              <span className="flex items-center min-w-0">
+                                <span className={`w-2 h-2 rounded-full mr-2.5 flex-shrink-0 ${item.dotClass}`}></span>
+                                <span className="truncate">{item.label}</span>
+                              </span>
+                              <span
+                                className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${item.badgeClass}`}
+                              >
+                                {item.timeline}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}

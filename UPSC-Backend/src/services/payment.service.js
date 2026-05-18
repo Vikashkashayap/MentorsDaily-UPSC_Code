@@ -72,6 +72,7 @@ const UPPCS_CHECKOUT_AMOUNT_BY_SLUG = {
     'uppcs-2027-bns-prelims': 25000,
     'uppcs-2027-upsc-combo': 75000,
     'uppcs-2027-mains-booster': 20000,
+    'mppsc-2027-daily': 35000,
 };
 
 function resolveUppcsFullPayAmountBySlug(slug) {
@@ -118,6 +119,7 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
  */
 const IMP_SLUG_RE = /^integrated-mentorship-20\d{2}$/i;
 const UPPCS_SLUG_RE = /^uppcs-20(26|27)-/i;
+const MPPSC_SLUG_RE = /^mppsc-2027-/i;
 
 async function resolveCourseForPayment(courseId, courseSlug) {
     const idStr = courseId != null ? String(courseId).trim() : '';
@@ -149,6 +151,18 @@ async function resolveCourseForPayment(courseId, courseSlug) {
                     `paymentService.js <<resolveCourseForPayment>> slug=${slug} → UPPCS_PAYMENT_FALLBACK_COURSE_OBJECT_ID=${uppcsFb}`
                 );
                 return { course: byUppcs, resolvedCourseId: String(byUppcs._id) };
+            }
+        }
+        const mppscFb =
+            process.env.MPPSC_PAYMENT_FALLBACK_COURSE_OBJECT_ID?.trim() ||
+            uppcsFb;
+        if (mppscFb && mongoose.Types.ObjectId.isValid(mppscFb) && MPPSC_SLUG_RE.test(slug)) {
+            const byMppsc = await courseService.findCourseById(mppscFb);
+            if (byMppsc && byMppsc._id) {
+                logger.info(
+                    `paymentService.js <<resolveCourseForPayment>> slug=${slug} → MPPSC_PAYMENT_FALLBACK_COURSE_OBJECT_ID=${mppscFb}`
+                );
+                return { course: byMppsc, resolvedCourseId: String(byMppsc._id) };
             }
         }
     }
