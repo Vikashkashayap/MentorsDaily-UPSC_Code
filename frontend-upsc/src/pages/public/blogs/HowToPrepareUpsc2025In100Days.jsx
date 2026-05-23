@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BlogSEO from '../../../components/SEO/BlogSEO';
@@ -13,7 +13,7 @@ const HowToPrepareUpsc2025In100Days = () => {
         author="MentorsDaily Team"
         publishDate="2024-12-19T00:00:00Z"
         modifiedDate="2024-12-19T00:00:00Z"
-        imageUrl="/images/blog-100days.png"
+        imageUrl="/images/blog-100days.webp"
         articleUrl="/blogs/how-to-prepare-upsc-2025-in-100-days"
         category="UPSC Preparation"
         readingTime="12 min read"
@@ -34,7 +34,7 @@ const HowToPrepareUpsc2025In100Days = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-100days.png" 
+              src="/images/blog-100days.webp" 
               alt="How to Prepare for UPSC 2025 in 100 Days" 
               className="w-full h-full object-cover"
             />
@@ -47,7 +47,7 @@ const HowToPrepareUpsc2025In100Days = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: January 5, 2025</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>12 min read</span>
             </div>
 

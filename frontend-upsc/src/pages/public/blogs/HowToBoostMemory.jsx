@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const HowToBoostMemory = () => {
@@ -18,7 +18,7 @@ const HowToBoostMemory = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-boost.png" 
+              src="/images/blog-boost.webp" 
               alt="How to Boost Your Memory for UPSC Preparation" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const HowToBoostMemory = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: December 10, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>11 min read</span>
             </div>
 
@@ -52,20 +52,20 @@ const HowToBoostMemory = () => {
                 <div className="bg-blue-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-blue-900 mb-3">Short-term Memory</h3>
                   <ul className="text-blue-800 space-y-2">
-                    <li>• Holds information for 15-30 seconds</li>
-                    <li>• Limited capacity (7±2 items)</li>
-                    <li>• Used for immediate tasks</li>
-                    <li>• Can be enhanced with practice</li>
+                    <li>â€¢ Holds information for 15-30 seconds</li>
+                    <li>â€¢ Limited capacity (7Â±2 items)</li>
+                    <li>â€¢ Used for immediate tasks</li>
+                    <li>â€¢ Can be enhanced with practice</li>
                   </ul>
                 </div>
                 
                 <div className="bg-green-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-green-900 mb-3">Long-term Memory</h3>
                   <ul className="text-green-800 space-y-2">
-                    <li>• Unlimited storage capacity</li>
-                    <li>• Can last for years</li>
-                    <li>• Requires encoding and consolidation</li>
-                    <li>• Key for UPSC success</li>
+                    <li>â€¢ Unlimited storage capacity</li>
+                    <li>â€¢ Can last for years</li>
+                    <li>â€¢ Requires encoding and consolidation</li>
+                    <li>â€¢ Key for UPSC success</li>
                   </ul>
                 </div>
               </div>
@@ -118,22 +118,22 @@ const HowToBoostMemory = () => {
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Physical Health</h3>
                   <ul className="text-gray-700 space-y-2">
-                    <li>• Regular exercise (30 min daily)</li>
-                    <li>• Adequate sleep (7-8 hours)</li>
-                    <li>• Balanced diet with omega-3</li>
-                    <li>• Stay hydrated</li>
-                    <li>• Avoid excessive caffeine</li>
+                    <li>â€¢ Regular exercise (30 min daily)</li>
+                    <li>â€¢ Adequate sleep (7-8 hours)</li>
+                    <li>â€¢ Balanced diet with omega-3</li>
+                    <li>â€¢ Stay hydrated</li>
+                    <li>â€¢ Avoid excessive caffeine</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">Mental Health</h3>
                   <ul className="text-gray-700 space-y-2">
-                    <li>• Practice meditation</li>
-                    <li>• Manage stress levels</li>
-                    <li>• Take regular breaks</li>
-                    <li>• Stay socially connected</li>
-                    <li>• Pursue hobbies</li>
+                    <li>â€¢ Practice meditation</li>
+                    <li>â€¢ Manage stress levels</li>
+                    <li>â€¢ Take regular breaks</li>
+                    <li>â€¢ Stay socially connected</li>
+                    <li>â€¢ Pursue hobbies</li>
                   </ul>
                 </div>
               </div>

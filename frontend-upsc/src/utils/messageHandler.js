@@ -87,29 +87,3 @@ export const messageHandler = new MessageHandler();
 // Helper functions for common message patterns
 export const showSuccess = (message) => messageHandler.success(message);
 export const showError = (message) => messageHandler.error(message);
-export const showWarning = (message) => messageHandler.warning(message);
-export const showInfo = (message) => messageHandler.info(message);
-
-// API response message handler
-export const handleApiResponse = (response, successMessage = 'Operation successful') => {
-  if (response?.data?.message) {
-    if (response.status >= 200 && response.status < 300) {
-      showSuccess(response.data.message);
-    } else {
-      showError(response.data.message);
-    }
-  } else if (response?.status >= 200 && response?.status < 300) {
-    showSuccess(successMessage);
-  } else {
-    showError('Something went wrong. Please try again.');
-  }
-};
-
-// Error handler for API calls
-export const handleApiError = (error, defaultMessage = 'An error occurred') => {
-  const errorMessage = error?.response?.data?.message || 
-                      error?.message || 
-                      defaultMessage;
-  showError(errorMessage);
-  console.error('API Error:', error);
-};

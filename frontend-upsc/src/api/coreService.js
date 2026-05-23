@@ -333,20 +333,6 @@ export const deleteCourse = async (id) => {
   }
 };
 
-// Fetch a single course by ID
-export const fetchCourseById = async (id) => {
-  try {
-    const response = await callApi({
-      endpoint: `api/v1/course/${id}`,
-      method: "GET",
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching course by ID:", error);
-    throw error;
-  }
-};
-
 export const createCoupon = async (payload) => {
   const response = await callApi({
     endpoint: "api/v1/admin/coupons",
@@ -461,20 +447,6 @@ export const verifyCoursePayment = async (payload) => {
     return response.data;
   } catch (error) {
     console.error('Error verifying course payment:', error);
-    throw error;
-  }
-};
-
-
-export const getPaymentReceipt = async (paymentId) => {
-  try {
-    const response = await callApi({
-      endpoint: `api/v1/payment-receipt/${paymentId}`,
-      method: 'GET',
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching payment receipt:', error);
     throw error;
   }
 };

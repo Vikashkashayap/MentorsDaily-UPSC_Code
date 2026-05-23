@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const BooksEveryUpscAspirantMustRead = () => {
@@ -18,7 +18,7 @@ const BooksEveryUpscAspirantMustRead = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-book.png" 
+              src="/images/blog-book.webp" 
               alt="Books that Every UPSC Aspirant Must Read" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const BooksEveryUpscAspirantMustRead = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 15, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>12 min read</span>
             </div>
 
@@ -50,17 +50,17 @@ const BooksEveryUpscAspirantMustRead = () => {
                   <div>
                     <h4 className="font-semibold text-blue-800 mb-2">History</h4>
                     <ul className="text-blue-700 space-y-1 text-sm">
-                      <li>• Class 6-12 History NCERT</li>
-                      <li>• India's Ancient Past - R.S. Sharma</li>
-                      <li>• Medieval India - Satish Chandra</li>
+                      <li>â€¢ Class 6-12 History NCERT</li>
+                      <li>â€¢ India's Ancient Past - R.S. Sharma</li>
+                      <li>â€¢ Medieval India - Satish Chandra</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-blue-800 mb-2">Geography</h4>
                     <ul className="text-blue-700 space-y-1 text-sm">
-                      <li>• Class 6-12 Geography NCERT</li>
-                      <li>• Certificate Physical Geography</li>
-                      <li>• Indian Geography - Majid Hussain</li>
+                      <li>â€¢ Class 6-12 Geography NCERT</li>
+                      <li>â€¢ Certificate Physical Geography</li>
+                      <li>â€¢ Indian Geography - Majid Hussain</li>
                     </ul>
                   </div>
                 </div>
@@ -106,19 +106,19 @@ const BooksEveryUpscAspirantMustRead = () => {
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">Basic Science</h4>
                     <ul className="text-gray-700 space-y-1 text-sm">
-                      <li>• NCERT Class 6-10 Science</li>
-                      <li>• NCERT Class 11-12 Biology</li>
-                      <li>• NCERT Class 11-12 Chemistry</li>
-                      <li>• NCERT Class 11-12 Physics</li>
+                      <li>â€¢ NCERT Class 6-10 Science</li>
+                      <li>â€¢ NCERT Class 11-12 Biology</li>
+                      <li>â€¢ NCERT Class 11-12 Chemistry</li>
+                      <li>â€¢ NCERT Class 11-12 Physics</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-2">Technology & Current Affairs</h4>
                     <ul className="text-gray-700 space-y-1 text-sm">
-                      <li>• Science Reporter Magazine</li>
-                      <li>• Down to Earth Magazine</li>
-                      <li>• Yojana Magazine</li>
-                      <li>• Kurukshetra Magazine</li>
+                      <li>â€¢ Science Reporter Magazine</li>
+                      <li>â€¢ Down to Earth Magazine</li>
+                      <li>â€¢ Yojana Magazine</li>
+                      <li>â€¢ Kurukshetra Magazine</li>
                     </ul>
                   </div>
                 </div>
@@ -130,20 +130,20 @@ const BooksEveryUpscAspirantMustRead = () => {
                 <div className="bg-yellow-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-yellow-900 mb-3">Newspapers</h3>
                   <ul className="text-yellow-800 space-y-2">
-                    <li>• The Hindu (Daily)</li>
-                    <li>• Indian Express (Daily)</li>
-                    <li>• Business Standard (Weekly)</li>
-                    <li>• Frontline (Weekly)</li>
+                    <li>â€¢ The Hindu (Daily)</li>
+                    <li>â€¢ Indian Express (Daily)</li>
+                    <li>â€¢ Business Standard (Weekly)</li>
+                    <li>â€¢ Frontline (Weekly)</li>
                   </ul>
                 </div>
                 
                 <div className="bg-red-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-red-900 mb-3">Magazines</h3>
                   <ul className="text-red-800 space-y-2">
-                    <li>• Yojana (Monthly)</li>
-                    <li>• Kurukshetra (Monthly)</li>
-                    <li>• Economic & Political Weekly</li>
-                    <li>• Down to Earth (Monthly)</li>
+                    <li>â€¢ Yojana (Monthly)</li>
+                    <li>â€¢ Kurukshetra (Monthly)</li>
+                    <li>â€¢ Economic & Political Weekly</li>
+                    <li>â€¢ Down to Earth (Monthly)</li>
                   </ul>
                 </div>
               </div>
@@ -156,17 +156,17 @@ const BooksEveryUpscAspirantMustRead = () => {
                   <div>
                     <h4 className="font-semibold text-indigo-800 mb-2">Public Administration</h4>
                     <ul className="text-indigo-700 space-y-1 text-sm">
-                      <li>• Public Administration - Laxmikant</li>
-                      <li>• Administrative Thinkers - Prasad & Prasad</li>
-                      <li>• Public Administration - Fadia & Fadia</li>
+                      <li>â€¢ Public Administration - Laxmikant</li>
+                      <li>â€¢ Administrative Thinkers - Prasad & Prasad</li>
+                      <li>â€¢ Public Administration - Fadia & Fadia</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-indigo-800 mb-2">Sociology</h4>
                     <ul className="text-indigo-700 space-y-1 text-sm">
-                      <li>• Sociology - Haralambos & Holborn</li>
-                      <li>• Indian Society - Ram Ahuja</li>
-                      <li>• Social Change in India - M.N. Srinivas</li>
+                      <li>â€¢ Sociology - Haralambos & Holborn</li>
+                      <li>â€¢ Indian Society - Ram Ahuja</li>
+                      <li>â€¢ Social Change in India - M.N. Srinivas</li>
                     </ul>
                   </div>
                 </div>
@@ -178,20 +178,20 @@ const BooksEveryUpscAspirantMustRead = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Answer Writing Books</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Answer Writing for Civil Services - Arihant</li>
-                    <li>• Essay Writing for Civil Services - Arihant</li>
-                    <li>• Previous Year Question Papers</li>
-                    <li>• Model Answer Papers</li>
+                    <li>â€¢ Answer Writing for Civil Services - Arihant</li>
+                    <li>â€¢ Essay Writing for Civil Services - Arihant</li>
+                    <li>â€¢ Previous Year Question Papers</li>
+                    <li>â€¢ Model Answer Papers</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Test Series & Practice</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Vision IAS Test Series</li>
-                    <li>• Drishti IAS Test Series</li>
-                    <li>• Vajiram & Ravi Test Series</li>
-                    <li>• Self-made practice tests</li>
+                    <li>â€¢ Vision IAS Test Series</li>
+                    <li>â€¢ Drishti IAS Test Series</li>
+                    <li>â€¢ Vajiram & Ravi Test Series</li>
+                    <li>â€¢ Self-made practice tests</li>
                   </ul>
                 </div>
               </div>
@@ -208,11 +208,11 @@ const BooksEveryUpscAspirantMustRead = () => {
               <div className="bg-green-50 border-l-4 border-green-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Pro Tips</h3>
                 <ul className="text-green-800 space-y-2">
-                  <li>• Don't buy too many books - focus on quality</li>
-                  <li>• Complete one book before starting another</li>
-                  <li>• Make notes while reading</li>
-                  <li>• Regular revision is key</li>
-                  <li>• Connect different subjects and topics</li>
+                  <li>â€¢ Don't buy too many books - focus on quality</li>
+                  <li>â€¢ Complete one book before starting another</li>
+                  <li>â€¢ Make notes while reading</li>
+                  <li>â€¢ Regular revision is key</li>
+                  <li>â€¢ Connect different subjects and topics</li>
                 </ul>
               </div>
             </div>

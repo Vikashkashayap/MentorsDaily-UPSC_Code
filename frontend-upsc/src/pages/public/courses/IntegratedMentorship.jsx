@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import Form from "../components/Form";
 
 // Prelims Content Component
@@ -7,7 +7,7 @@ function PrelimsContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/prelims.png"
+          src="/images/prelims.webp"
           alt="Prelims Features"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
         />
@@ -22,7 +22,7 @@ function MainsContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/mains.png"
+          src="/images/mains.webp"
           alt="Mains Features"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
         />
@@ -37,7 +37,7 @@ function InterviewContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/interview.png"
+          src="/images/interview.webp"
           alt="Interview Features"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
         />
@@ -52,7 +52,7 @@ function MentorshipContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/mentorships.png"
+          src="/images/mentorships.webp"
           alt="Mentorship Features"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
         />
@@ -93,8 +93,8 @@ export default function IMPPage() {
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
                   When we started building{" "}
-                  <strong>IMP – the Integrated Mentorship Program</strong>, we
-                  weren’t chasing trends. We were listening to students.
+                  <strong>IMP â€“ the Integrated Mentorship Program</strong>, we
+                  werenâ€™t chasing trends. We were listening to students.
                 </p>
                 <p>
                   In a world full of mass-produced coaching and templated plans,
@@ -104,14 +104,14 @@ export default function IMPPage() {
                 </p>
                 <p>
                   IMP was born out of the belief that UPSC preparation should be
-                  as personal as the dream itself. We don’t offer shortcuts. We
-                  offer handholding. Like a child learning to walk—supported,
+                  as personal as the dream itself. We donâ€™t offer shortcuts. We
+                  offer handholding. Like a child learning to walkâ€”supported,
                   understood, and never rushed.
                 </p>
                 <p className="font-semibold text-gray-800">
-                  This isn’t just mentorship.{" "}
+                  This isnâ€™t just mentorship.{" "}
                   <em>
-                    It’s your journey, your way—with someone truly walking
+                    Itâ€™s your journey, your wayâ€”with someone truly walking
                     beside you.
                   </em>
                 </p>
@@ -130,10 +130,10 @@ export default function IMPPage() {
       <section className="py-8 lg:py-12 bg-white">
         <div className="mx-auto max-w-7xl px-0 sm:px-6">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-center text-[#1a3da7] mb-6">
-            What’s really standing between you and your best attempt?
+            Whatâ€™s really standing between you and your best attempt?
           </h2>
           <img
-            src="/images/best-attemp.png"
+            src="/images/best-attemp.webp"
             alt="What's really standing between you and your best attempt?"
             className="w-full h-auto mx-auto rounded-none sm:rounded-xl shadow-none sm:shadow-lg max-w-none md:max-w-5xl"
           />

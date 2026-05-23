@@ -1,4 +1,4 @@
-import { SEO_CONFIG } from "./seoUtils";
+﻿import { SEO_CONFIG } from "./seoUtils";
 
 /** Default OG image under `public/images/` (served at `/images/...` in production). */
 export const DEFAULT_OG_IMAGE_PATH = "/images/default-blog.png";
@@ -71,7 +71,7 @@ export function uploadedBlogImageUrl(fileId, apiOrigin) {
 }
 
 /**
- * Open Graph image for a preparation blog: hosted file (image/*) or default `hero.png`.
+ * Open Graph image for a preparation blog: hosted file (image/*) or default `hero.webp`.
  */
 export function getPreparationBlogOgImageUrl(blog) {
   const base = getSiteOrigin();

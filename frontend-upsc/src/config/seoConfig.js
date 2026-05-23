@@ -1,4 +1,4 @@
-// SEO Configuration for MentorsDaily
+﻿// SEO Configuration for MentorsDaily
 export const SEO_CONFIG = {
   // Basic Site Information
   siteName: 'MentorsDaily',
@@ -35,8 +35,8 @@ export const SEO_CONFIG = {
   msApplicationTileColor: '#2563eb',
   
   // Images
-  defaultOgImage: '/images/hero.png',
-  defaultTwitterImage: '/images/hero.png',
+  defaultOgImage: '/images/hero.webp',
+  defaultTwitterImage: '/images/hero.webp',
   logoUrl: '/Logo/logo.png',
   faviconUrl: '/Logo/icon.png',
   
@@ -95,7 +95,7 @@ export const PAGE_SEO_CONFIGS = {
   // Mentorship Programs
   '/uppcs-mentorship': {
     title: 'UPPCS 2026 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2026 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2026 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2026, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     priority: 0.9,
     changefreq: 'weekly'
@@ -103,7 +103,7 @@ export const PAGE_SEO_CONFIGS = {
 
   '/uppcs-mentorship-2027': {
     title: 'UPPCS 2027 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2027 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2027 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2027, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     priority: 0.9,
     changefreq: 'weekly'
@@ -111,7 +111,7 @@ export const PAGE_SEO_CONFIGS = {
 
   '/mppsc-mentorship-2027': {
     title: 'MPPSC 2027 Programme | MentorsDaily',
-    description: 'MPPSC 2027 daily mentorship — structured syllabus, module tests, MP state focus, and Razorpay enrolment at ₹35,000.',
+    description: 'MPPSC 2027 daily mentorship â€” structured syllabus, module tests, MP state focus, and Razorpay enrolment at â‚¹35,000.',
     keywords: 'MPPSC 2027, Madhya Pradesh PCS, state PCS, daily sessions, mentorship, MentorsDaily',
     priority: 0.9,
     changefreq: 'weekly'
@@ -221,7 +221,7 @@ export const generateStructuredData = (pageType, data) => {
         '@type': 'Article',
         headline: data.title,
         description: data.description,
-        image: data.imageUrl ? `${baseUrl}${data.imageUrl}` : `${baseUrl}/images/blog-hero.png`,
+        image: data.imageUrl ? `${baseUrl}${data.imageUrl}` : `${baseUrl}/images/blog-hero.webp`,
         author: {
           '@type': 'Person',
           name: data.author || SEO_CONFIG.author

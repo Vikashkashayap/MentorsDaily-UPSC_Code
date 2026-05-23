@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const CrackingUpscInFirstAttempt = () => {
@@ -18,7 +18,7 @@ const CrackingUpscInFirstAttempt = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-crack-first.png" 
+              src="/images/blog-crack-first.webp" 
               alt="Cracking UPSC in the First Attempt: Is it Possible?" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const CrackingUpscInFirstAttempt = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 20, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>9 min read</span>
             </div>
 
@@ -65,22 +65,22 @@ const CrackingUpscInFirstAttempt = () => {
                 <div className="bg-blue-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-blue-900 mb-3">Academic Foundation</h3>
                   <ul className="text-blue-800 space-y-2">
-                    <li>• Strong educational background</li>
-                    <li>• Good reading and writing skills</li>
-                    <li>• Analytical thinking ability</li>
-                    <li>• General awareness and knowledge</li>
-                    <li>• Language proficiency</li>
+                    <li>â€¢ Strong educational background</li>
+                    <li>â€¢ Good reading and writing skills</li>
+                    <li>â€¢ Analytical thinking ability</li>
+                    <li>â€¢ General awareness and knowledge</li>
+                    <li>â€¢ Language proficiency</li>
                   </ul>
                 </div>
                 
                 <div className="bg-purple-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-purple-900 mb-3">Preparation Strategy</h3>
                   <ul className="text-purple-800 space-y-2">
-                    <li>• Early start and consistent effort</li>
-                    <li>• Comprehensive syllabus coverage</li>
-                    <li>• Regular answer writing practice</li>
-                    <li>• Current affairs integration</li>
-                    <li>• Mock test participation</li>
+                    <li>â€¢ Early start and consistent effort</li>
+                    <li>â€¢ Comprehensive syllabus coverage</li>
+                    <li>â€¢ Regular answer writing practice</li>
+                    <li>â€¢ Current affairs integration</li>
+                    <li>â€¢ Mock test participation</li>
                   </ul>
                 </div>
               </div>
@@ -115,40 +115,40 @@ const CrackingUpscInFirstAttempt = () => {
                 <div className="border-l-4 border-blue-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">1. Start Early and Stay Consistent</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Begin preparation at least 12-15 months before the exam</li>
-                    <li>• Maintain daily study routine</li>
-                    <li>• Avoid long breaks in preparation</li>
-                    <li>• Stay motivated throughout the journey</li>
+                    <li>â€¢ Begin preparation at least 12-15 months before the exam</li>
+                    <li>â€¢ Maintain daily study routine</li>
+                    <li>â€¢ Avoid long breaks in preparation</li>
+                    <li>â€¢ Stay motivated throughout the journey</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-green-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">2. Focus on Fundamentals</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Master NCERT books thoroughly</li>
-                    <li>• Build strong conceptual understanding</li>
-                    <li>• Don't skip basic topics</li>
-                    <li>• Create strong foundation before advanced topics</li>
+                    <li>â€¢ Master NCERT books thoroughly</li>
+                    <li>â€¢ Build strong conceptual understanding</li>
+                    <li>â€¢ Don't skip basic topics</li>
+                    <li>â€¢ Create strong foundation before advanced topics</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-purple-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">3. Regular Practice and Evaluation</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Practice answer writing from day one</li>
-                    <li>• Take regular mock tests</li>
-                    <li>• Analyze your performance</li>
-                    <li>• Work on weak areas continuously</li>
+                    <li>â€¢ Practice answer writing from day one</li>
+                    <li>â€¢ Take regular mock tests</li>
+                    <li>â€¢ Analyze your performance</li>
+                    <li>â€¢ Work on weak areas continuously</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-orange-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">4. Current Affairs Integration</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Follow daily news consistently</li>
-                    <li>• Connect current affairs with static portions</li>
-                    <li>• Make notes of important issues</li>
-                    <li>• Regular revision of current affairs</li>
+                    <li>â€¢ Follow daily news consistently</li>
+                    <li>â€¢ Connect current affairs with static portions</li>
+                    <li>â€¢ Make notes of important issues</li>
+                    <li>â€¢ Regular revision of current affairs</li>
                   </ul>
                 </div>
               </div>
@@ -174,10 +174,10 @@ const CrackingUpscInFirstAttempt = () => {
                   systematic preparation, maintaining consistency, and staying focused on their goals.
                 </p>
                 <ul className="text-green-800 space-y-2">
-                  <li>• Average preparation time: 12-18 months</li>
-                  <li>• Daily study hours: 6-8 hours</li>
-                  <li>• Focus on quality over quantity</li>
-                  <li>• Regular self-assessment and improvement</li>
+                  <li>â€¢ Average preparation time: 12-18 months</li>
+                  <li>â€¢ Daily study hours: 6-8 hours</li>
+                  <li>â€¢ Focus on quality over quantity</li>
+                  <li>â€¢ Regular self-assessment and improvement</li>
                 </ul>
               </div>
 

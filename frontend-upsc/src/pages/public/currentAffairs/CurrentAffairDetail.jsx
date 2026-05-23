@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { fetchCurrentAffairs, fetchCurrentAffairById, fetchCurrentAffairBySlug } from "../../../api/coreService";
 import SEOHead from "../../../components/SEO/SEOHead";
@@ -146,7 +146,7 @@ const CurrentAffairDetail = () => {
       title,
       description,
       canonical: pathname,
-      ogImage: post.thumbnailUrl || "/images/hero.png",
+      ogImage: post.thumbnailUrl || "/images/hero.webp",
       keywords: `current affairs, upsc, ${post.subject || "general studies"}`
     };
   }, [post, pathname]);
@@ -221,7 +221,7 @@ const CurrentAffairDetail = () => {
             onClick={() => navigate('/current-affairs')}
             className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md text-sm font-semibold"
           >
-            ← Back
+            â† Back
           </button>
         </div>
 
@@ -240,13 +240,13 @@ const CurrentAffairDetail = () => {
 
               {hasContent(post.paperName) && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-md">
-                  <span className="mr-1">📚</span>
+                  <span className="mr-1">ðŸ“š</span>
                   {decodeHtmlEntities(getPlainText(post.paperName))}
                 </span>
               )}
               {hasContent(post.subject) && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md">
-                  <span className="mr-1">📖</span>
+                  <span className="mr-1">ðŸ“–</span>
                   {decodeHtmlEntities(getPlainText(post.subject))}
                 </span>
               )}

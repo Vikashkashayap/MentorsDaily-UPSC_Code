@@ -65,7 +65,6 @@ const TodaysCurrentAffairs = () => {
   }, []);
 
   const handleRefresh = () => {
-    console.log("Manual refresh triggered");
     fetchTodaysPosts(true);
   };
 

@@ -1,4 +1,4 @@
-// SEO utility functions for MentorsDaily
+﻿// SEO utility functions for MentorsDaily
 const viteSiteUrl =
   typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL
     ? String(import.meta.env.VITE_SITE_URL).replace(/\/$/, '')
@@ -66,7 +66,7 @@ export const PAGE_SEO_DATA = {
     description: 'Join MentorsDaily for comprehensive UPSC preparation with expert mentorship, personalized courses, study materials, and proven strategies to crack civil services exam.',
     keywords: 'UPSC preparation, IAS coaching, civil services mentorship, UPSC courses, study materials, current affairs, prelims preparation, mains preparation',
     canonical: '/',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/login': {
     title: 'Login - MentorsDaily | Access Your UPSC Preparation Dashboard',
@@ -82,19 +82,19 @@ export const PAGE_SEO_DATA = {
   },
   '/uppcs-mentorship': {
     title: 'UPPCS 2026 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2026 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2026 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2026, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship'
   },
   '/uppcs-mentorship-2027': {
     title: 'UPPCS 2027 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2027 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2027 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2027, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship-2027'
   },
   '/mppsc-mentorship-2027': {
     title: 'MPPSC 2027 Programme | MentorsDaily',
-    description: 'MPPSC 2027 daily mentorship — structured syllabus, module tests, MP state focus, and Razorpay enrolment at ₹35,000.',
+    description: 'MPPSC 2027 daily mentorship â€” structured syllabus, module tests, MP state focus, and Razorpay enrolment at â‚¹35,000.',
     keywords: 'MPPSC 2027, Madhya Pradesh PCS, state PCS, daily sessions, mentorship, MentorsDaily',
     canonical: '/mppsc-mentorship-2027'
   },
@@ -109,35 +109,35 @@ export const PAGE_SEO_DATA = {
     description: 'Join UPSC 2026 Integrated Mentorship Program (IMP). 18 months comprehensive preparation covering Prelims, Mains & Interview. Get 100% fee refund after clearing Prelims, free hostel & library access, personalized 1:1 mentorship.',
     keywords: 'UPSC 2026, integrated mentorship program, IMP 2026, UPSC preparation 2026, civil services 2026, IAS preparation 2026, UPSC coaching 2026, mentorship program, prelims mains interview preparation, personalized mentorship, UPSC course 2026, best UPSC coaching, UPSC online course, civil services exam preparation, UPSC study plan, expert guidance UPSC, answer writing evaluation, UPSC mock tests, free hostel library UPSC, fee refund guarantee UPSC, UPSC success program, comprehensive UPSC preparation, UPSC mentorship 2026, UPSC guidance program, UPSC CSE 2026, IAS exam 2026, civil services coaching, UPSC prelims 2026, UPSC mains 2026, UPSC interview 2026, best UPSC institute, UPSC online coaching, UPSC test series, UPSC current affairs, UPSC optional subject, UPSC answer writing, UPSC study material, UPSC preparation strategy, UPSC coaching online, UPSC foundation course, UPSC preparation tips, UPSC exam pattern, UPSC syllabus 2026, UPSC notification 2026, UPSC eligibility, UPSC age limit, UPSC attempt limit, UPSC prelims preparation, UPSC mains preparation, UPSC interview preparation, UPSC personality test, UPSC DAF preparation, UPSC optional preparation, UPSC GS preparation, UPSC essay writing, UPSC ethics paper, UPSC preparation books, UPSC NCERT books, UPSC standard books, UPSC reference books, UPSC magazines, UPSC newspapers, UPSC monthly magazines, UPSC year book, UPSC atlas, UPSC notes, UPSC video lectures, UPSC online classes, UPSC live classes, UPSC recorded classes, UPSC doubt clearing, UPSC student support, UPSC helpline, UPSC study group, UPSC peer learning, UPSC success stories, UPSC toppers, UPSC rank holders, UPSC interview experience, UPSC mains experience, UPSC prelims experience, UPSC journey, UPSC motivation, UPSC inspiration, UPSC success tips, UPSC time management, UPSC stress management, UPSC mental health, UPSC psychological support, UPSC emotional support, UPSC career guidance, UPSC career counseling, UPSC facilities, UPSC library, UPSC hostel, UPSC accommodation, UPSC faculty, UPSC teachers, UPSC experts, UPSC mentors, UPSC strategy, UPSC plan, UPSC schedule, UPSC timetable, UPSC daily plan, UPSC weekly plan, UPSC monthly plan, UPSC long-term plan, UPSC flexible plan, UPSC customized plan, UPSC personalized plan, UPSC curriculum, UPSC syllabus coverage, UPSC complete coverage, UPSC comprehensive preparation, UPSC complete course, UPSC comprehensive program, UPSC complete mentorship, UPSC complete guidance, UPSC complete support, UPSC complete training, UPSC complete coaching, UPSC complete education, UPSC complete learning, UPSC complete study, UPSC complete exam preparation, UPSC complete test preparation, UPSC complete competitive exam preparation',
     canonical: '/integrated-mentorship-2026',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/integrated-mentorship-2027': {
     title: 'UPSC 2027 IMP | 30 Months Early Start Program | MentorsDaily',
     description: 'Start early with UPSC 2027 Integrated Mentorship Program (IMP). 30 months comprehensive program perfect for freshers and working professionals. Build strong foundation with flexible schedule, comprehensive coverage from basics to interview.',
     keywords: 'UPSC 2027, integrated mentorship program 2027, IMP 2027, early UPSC preparation, UPSC for freshers, working professional UPSC, UPSC foundation course, 30 months UPSC program, flexible UPSC schedule, UPSC early start, civil services 2027, IAS preparation 2027, UPSC coaching 2027, beginner UPSC course, UPSC foundation building, long-term UPSC preparation, UPSC mentorship 2027, comprehensive UPSC program, UPSC guidance 2027, UPSC CSE 2027, IAS exam 2027, civil services coaching 2027, UPSC prelims 2027, UPSC mains 2027, UPSC interview 2027, best UPSC institute 2027, UPSC online coaching 2027, UPSC test series 2027, UPSC current affairs 2027, UPSC optional subject 2027, UPSC answer writing 2027, UPSC study material 2027, UPSC preparation strategy 2027, UPSC coaching online 2027, UPSC mentorship program 2027, UPSC foundation course 2027, UPSC preparation tips 2027, UPSC exam pattern 2027, UPSC syllabus 2027, UPSC notification 2027, UPSC eligibility 2027, UPSC age limit 2027, UPSC attempt limit 2027, UPSC prelims preparation 2027, UPSC mains preparation 2027, UPSC interview preparation 2027, UPSC personality test 2027, UPSC DAF preparation 2027, UPSC optional preparation 2027, UPSC GS preparation 2027, UPSC essay writing 2027, UPSC ethics paper 2027, UPSC preparation books 2027, UPSC NCERT books 2027, UPSC standard books 2027, UPSC reference books 2027, UPSC magazines 2027, UPSC newspapers 2027, UPSC monthly magazines 2027, UPSC year book 2027, UPSC atlas 2027, UPSC notes 2027, UPSC video lectures 2027, UPSC online classes 2027, UPSC live classes 2027, UPSC recorded classes 2027, UPSC doubt clearing 2027, UPSC student support 2027, UPSC helpline 2027, UPSC study group 2027, UPSC peer learning 2027, UPSC success stories 2027, UPSC toppers 2027, UPSC rank holders 2027, UPSC interview experience 2027, UPSC mains experience 2027, UPSC prelims experience 2027, UPSC journey 2027, UPSC motivation 2027, UPSC inspiration 2027, UPSC success tips 2027, UPSC time management 2027, UPSC stress management 2027, UPSC mental health 2027, UPSC psychological support 2027, UPSC emotional support 2027, UPSC career guidance 2027, UPSC career counseling 2027, UPSC facilities 2027, UPSC library 2027, UPSC hostel 2027, UPSC accommodation 2027, UPSC faculty 2027, UPSC teachers 2027, UPSC experts 2027, UPSC mentors 2027, UPSC strategy 2027, UPSC plan 2027, UPSC schedule 2027, UPSC timetable 2027, UPSC daily plan 2027, UPSC weekly plan 2027, UPSC monthly plan 2027, UPSC long-term plan 2027, UPSC flexible plan 2027, UPSC customized plan 2027, UPSC personalized plan 2027, UPSC curriculum 2027, UPSC syllabus coverage 2027, UPSC complete coverage 2027, UPSC comprehensive preparation 2027, UPSC complete course 2027, UPSC comprehensive program 2027, UPSC complete mentorship 2027, UPSC complete guidance 2027, UPSC complete support 2027, UPSC complete training 2027, UPSC complete coaching 2027, UPSC complete education 2027, UPSC complete learning 2027, UPSC complete study 2027, UPSC complete exam preparation 2027, UPSC complete test preparation 2027, UPSC complete competitive exam preparation 2027',
     canonical: '/integrated-mentorship-2027',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/integrated-mentorship-2028': {
     title: 'UPSC 2028 IMP | 42 Months Long-term Strategy | MentorsDaily',
     description: 'Plan ahead with UPSC 2028 Integrated Mentorship Program (IMP). 42 months comprehensive long-term preparation with deep subject mastery, multiple attempt strategy, optional subject specialization, and advanced answer writing techniques.',
     keywords: 'UPSC 2028, integrated mentorship program 2028, IMP 2028, long-term UPSC preparation, UPSC multiple attempts, UPSC optional subject, deep subject mastery UPSC, advanced answer writing, UPSC strategy 2028, civil services 2028, IAS preparation 2028, UPSC coaching 2028, comprehensive UPSC program, UPSC foundation course, UPSC mentorship 2028, UPSC guidance program, UPSC preparation strategy, multiple attempt UPSC, optional subject UPSC, UPSC long-term course, UPSC CSE 2028, IAS exam 2028, civil services coaching 2028, UPSC prelims 2028, UPSC mains 2028, UPSC interview 2028, best UPSC institute 2028, UPSC online coaching 2028, UPSC test series 2028, UPSC current affairs 2028, UPSC optional subject 2028, UPSC answer writing 2028, UPSC study material 2028, UPSC preparation strategy 2028, UPSC coaching online 2028, UPSC mentorship program 2028, UPSC foundation course 2028, UPSC preparation tips 2028, UPSC exam pattern 2028, UPSC syllabus 2028, UPSC notification 2028, UPSC eligibility 2028, UPSC age limit 2028, UPSC attempt limit 2028, UPSC prelims preparation 2028, UPSC mains preparation 2028, UPSC interview preparation 2028, UPSC personality test 2028, UPSC DAF preparation 2028, UPSC optional preparation 2028, UPSC GS preparation 2028, UPSC essay writing 2028, UPSC ethics paper 2028, UPSC preparation books 2028, UPSC NCERT books 2028, UPSC standard books 2028, UPSC reference books 2028, UPSC magazines 2028, UPSC newspapers 2028, UPSC monthly magazines 2028, UPSC year book 2028, UPSC atlas 2028, UPSC notes 2028, UPSC video lectures 2028, UPSC online classes 2028, UPSC live classes 2028, UPSC recorded classes 2028, UPSC doubt clearing 2028, UPSC student support 2028, UPSC helpline 2028, UPSC study group 2028, UPSC peer learning 2028, UPSC success stories 2028, UPSC toppers 2028, UPSC rank holders 2028, UPSC interview experience 2028, UPSC mains experience 2028, UPSC prelims experience 2028, UPSC journey 2028, UPSC motivation 2028, UPSC inspiration 2028, UPSC success tips 2028, UPSC time management 2028, UPSC stress management 2028, UPSC mental health 2028, UPSC psychological support 2028, UPSC emotional support 2028, UPSC career guidance 2028, UPSC career counseling 2028, UPSC facilities 2028, UPSC library 2028, UPSC hostel 2028, UPSC accommodation 2028, UPSC faculty 2028, UPSC teachers 2028, UPSC experts 2028, UPSC mentors 2028, UPSC strategy 2028, UPSC plan 2028, UPSC schedule 2028, UPSC timetable 2028, UPSC daily plan 2028, UPSC weekly plan 2028, UPSC monthly plan 2028, UPSC long-term plan 2028, UPSC flexible plan 2028, UPSC customized plan 2028, UPSC personalized plan 2028, UPSC curriculum 2028, UPSC syllabus coverage 2028, UPSC complete coverage 2028, UPSC comprehensive preparation 2028, UPSC complete course 2028, UPSC comprehensive program 2028, UPSC complete mentorship 2028, UPSC complete guidance 2028, UPSC complete support 2028, UPSC complete training 2028, UPSC complete coaching 2028, UPSC complete education 2028, UPSC complete learning 2028, UPSC complete study 2028, UPSC complete exam preparation 2028, UPSC complete test preparation 2028, UPSC complete competitive exam preparation 2028',
     canonical: '/integrated-mentorship-2028',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/integrated-mentorship-2029': {
     title: 'UPSC 2029 IMP | 48 Months Complete Preparation | MentorsDaily',
     description: 'Join UPSC 2029 Integrated Mentorship Program (IMP). 48 months comprehensive preparation covering Prelims, Mains & Interview. Get 100% fee refund after clearing Prelims, free hostel & library access, personalized 1:1 mentorship.',
     keywords: 'UPSC 2029, integrated mentorship program 2029, IMP 2029, UPSC preparation 2029, civil services 2029, IAS preparation 2029, UPSC coaching 2029, mentorship program, prelims mains interview preparation, personalized mentorship, UPSC course 2029, best UPSC coaching, UPSC online course, civil services exam preparation, UPSC study plan, expert guidance UPSC, answer writing evaluation, UPSC mock tests, free hostel library UPSC, fee refund guarantee UPSC, UPSC success program, comprehensive UPSC preparation, UPSC mentorship 2029, UPSC guidance program, UPSC CSE 2029, IAS exam 2029, civil services coaching, UPSC prelims 2029, UPSC mains 2029, UPSC interview 2029, best UPSC institute, UPSC online coaching, UPSC test series, UPSC current affairs, UPSC optional subject, UPSC answer writing, UPSC study material, UPSC preparation strategy, UPSC coaching online, UPSC foundation course, UPSC preparation tips, UPSC exam pattern, UPSC syllabus 2029, UPSC notification 2029, UPSC eligibility, UPSC age limit, UPSC attempt limit, UPSC prelims preparation, UPSC mains preparation, UPSC interview preparation, UPSC personality test, UPSC DAF preparation, UPSC optional preparation, UPSC GS preparation, UPSC essay writing, UPSC ethics paper, UPSC preparation books, UPSC NCERT books, UPSC standard books, UPSC reference books, UPSC magazines, UPSC newspapers, UPSC monthly magazines, UPSC year book, UPSC atlas, UPSC notes, UPSC video lectures, UPSC online classes, UPSC live classes, UPSC recorded classes, UPSC doubt clearing, UPSC student support, UPSC helpline, UPSC study group, UPSC peer learning, UPSC success stories, UPSC toppers, UPSC rank holders, UPSC interview experience, UPSC mains experience, UPSC prelims experience, UPSC journey, UPSC motivation, UPSC inspiration, UPSC success tips, UPSC time management, UPSC stress management, UPSC mental health, UPSC psychological support, UPSC emotional support, UPSC career guidance, UPSC career counseling, UPSC facilities, UPSC library, UPSC hostel, UPSC accommodation, UPSC faculty, UPSC teachers, UPSC experts, UPSC mentors, UPSC strategy, UPSC plan, UPSC schedule, UPSC timetable, UPSC daily plan, UPSC weekly plan, UPSC monthly plan, UPSC long-term plan, UPSC flexible plan, UPSC customized plan, UPSC personalized plan, UPSC curriculum, UPSC syllabus coverage, UPSC complete coverage, UPSC comprehensive preparation, UPSC complete course, UPSC comprehensive program, UPSC complete mentorship, UPSC complete guidance, UPSC complete support, UPSC complete training, UPSC complete coaching, UPSC complete education, UPSC complete learning, UPSC complete study, UPSC complete exam preparation, UPSC complete test preparation, UPSC complete competitive exam preparation',
     canonical: '/integrated-mentorship-2029',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/integrated-mentorship-2030': {
     title: 'UPSC 2030 IMP | 66 Months Ultimate Preparation | MentorsDaily',
     description: 'Start your journey with UPSC 2030 Integrated Mentorship Program (IMP). 66 months comprehensive preparation covering Prelims, Mains & Interview. Get 100% fee refund after clearing Prelims, free hostel & library access, personalized 1:1 mentorship.',
     keywords: 'UPSC 2030, integrated mentorship program 2030, IMP 2030, UPSC preparation 2030, civil services 2030, IAS preparation 2030, UPSC coaching 2030, mentorship program, prelims mains interview preparation, personalized mentorship, UPSC course 2030, best UPSC coaching, UPSC online course, civil services exam preparation, UPSC study plan, expert guidance UPSC, answer writing evaluation, UPSC mock tests, free hostel library UPSC, fee refund guarantee UPSC, UPSC success program, comprehensive UPSC preparation, UPSC mentorship 2030, UPSC guidance program, UPSC CSE 2030, IAS exam 2030, civil services coaching, UPSC prelims 2030, UPSC mains 2030, UPSC interview 2030, best UPSC institute, UPSC online coaching, UPSC test series, UPSC current affairs, UPSC optional subject, UPSC answer writing, UPSC study material, UPSC preparation strategy, UPSC coaching online, UPSC foundation course, UPSC preparation tips, UPSC exam pattern, UPSC syllabus 2030, UPSC notification 2030, UPSC eligibility, UPSC age limit, UPSC attempt limit, UPSC prelims preparation, UPSC mains preparation, UPSC interview preparation, UPSC personality test, UPSC DAF preparation, UPSC optional preparation, UPSC GS preparation, UPSC essay writing, UPSC ethics paper, UPSC preparation books, UPSC NCERT books, UPSC standard books, UPSC reference books, UPSC magazines, UPSC newspapers, UPSC monthly magazines, UPSC year book, UPSC atlas, UPSC notes, UPSC video lectures, UPSC online classes, UPSC live classes, UPSC recorded classes, UPSC doubt clearing, UPSC student support, UPSC helpline, UPSC study group, UPSC peer learning, UPSC success stories, UPSC toppers, UPSC rank holders, UPSC interview experience, UPSC mains experience, UPSC prelims experience, UPSC journey, UPSC motivation, UPSC inspiration, UPSC success tips, UPSC time management, UPSC stress management, UPSC mental health, UPSC psychological support, UPSC emotional support, UPSC career guidance, UPSC career counseling, UPSC facilities, UPSC library, UPSC hostel, UPSC accommodation, UPSC faculty, UPSC teachers, UPSC experts, UPSC mentors, UPSC strategy, UPSC plan, UPSC schedule, UPSC timetable, UPSC daily plan, UPSC weekly plan, UPSC monthly plan, UPSC long-term plan, UPSC flexible plan, UPSC customized plan, UPSC personalized plan, UPSC curriculum, UPSC syllabus coverage, UPSC complete coverage, UPSC comprehensive preparation, UPSC complete course, UPSC comprehensive program, UPSC complete mentorship, UPSC complete guidance, UPSC complete support, UPSC complete training, UPSC complete coaching, UPSC complete education, UPSC complete learning, UPSC complete study, UPSC complete exam preparation, UPSC complete test preparation, UPSC complete competitive exam preparation',
     canonical: '/integrated-mentorship-2030',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/previous-year-papers': {
     title: 'UPSC Previous Year Papers | Download PDFs | MentorsDaily',
@@ -174,7 +174,7 @@ export const PAGE_SEO_DATA = {
     description: 'Comprehensive daily current affairs for UPSC 2025 preparation. Expert-curated news analysis organized by GS papers (GS1, GS2, GS3, GS4) with date-wise and paper-wise filtering. Perfect for prelims and mains exam preparation.',
     keywords: 'daily current affairs UPSC, UPSC current affairs 2025, current affairs for UPSC exam, GS paper current affairs, GS1 current affairs, GS2 current affairs, GS3 current affairs, GS4 current affairs, latest news for UPSC, current events UPSC, news analysis UPSC, civil services current affairs, IAS current affairs, UPSC preparation current affairs, daily news analysis, important current affairs, UPSC exam current affairs, prelims current affairs, mains current affairs, UPSC news today, current affairs for civil services, UPSC daily news, UPSC current affairs analysis, expert insights UPSC, current affairs syllabus, UPSC 2025 preparation, smart organization current affairs, date-wise current affairs, paper-wise current affairs, comprehensive current affairs, in-depth analysis UPSC, contemporary issues UPSC, static syllabus current affairs, history culture current affairs, geography environment current affairs, polity governance current affairs, international relations UPSC, economy development UPSC, science technology UPSC, social issues justice UPSC, ethics integrity UPSC, disaster management UPSC',
     canonical: '/current-affairs',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/mentorship-courses': {
     title: 'UPSC Mentorship Courses | Expert Guidance Programs | MentorsDaily',
@@ -187,14 +187,14 @@ export const PAGE_SEO_DATA = {
     description: 'Learn about MentorsDaily - India\'s leading UPSC preparation platform. Discover our vision, mission, and commitment to empowering civil services aspirants with expert mentorship and personalized guidance.',
     keywords: 'about MentorsDaily, UPSC coaching platform, civil services mentorship, IAS preparation, UPSC about us, mentorship platform, UPSC success stories, expert guidance UPSC',
     canonical: '/about-us',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/contact-us': {
     title: 'Contact Us - MentorsDaily | UPSC Mentorship Support',
     description: 'Contact MentorsDaily for UPSC mentorship inquiries and support. Reach us at B-69, Block B, Noida Sector 2, Noida, UP 201301. Call +91 8766233193 or email contact@mentorsdaily.com.',
     keywords: 'contact MentorsDaily, UPSC mentorship contact, IAS coaching contact, civil services support, MentorsDaily phone number, UPSC inquiry, mentorship help, contact UPSC coaching',
     canonical: '/contact-us',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/privacy-policy': {
     title: 'Privacy Policy - MentorsDaily | Data Protection & Privacy | UPSC Platform',
@@ -219,14 +219,14 @@ export const PAGE_SEO_DATA = {
     description: 'Join MentorsDaily and be part of India\'s leading UPSC preparation platform. Explore career opportunities in content development, mentorship, business development, video editing, digital marketing, graphics design, and software development. Make a difference in students\' lives.',
     keywords: 'MentorsDaily careers, UPSC education jobs, mentorship jobs, content developer jobs, education technology careers, UPSC platform jobs, join MentorsDaily team',
     canonical: '/careers',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   },
   '/success-stories': {
     title: 'Success Stories - MentorsDaily | UPSC Toppers & Reviews',
     description: 'Read inspiring success stories from UPSC aspirants who achieved their goals with MentorsDaily. Discover real testimonials and achievements from successful candidates who cleared civil services.',
     keywords: 'MentorsDaily success stories, UPSC toppers, IAS success stories, student testimonials, UPSC achievements, mentorship success, civil services success, student reviews',
     canonical: '/success-stories',
-    ogImage: '/images/hero.png'
+    ogImage: '/images/hero.webp'
   }
 };
 
@@ -343,7 +343,7 @@ export const getPageSEO = (pathname) => {
         'Expert UPSC preparation articles, strategies, and guidance from MentorsDaily.',
       keywords: 'UPSC preparation blog, civil services, IAS, MentorsDaily',
       canonical: pathname,
-      ogImage: '/images/hero.png',
+      ogImage: '/images/hero.webp',
     };
   }
 
@@ -935,7 +935,7 @@ export const generateMetaTags = (pageData, pathname) => {
   const currentUrl = `${baseUrl}${path}`;
   const imageUrl = (() => {
     const raw = String(pageData.ogImage || "").trim();
-    if (!raw) return `${baseUrl}/images/hero.png`;
+    if (!raw) return `${baseUrl}/images/hero.webp`;
     if (/^https?:\/\//i.test(raw)) return raw.replace(/^http:\/\//i, "https://");
     if (raw.startsWith("//")) return `https:${raw}`;
     if (raw.startsWith("/")) return `${baseUrl}${raw}`;

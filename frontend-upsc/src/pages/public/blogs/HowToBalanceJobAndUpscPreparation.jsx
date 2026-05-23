@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const HowToBalanceJobAndUpscPreparation = () => {
@@ -18,7 +18,7 @@ const HowToBalanceJobAndUpscPreparation = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-balance.png" 
+              src="/images/blog-balance.webp" 
               alt="How to Balance a Job and UPSC Preparation" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const HowToBalanceJobAndUpscPreparation = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 28, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>10 min read</span>
             </div>
 
@@ -85,22 +85,22 @@ const HowToBalanceJobAndUpscPreparation = () => {
                 <div className="bg-green-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-green-900 mb-3">Weekday Strategy</h3>
                   <ul className="text-green-800 space-y-2">
-                    <li>• Focus on current affairs</li>
-                    <li>• Read newspapers during breaks</li>
-                    <li>• Use mobile apps for revision</li>
-                    <li>• Listen to podcasts during commute</li>
-                    <li>• Practice answer writing</li>
+                    <li>â€¢ Focus on current affairs</li>
+                    <li>â€¢ Read newspapers during breaks</li>
+                    <li>â€¢ Use mobile apps for revision</li>
+                    <li>â€¢ Listen to podcasts during commute</li>
+                    <li>â€¢ Practice answer writing</li>
                   </ul>
                 </div>
                 
                 <div className="bg-purple-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-purple-900 mb-3">Weekend Strategy</h3>
                   <ul className="text-purple-800 space-y-2">
-                    <li>• Intensive subject study</li>
-                    <li>• Mock tests and evaluation</li>
-                    <li>• Optional subject preparation</li>
-                    <li>• Answer writing practice</li>
-                    <li>• Revision and note-making</li>
+                    <li>â€¢ Intensive subject study</li>
+                    <li>â€¢ Mock tests and evaluation</li>
+                    <li>â€¢ Optional subject preparation</li>
+                    <li>â€¢ Answer writing practice</li>
+                    <li>â€¢ Revision and note-making</li>
                   </ul>
                 </div>
               </div>
@@ -111,20 +111,20 @@ const HowToBalanceJobAndUpscPreparation = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">During Work Hours</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Read news during lunch breaks</li>
-                    <li>• Use commute time for audio content</li>
-                    <li>• Keep study materials on phone</li>
-                    <li>• Join work-related discussions for current affairs</li>
+                    <li>â€¢ Read news during lunch breaks</li>
+                    <li>â€¢ Use commute time for audio content</li>
+                    <li>â€¢ Keep study materials on phone</li>
+                    <li>â€¢ Join work-related discussions for current affairs</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">After Work Hours</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Take short breaks between work and study</li>
-                    <li>• Use energy management techniques</li>
-                    <li>• Focus on high-priority topics</li>
-                    <li>• Maintain consistent study schedule</li>
+                    <li>â€¢ Take short breaks between work and study</li>
+                    <li>â€¢ Use energy management techniques</li>
+                    <li>â€¢ Focus on high-priority topics</li>
+                    <li>â€¢ Maintain consistent study schedule</li>
                   </ul>
                 </div>
               </div>
@@ -150,10 +150,10 @@ const HowToBalanceJobAndUpscPreparation = () => {
                   The key is consistency, smart planning, and maintaining motivation throughout the journey.
                 </p>
                 <ul className="text-green-800 space-y-2">
-                  <li>• Average study time: 4-6 hours daily</li>
-                  <li>• Weekend intensive study sessions</li>
-                  <li>• Strategic use of leave for exam preparation</li>
-                  <li>• Leveraging work experience in answers</li>
+                  <li>â€¢ Average study time: 4-6 hours daily</li>
+                  <li>â€¢ Weekend intensive study sessions</li>
+                  <li>â€¢ Strategic use of leave for exam preparation</li>
+                  <li>â€¢ Leveraging work experience in answers</li>
                 </ul>
               </div>
 

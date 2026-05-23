@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SEOHead from "../../../components/SEO/SEOHead";
 import Form from "../components/Form";
@@ -11,7 +11,7 @@ function PrelimsContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/prelims.png"
+          src="/images/prelims.webp"
         alt="UPSC Prelims Preparation Features - Comprehensive Prelims Study Plan, Mock Tests, Current Affairs Coverage for Civil Services Exam 2030"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
           loading="lazy"
@@ -28,7 +28,7 @@ function MainsContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/mains.png"
+          src="/images/mains.webp"
           alt="UPSC Mains Preparation Features - Answer Writing Practice, Essay Writing, Optional Subject Guidance, GS Paper Coverage for Civil Services Mains Exam 2030"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
           loading="lazy"
@@ -45,7 +45,7 @@ function InterviewContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/interview.png"
+          src="/images/interview.webp"
           alt="UPSC Interview Preparation Features - Personality Test Guidance, Mock Interviews, DAF Preparation, Communication Skills Training for Civil Services Final Stage"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
           loading="lazy"
@@ -62,7 +62,7 @@ function MentorshipContent() {
     <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 animate-fadeIn">
       <div className="flex justify-center w-full">
         <img
-          src="/images/mentorships.png"
+          src="/images/mentorships.webp"
           alt="Personalized UPSC Mentorship Program - 1:1 Mentorship, Expert Guidance, Study Plan Customization, Performance Tracking for Civil Services Aspirants"
           className="w-full h-auto max-w-none md:max-w-5xl rounded-none sm:rounded-xl shadow-none sm:shadow-lg sm:hover:scale-105 transition-transform duration-300"
           loading="lazy"
@@ -202,7 +202,7 @@ export default function IMPPage() {
   const discountPercentage = course?.discountPercentage || 0;
   const savings = basePrice - sellingPrice;
 
-  const formatPrice = (p) => (p === 0 ? "Free" : `₹${p?.toLocaleString?.('en-IN')}`);
+  const formatPrice = (p) => (p === 0 ? "Free" : `â‚¹${p?.toLocaleString?.('en-IN')}`);
 
   return (
     <>
@@ -244,16 +244,16 @@ export default function IMPPage() {
             <div className="bg-white/80 backdrop-blur-sm border-2 border-green-200 rounded-lg p-3 md:p-4 mb-6 shadow-lg max-w-2xl mx-auto">
               <div className="space-y-1.5 md:space-y-2">
                 <p className="text-sm md:text-base font-semibold text-gray-800 flex items-center justify-center gap-2">
-                  <span className="text-green-600">✓</span> Get 100% Fee Refund after Clearing Prelims!
+                  <span className="text-green-600">âœ“</span> Get 100% Fee Refund after Clearing Prelims!
                 </p>
                 <p className="text-sm md:text-base font-semibold text-gray-800 flex items-center justify-center gap-2">
-                  <span className="text-green-600">✓</span> Free Hostel & Library facilities for Mains and Interview
+                  <span className="text-green-600">âœ“</span> Free Hostel & Library facilities for Mains and Interview
                 </p>
               </div>
             </div>
 
             <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 max-w-3xl mx-auto">
-              When we started building <strong className="text-gray-900">IMP – the Integrated Mentorship Program</strong>, we weren't chasing trends. We were listening to students.
+              When we started building <strong className="text-gray-900">IMP â€“ the Integrated Mentorship Program</strong>, we weren't chasing trends. We were listening to students.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
@@ -311,7 +311,7 @@ export default function IMPPage() {
                 What's really standing between you and your best attempt?
               </h2>
               <img
-                src="/images/best-attemp.png"
+                src="/images/best-attemp.webp"
                 alt="Common UPSC Preparation Challenges - Identify and Overcome Obstacles in Your Civil Services Exam Journey with Expert Mentorship"
                 className="w-full h-auto mx-auto rounded-none sm:rounded-xl shadow-none sm:shadow-lg max-w-none md:max-w-5xl"
                 loading="lazy"

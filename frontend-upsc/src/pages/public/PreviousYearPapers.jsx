@@ -31,19 +31,14 @@ export default function PreviousYearPapers() {
         papers = response.data.data;
       }
 
-      console.log("Fetched papers:", papers); // Debug log
-      
       // Transform API data into UI format
       const transformedData = transformPapersData(papers);
       setPapersData(transformedData);
     } catch (err) {
       // Handle 401 or other errors gracefully
       if (err.response?.status === 401) {
-        // Backend requires auth, but this is a public page
-        // Show empty state instead of error
-        console.log("Papers endpoint requires authentication. Showing empty state.");
         setPapersData([]);
-        setError(null); // Don't show error for 401 on public page
+        setError(null);
       } else {
         console.error("Error fetching papers:", err);
         setError("Failed to load previous year papers. Please try again later.");

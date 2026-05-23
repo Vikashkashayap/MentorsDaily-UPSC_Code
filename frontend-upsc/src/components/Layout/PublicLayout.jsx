@@ -1,8 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
-import Footer from "../Footer";
-// import AIStudentDashboardBanner from "../AIStudentDashboardBanner";
+const Footer = lazy(() => import("../Footer"));
 const WatsupWidget = lazy(() => import("../../../src/pages/public/components/WatsupWidget"));
 const EnquiryWidget = lazy(() => import("../../pages/public/EnquiryWidget"));
 import MessageDisplay from "../utility/MessageDisplay";
@@ -58,9 +57,6 @@ export default function PublicLayout({
       <SEOHead pathname={location.pathname} />
       <MessageDisplay />
 
-      {/* AI Student Dashboard Announcement Banner - Above Navbar */}
-      {/* {showNavbar && location.pathname === "/" && <AIStudentDashboardBanner />} */}
-
       {/* Top Navbar */}
       {showNavbar && <Navbar />}
 
@@ -70,7 +66,11 @@ export default function PublicLayout({
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      {showFooter && <Footer />}
+      {showFooter && (
+        <Suspense fallback={<div className="min-h-[320px]" aria-hidden="true" />}>
+          <Footer />
+        </Suspense>
+      )}
 
       {/* WhatsApp Widget - visible on all public pages */}
       <Suspense fallback={null}>

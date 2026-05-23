@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const HowToStartUpsc2026Preparation = () => {
@@ -18,7 +18,7 @@ const HowToStartUpsc2026Preparation = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-preparation.png" 
+              src="/images/blog-preparation.webp" 
               alt="How to Start UPSC 2026 Preparation" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const HowToStartUpsc2026Preparation = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 5, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>11 min read</span>
             </div>
 
@@ -60,22 +60,22 @@ const HowToStartUpsc2026Preparation = () => {
                 <div className="bg-green-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-green-900 mb-3">Self-Evaluation</h3>
                   <ul className="text-green-800 space-y-2">
-                    <li>• Assess your current knowledge level</li>
-                    <li>• Identify your strengths and weaknesses</li>
-                    <li>• Evaluate your reading and writing skills</li>
-                    <li>• Check your time availability</li>
-                    <li>• Understand your motivation level</li>
+                    <li>â€¢ Assess your current knowledge level</li>
+                    <li>â€¢ Identify your strengths and weaknesses</li>
+                    <li>â€¢ Evaluate your reading and writing skills</li>
+                    <li>â€¢ Check your time availability</li>
+                    <li>â€¢ Understand your motivation level</li>
                   </ul>
                 </div>
                 
                 <div className="bg-purple-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-purple-900 mb-3">Goal Setting</h3>
                   <ul className="text-purple-800 space-y-2">
-                    <li>• Set realistic short-term goals</li>
-                    <li>• Define your long-term objectives</li>
-                    <li>• Create a timeline for preparation</li>
-                    <li>• Identify your optional subject</li>
-                    <li>• Plan your study schedule</li>
+                    <li>â€¢ Set realistic short-term goals</li>
+                    <li>â€¢ Define your long-term objectives</li>
+                    <li>â€¢ Create a timeline for preparation</li>
+                    <li>â€¢ Identify your optional subject</li>
+                    <li>â€¢ Plan your study schedule</li>
                   </ul>
                 </div>
               </div>
@@ -88,33 +88,33 @@ const HowToStartUpsc2026Preparation = () => {
                   <div>
                     <h4 className="font-semibold text-yellow-800 mb-2">History</h4>
                     <ul className="text-yellow-700 space-y-1 text-sm">
-                      <li>• Class 6-12 History NCERT</li>
-                      <li>• Ancient, Medieval, Modern India</li>
-                      <li>• World History basics</li>
+                      <li>â€¢ Class 6-12 History NCERT</li>
+                      <li>â€¢ Ancient, Medieval, Modern India</li>
+                      <li>â€¢ World History basics</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-yellow-800 mb-2">Geography</h4>
                     <ul className="text-yellow-700 space-y-1 text-sm">
-                      <li>• Class 6-12 Geography NCERT</li>
-                      <li>• Physical Geography</li>
-                      <li>• Human Geography</li>
+                      <li>â€¢ Class 6-12 Geography NCERT</li>
+                      <li>â€¢ Physical Geography</li>
+                      <li>â€¢ Human Geography</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-yellow-800 mb-2">Polity</h4>
                     <ul className="text-yellow-700 space-y-1 text-sm">
-                      <li>• Class 9-12 Political Science</li>
-                      <li>• Indian Constitution basics</li>
-                      <li>• Governance concepts</li>
+                      <li>â€¢ Class 9-12 Political Science</li>
+                      <li>â€¢ Indian Constitution basics</li>
+                      <li>â€¢ Governance concepts</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold text-yellow-800 mb-2">Economy</h4>
                     <ul className="text-yellow-700 space-y-1 text-sm">
-                      <li>• Class 9-12 Economics NCERT</li>
-                      <li>• Basic economic concepts</li>
-                      <li>• Indian economy overview</li>
+                      <li>â€¢ Class 9-12 Economics NCERT</li>
+                      <li>â€¢ Basic economic concepts</li>
+                      <li>â€¢ Indian economy overview</li>
                     </ul>
                   </div>
                 </div>
@@ -126,20 +126,20 @@ const HowToStartUpsc2026Preparation = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Daily Routine</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Read one newspaper daily (The Hindu/Indian Express)</li>
-                    <li>• Follow government websites (PIB, PRS)</li>
-                    <li>• Watch news analysis programs</li>
-                    <li>• Make notes of important issues</li>
+                    <li>â€¢ Read one newspaper daily (The Hindu/Indian Express)</li>
+                    <li>â€¢ Follow government websites (PIB, PRS)</li>
+                    <li>â€¢ Watch news analysis programs</li>
+                    <li>â€¢ Make notes of important issues</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Monthly Magazines</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Yojana Magazine</li>
-                    <li>• Kurukshetra Magazine</li>
-                    <li>• Economic & Political Weekly</li>
-                    <li>• Down to Earth</li>
+                    <li>â€¢ Yojana Magazine</li>
+                    <li>â€¢ Kurukshetra Magazine</li>
+                    <li>â€¢ Economic & Political Weekly</li>
+                    <li>â€¢ Down to Earth</li>
                   </ul>
                 </div>
               </div>
@@ -186,22 +186,22 @@ const HowToStartUpsc2026Preparation = () => {
                 <div className="border-l-4 border-blue-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Essential Books</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• NCERT Books (Classes 6-12)</li>
-                    <li>• Indian Polity - Laxmikant</li>
-                    <li>• Indian Economy - Ramesh Singh</li>
-                    <li>• Certificate Physical Geography</li>
-                    <li>• History of Modern India - Bipin Chandra</li>
+                    <li>â€¢ NCERT Books (Classes 6-12)</li>
+                    <li>â€¢ Indian Polity - Laxmikant</li>
+                    <li>â€¢ Indian Economy - Ramesh Singh</li>
+                    <li>â€¢ Certificate Physical Geography</li>
+                    <li>â€¢ History of Modern India - Bipin Chandra</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-green-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Online Resources</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Government websites (PIB, PRS)</li>
-                    <li>• YouTube channels for current affairs</li>
-                    <li>• Mobile apps for daily practice</li>
-                    <li>• Online test series</li>
-                    <li>• Study groups and forums</li>
+                    <li>â€¢ Government websites (PIB, PRS)</li>
+                    <li>â€¢ YouTube channels for current affairs</li>
+                    <li>â€¢ Mobile apps for daily practice</li>
+                    <li>â€¢ Online test series</li>
+                    <li>â€¢ Study groups and forums</li>
                   </ul>
                 </div>
               </div>
@@ -225,20 +225,20 @@ const HowToStartUpsc2026Preparation = () => {
                 <div className="bg-teal-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-teal-900 mb-3">Prelims Preparation</h3>
                   <ul className="text-teal-800 space-y-2">
-                    <li>• Take monthly mock tests</li>
-                    <li>• Practice previous year papers</li>
-                    <li>• Focus on time management</li>
-                    <li>• Analyze your performance</li>
+                    <li>â€¢ Take monthly mock tests</li>
+                    <li>â€¢ Practice previous year papers</li>
+                    <li>â€¢ Focus on time management</li>
+                    <li>â€¢ Analyze your performance</li>
                   </ul>
                 </div>
                 
                 <div className="bg-orange-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-orange-900 mb-3">Mains Preparation</h3>
                   <ul className="text-orange-800 space-y-2">
-                    <li>• Regular answer writing practice</li>
-                    <li>• Essay writing practice</li>
-                    <li>• Optional subject tests</li>
-                    <li>• Get expert evaluation</li>
+                    <li>â€¢ Regular answer writing practice</li>
+                    <li>â€¢ Essay writing practice</li>
+                    <li>â€¢ Optional subject tests</li>
+                    <li>â€¢ Get expert evaluation</li>
                   </ul>
                 </div>
               </div>
@@ -262,22 +262,22 @@ const HowToStartUpsc2026Preparation = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Motivation Strategies</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Set short-term achievable goals</li>
-                    <li>• Celebrate small victories</li>
-                    <li>• Join study groups</li>
-                    <li>• Read success stories</li>
-                    <li>• Stay connected with mentors</li>
+                    <li>â€¢ Set short-term achievable goals</li>
+                    <li>â€¢ Celebrate small victories</li>
+                    <li>â€¢ Join study groups</li>
+                    <li>â€¢ Read success stories</li>
+                    <li>â€¢ Stay connected with mentors</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Health and Wellness</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Maintain regular exercise routine</li>
-                    <li>• Eat healthy and balanced meals</li>
-                    <li>• Get adequate sleep (7-8 hours)</li>
-                    <li>• Take regular breaks</li>
-                    <li>• Practice meditation or yoga</li>
+                    <li>â€¢ Maintain regular exercise routine</li>
+                    <li>â€¢ Eat healthy and balanced meals</li>
+                    <li>â€¢ Get adequate sleep (7-8 hours)</li>
+                    <li>â€¢ Take regular breaks</li>
+                    <li>â€¢ Practice meditation or yoga</li>
                   </ul>
                 </div>
               </div>
@@ -285,11 +285,11 @@ const HowToStartUpsc2026Preparation = () => {
               <div className="bg-green-50 border-l-4 border-green-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Final Tips</h3>
                 <ul className="text-green-800 space-y-2">
-                  <li>• Start early and stay consistent</li>
-                  <li>• Don't overburden yourself initially</li>
-                  <li>• Focus on understanding, not memorization</li>
-                  <li>• Regular revision is key</li>
-                  <li>• Stay positive and believe in yourself</li>
+                  <li>â€¢ Start early and stay consistent</li>
+                  <li>â€¢ Don't overburden yourself initially</li>
+                  <li>â€¢ Focus on understanding, not memorization</li>
+                  <li>â€¢ Regular revision is key</li>
+                  <li>â€¢ Stay positive and believe in yourself</li>
                 </ul>
               </div>
             </div>

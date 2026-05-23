@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const FreeResourcesForUpscPreparation = () => {
@@ -18,7 +18,7 @@ const FreeResourcesForUpscPreparation = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-resouces.png" 
+              src="/images/blog-resouces.webp" 
               alt="Free Resources for UPSC Preparation" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const FreeResourcesForUpscPreparation = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: December 1, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>8 min read</span>
             </div>
 
@@ -60,20 +60,20 @@ const FreeResourcesForUpscPreparation = () => {
                 <div className="bg-green-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-green-900 mb-3">NCERT Books</h3>
                   <ul className="text-green-800 space-y-2">
-                    <li>• Available free on ncert.nic.in</li>
-                    <li>• Classes 6-12 for all subjects</li>
-                    <li>• PDF downloads available</li>
-                    <li>• Audio books for some subjects</li>
+                    <li>â€¢ Available free on ncert.nic.in</li>
+                    <li>â€¢ Classes 6-12 for all subjects</li>
+                    <li>â€¢ PDF downloads available</li>
+                    <li>â€¢ Audio books for some subjects</li>
                   </ul>
                 </div>
                 
                 <div className="bg-purple-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-purple-900 mb-3">Government Reports</h3>
                   <ul className="text-purple-800 space-y-2">
-                    <li>• Economic Survey</li>
-                    <li>• Union Budget</li>
-                    <li>• NITI Aayog Reports</li>
-                    <li>• Census Data</li>
+                    <li>â€¢ Economic Survey</li>
+                    <li>â€¢ Union Budget</li>
+                    <li>â€¢ NITI Aayog Reports</li>
+                    <li>â€¢ Census Data</li>
                   </ul>
                 </div>
               </div>
@@ -84,22 +84,22 @@ const FreeResourcesForUpscPreparation = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">YouTube Channels</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Unacademy (Free content)</li>
-                    <li>• Study IQ Education</li>
-                    <li>• Drishti IAS</li>
-                    <li>• Vision IAS</li>
-                    <li>• BYJU'S Exam Prep</li>
+                    <li>â€¢ Unacademy (Free content)</li>
+                    <li>â€¢ Study IQ Education</li>
+                    <li>â€¢ Drishti IAS</li>
+                    <li>â€¢ Vision IAS</li>
+                    <li>â€¢ BYJU'S Exam Prep</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Mobile Apps</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• UPSC Pathshala</li>
-                    <li>• ClearIAS</li>
-                    <li>• IAS Baba</li>
-                    <li>• GK Today</li>
-                    <li>• Current Affairs</li>
+                    <li>â€¢ UPSC Pathshala</li>
+                    <li>â€¢ ClearIAS</li>
+                    <li>â€¢ IAS Baba</li>
+                    <li>â€¢ GK Today</li>
+                    <li>â€¢ Current Affairs</li>
                   </ul>
                 </div>
               </div>
@@ -137,11 +137,11 @@ const FreeResourcesForUpscPreparation = () => {
               <div className="bg-green-50 border-l-4 border-green-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Pro Tips</h3>
                 <ul className="text-green-800 space-y-2">
-                  <li>• Create a study schedule using free resources</li>
-                  <li>• Join online study groups for motivation</li>
-                  <li>• Use multiple sources to cross-verify information</li>
-                  <li>• Make notes from free resources for revision</li>
-                  <li>• Stay updated with government websites</li>
+                  <li>â€¢ Create a study schedule using free resources</li>
+                  <li>â€¢ Join online study groups for motivation</li>
+                  <li>â€¢ Use multiple sources to cross-verify information</li>
+                  <li>â€¢ Make notes from free resources for revision</li>
+                  <li>â€¢ Stay updated with government websites</li>
                 </ul>
               </div>
             </div>

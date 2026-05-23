@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const EffectiveRevisionTechniques = () => {
@@ -18,7 +18,7 @@ const EffectiveRevisionTechniques = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-technic.png" 
+              src="/images/blog-technic.webp" 
               alt="Effective Revision Techniques for UPSC" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const EffectiveRevisionTechniques = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: December 5, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>9 min read</span>
             </div>
 
@@ -96,40 +96,40 @@ const EffectiveRevisionTechniques = () => {
                 <div className="border-l-4 border-blue-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">History & Culture</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Create timelines and flowcharts</li>
-                    <li>• Use mnemonic devices for dates</li>
-                    <li>• Connect events with causes and effects</li>
-                    <li>• Practice map-based questions</li>
+                    <li>â€¢ Create timelines and flowcharts</li>
+                    <li>â€¢ Use mnemonic devices for dates</li>
+                    <li>â€¢ Connect events with causes and effects</li>
+                    <li>â€¢ Practice map-based questions</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-green-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Geography</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Draw maps and diagrams</li>
-                    <li>• Use visual memory techniques</li>
-                    <li>• Connect physical and human geography</li>
-                    <li>• Practice location-based questions</li>
+                    <li>â€¢ Draw maps and diagrams</li>
+                    <li>â€¢ Use visual memory techniques</li>
+                    <li>â€¢ Connect physical and human geography</li>
+                    <li>â€¢ Practice location-based questions</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-purple-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Polity & Governance</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Create constitutional article summaries</li>
-                    <li>• Use case studies and examples</li>
-                    <li>• Connect with current affairs</li>
-                    <li>• Practice analytical questions</li>
+                    <li>â€¢ Create constitutional article summaries</li>
+                    <li>â€¢ Use case studies and examples</li>
+                    <li>â€¢ Connect with current affairs</li>
+                    <li>â€¢ Practice analytical questions</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-orange-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Economy</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Use graphs and charts</li>
-                    <li>• Connect theory with current data</li>
-                    <li>• Practice numerical problems</li>
-                    <li>• Link with government schemes</li>
+                    <li>â€¢ Use graphs and charts</li>
+                    <li>â€¢ Connect theory with current data</li>
+                    <li>â€¢ Practice numerical problems</li>
+                    <li>â€¢ Link with government schemes</li>
                   </ul>
                 </div>
               </div>
@@ -166,11 +166,11 @@ const EffectiveRevisionTechniques = () => {
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-yellow-900 mb-2">Pro Tips for Effective Revision</h3>
                 <ul className="text-yellow-800 space-y-2">
-                  <li>• Start revision early, not just before exams</li>
-                  <li>• Use multiple senses while revising</li>
-                  <li>• Take breaks between revision sessions</li>
-                  <li>• Test yourself regularly</li>
-                  <li>• Focus on understanding, not memorization</li>
+                  <li>â€¢ Start revision early, not just before exams</li>
+                  <li>â€¢ Use multiple senses while revising</li>
+                  <li>â€¢ Take breaks between revision sessions</li>
+                  <li>â€¢ Test yourself regularly</li>
+                  <li>â€¢ Focus on understanding, not memorization</li>
                 </ul>
               </div>
             </div>

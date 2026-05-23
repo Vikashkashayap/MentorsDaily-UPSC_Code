@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Top5MistakesInUpscPreparation = () => {
@@ -18,7 +18,7 @@ const Top5MistakesInUpscPreparation = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-mistake.png" 
+              src="/images/blog-mistake.webp" 
               alt="Top 5 Mistakes Aspirants Make in UPSC CSE Preparation" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const Top5MistakesInUpscPreparation = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 25, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>7 min read</span>
             </div>
 
@@ -180,11 +180,11 @@ const Top5MistakesInUpscPreparation = () => {
               <div className="bg-blue-50 border-l-4 border-blue-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-blue-900 mb-2">Key Takeaways</h3>
                 <ul className="text-blue-800 space-y-2">
-                  <li>• Plan your preparation strategically</li>
-                  <li>• Limit your sources but use them effectively</li>
-                  <li>• Practice answer writing regularly</li>
-                  <li>• Stay updated with current affairs</li>
-                  <li>• Manage your time efficiently</li>
+                  <li>â€¢ Plan your preparation strategically</li>
+                  <li>â€¢ Limit your sources but use them effectively</li>
+                  <li>â€¢ Practice answer writing regularly</li>
+                  <li>â€¢ Stay updated with current affairs</li>
+                  <li>â€¢ Manage your time efficiently</li>
                 </ul>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const AnswerWritingTips = () => {
@@ -20,7 +20,7 @@ const AnswerWritingTips = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-answer-writing.png" 
+              src="/images/blog-answer-writing.webp" 
               alt="Answer Writing Tips to Score High in UPSC Mains" 
               className="w-full h-full object-cover"
             />
@@ -33,7 +33,7 @@ const AnswerWritingTips = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: December 20, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>10 min read</span>
             </div>
 
@@ -90,40 +90,40 @@ const AnswerWritingTips = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Clarity & Conciseness</h3>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Use simple, clear language</li>
-                    <li>• Avoid jargon and complex sentences</li>
-                    <li>• Be direct and to the point</li>
-                    <li>• Use active voice</li>
+                    <li>â€¢ Use simple, clear language</li>
+                    <li>â€¢ Avoid jargon and complex sentences</li>
+                    <li>â€¢ Be direct and to the point</li>
+                    <li>â€¢ Use active voice</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Logical Flow</h3>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Use connecting words</li>
-                    <li>• Maintain paragraph structure</li>
-                    <li>• Follow cause-effect relationships</li>
-                    <li>• Use bullet points for clarity</li>
+                    <li>â€¢ Use connecting words</li>
+                    <li>â€¢ Maintain paragraph structure</li>
+                    <li>â€¢ Follow cause-effect relationships</li>
+                    <li>â€¢ Use bullet points for clarity</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Evidence & Examples</h3>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Support arguments with facts</li>
-                    <li>• Use relevant examples</li>
-                    <li>• Include statistics and data</li>
-                    <li>• Reference current affairs</li>
+                    <li>â€¢ Support arguments with facts</li>
+                    <li>â€¢ Use relevant examples</li>
+                    <li>â€¢ Include statistics and data</li>
+                    <li>â€¢ Reference current affairs</li>
                   </ul>
                 </div>
                 
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">Presentation</h3>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Maintain neat handwriting</li>
-                    <li>• Use proper spacing</li>
-                    <li>• Highlight key points</li>
-                    <li>• Draw diagrams when needed</li>
+                    <li>â€¢ Maintain neat handwriting</li>
+                    <li>â€¢ Use proper spacing</li>
+                    <li>â€¢ Highlight key points</li>
+                    <li>â€¢ Draw diagrams when needed</li>
                   </ul>
                 </div>
               </div>
@@ -134,30 +134,30 @@ const AnswerWritingTips = () => {
                 <div className="border-l-4 border-blue-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">General Studies Papers</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Focus on current affairs integration</li>
-                    <li>• Use government schemes and policies</li>
-                    <li>• Include constitutional provisions</li>
-                    <li>• Address multiple dimensions</li>
+                    <li>â€¢ Focus on current affairs integration</li>
+                    <li>â€¢ Use government schemes and policies</li>
+                    <li>â€¢ Include constitutional provisions</li>
+                    <li>â€¢ Address multiple dimensions</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-green-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Optional Subject</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Demonstrate deep subject knowledge</li>
-                    <li>• Use subject-specific terminology</li>
-                    <li>• Include theoretical frameworks</li>
-                    <li>• Show analytical depth</li>
+                    <li>â€¢ Demonstrate deep subject knowledge</li>
+                    <li>â€¢ Use subject-specific terminology</li>
+                    <li>â€¢ Include theoretical frameworks</li>
+                    <li>â€¢ Show analytical depth</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-purple-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Essay Paper</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Develop a clear thesis</li>
-                    <li>• Use personal experiences</li>
-                    <li>• Include philosophical insights</li>
-                    <li>• Maintain balanced perspective</li>
+                    <li>â€¢ Develop a clear thesis</li>
+                    <li>â€¢ Use personal experiences</li>
+                    <li>â€¢ Include philosophical insights</li>
+                    <li>â€¢ Maintain balanced perspective</li>
                   </ul>
                 </div>
               </div>
@@ -174,11 +174,11 @@ const AnswerWritingTips = () => {
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-yellow-900 mb-2">Pro Tips</h3>
                 <ul className="text-yellow-800 space-y-2">
-                  <li>• Start with your strongest points</li>
-                  <li>• Use diagrams and flowcharts effectively</li>
-                  <li>• Quote relevant constitutional articles</li>
-                  <li>• Include recent examples and case studies</li>
-                  <li>• Maintain consistent handwriting throughout</li>
+                  <li>â€¢ Start with your strongest points</li>
+                  <li>â€¢ Use diagrams and flowcharts effectively</li>
+                  <li>â€¢ Quote relevant constitutional articles</li>
+                  <li>â€¢ Include recent examples and case studies</li>
+                  <li>â€¢ Maintain consistent handwriting throughout</li>
                 </ul>
               </div>
             </div>

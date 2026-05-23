@@ -129,7 +129,7 @@ const PreparationBlogDetail = () => {
         title: stripHtml(blog?.title || ''),
         text: shareText,
         url: window.location.href,
-      }).catch(err => console.log('Error sharing:', err));
+      }).catch(() => {});
     } else {
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const DifferenceBetweenPrelimsAndMains = () => {
@@ -18,7 +18,7 @@ const DifferenceBetweenPrelimsAndMains = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-prelimsvsmains.png" 
+              src="/images/blog-prelimsvsmains.webp" 
               alt="Difference between Prelims and Mains" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const DifferenceBetweenPrelimsAndMains = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: November 10, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>8 min read</span>
             </div>
 
@@ -142,22 +142,22 @@ const DifferenceBetweenPrelimsAndMains = () => {
                 <div className="bg-yellow-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-yellow-900 mb-3">Prelims Preparation</h3>
                   <ul className="text-yellow-800 space-y-2">
-                    <li>• Focus on facts and concepts</li>
-                    <li>• Practice MCQs regularly</li>
-                    <li>• Current affairs emphasis</li>
-                    <li>• Quick revision techniques</li>
-                    <li>• Mock tests and practice</li>
+                    <li>â€¢ Focus on facts and concepts</li>
+                    <li>â€¢ Practice MCQs regularly</li>
+                    <li>â€¢ Current affairs emphasis</li>
+                    <li>â€¢ Quick revision techniques</li>
+                    <li>â€¢ Mock tests and practice</li>
                   </ul>
                 </div>
                 
                 <div className="bg-red-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-red-900 mb-3">Mains Preparation</h3>
                   <ul className="text-red-800 space-y-2">
-                    <li>• Deep understanding required</li>
-                    <li>• Answer writing practice</li>
-                    <li>• Analytical skills development</li>
-                    <li>• Optional subject mastery</li>
-                    <li>• Essay writing practice</li>
+                    <li>â€¢ Deep understanding required</li>
+                    <li>â€¢ Answer writing practice</li>
+                    <li>â€¢ Analytical skills development</li>
+                    <li>â€¢ Optional subject mastery</li>
+                    <li>â€¢ Essay writing practice</li>
                   </ul>
                 </div>
               </div>
@@ -168,20 +168,20 @@ const DifferenceBetweenPrelimsAndMains = () => {
                 <div className="border-l-4 border-blue-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Prelims Syllabus</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Broader coverage of topics</li>
-                    <li>• Fact-based questions</li>
-                    <li>• Current affairs heavy</li>
-                    <li>• Basic understanding sufficient</li>
+                    <li>â€¢ Broader coverage of topics</li>
+                    <li>â€¢ Fact-based questions</li>
+                    <li>â€¢ Current affairs heavy</li>
+                    <li>â€¢ Basic understanding sufficient</li>
                   </ul>
                 </div>
                 
                 <div className="border-l-4 border-green-400 pl-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Mains Syllabus</h3>
                   <ul className="text-gray-700 space-y-1">
-                    <li>• Detailed and analytical</li>
-                    <li>• Application-based questions</li>
-                    <li>• Current affairs integration</li>
-                    <li>• Deep understanding required</li>
+                    <li>â€¢ Detailed and analytical</li>
+                    <li>â€¢ Application-based questions</li>
+                    <li>â€¢ Current affairs integration</li>
+                    <li>â€¢ Deep understanding required</li>
                   </ul>
                 </div>
               </div>

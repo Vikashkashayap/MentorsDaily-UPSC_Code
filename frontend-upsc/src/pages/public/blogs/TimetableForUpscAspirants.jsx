@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const TimetableForUpscAspirants = () => {
@@ -18,7 +18,7 @@ const TimetableForUpscAspirants = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-timetable.png" 
+              src="/images/blog-timetable.webp" 
               alt="Timetable for UPSC Aspirants" 
               className="w-full h-full object-cover"
             />
@@ -31,7 +31,7 @@ const TimetableForUpscAspirants = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: December 15, 2024</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>9 min read</span>
             </div>
 
@@ -172,10 +172,10 @@ const TimetableForUpscAspirants = () => {
               <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 mt-8">
                 <h3 className="text-lg font-semibold text-yellow-900 mb-2">Important Notes</h3>
                 <ul className="text-yellow-800 space-y-2">
-                  <li>• Customize the schedule based on your strengths and weaknesses</li>
-                  <li>• Maintain consistency rather than perfection</li>
-                  <li>• Include time for physical exercise and relaxation</li>
-                  <li>• Regular evaluation and adjustment of the timetable</li>
+                  <li>â€¢ Customize the schedule based on your strengths and weaknesses</li>
+                  <li>â€¢ Maintain consistency rather than perfection</li>
+                  <li>â€¢ Include time for physical exercise and relaxation</li>
+                  <li>â€¢ Regular evaluation and adjustment of the timetable</li>
                 </ul>
               </div>
             </div>

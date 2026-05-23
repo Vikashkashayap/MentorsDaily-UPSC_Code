@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const UpscMainsResult2024 = () => {
@@ -20,7 +20,7 @@ const UpscMainsResult2024 = () => {
         <article className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="aspect-[16/9] w-full">
             <img 
-              src="/images/blog-mains.png" 
+              src="/images/blog-mains.webp" 
               alt="UPSC Mains Result 2024" 
               className="w-full h-full object-cover"
             />
@@ -33,7 +33,7 @@ const UpscMainsResult2024 = () => {
             
             <div className="flex items-center text-sm text-gray-600 mb-6">
               <span>Published on: January 10, 2025</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2">â€¢</span>
               <span>7 min read</span>
             </div>
 
