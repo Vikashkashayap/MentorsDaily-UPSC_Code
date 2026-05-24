@@ -36,6 +36,7 @@ Allow: /integrated-mentorship-2028
 Allow: /previous-year-papers
 Allow: /free-study-materials
 Allow: /upsc-syllabus
+Allow: /upsc-age-calculator
 Allow: /download-ncerts
 Allow: /upsc-preparation-blog
 Allow: /preparation-blogs

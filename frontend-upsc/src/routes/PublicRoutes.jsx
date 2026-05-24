@@ -49,6 +49,7 @@ const Careers = lazy(() => import("../pages/public/utils/Careers"));
 
 // Other Pages
 const BudgetSurvey = lazy(() => import('../pages/public/BudgetSurvey'));
+const UPSCAgeCalculator = lazy(() => import('../pages/public/UPSCAgeCalculator'));
 
 const SuccessStories = lazy(() => import("../pages/public/SuccessStories"));
 
@@ -168,6 +169,11 @@ const PublicRoutes = () => {
       <Route path="/download-ncerts" element={
         <PublicLayout>
           <DownloadNCERTs />
+        </PublicLayout>
+      } />
+      <Route path="/upsc-age-calculator" element={
+        <PublicLayout>
+          <UPSCAgeCalculator />
         </PublicLayout>
       } />
 

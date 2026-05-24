@@ -23,6 +23,7 @@ export const setupAxiosInterceptor = () => {
           '/previous-year-papers',
           '/free-study-materials',
           '/upsc-syllabus',
+          '/upsc-age-calculator',
           '/download-ncerts',
           '/current-affairs',
           '/mentorship-courses',

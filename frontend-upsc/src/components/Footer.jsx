@@ -455,6 +455,16 @@ export default function Footer() {
             </span> All rights reserved.
           </div>
 
+          <motion.a
+            href="/upsc-age-calculator"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 rounded-xl border border-blue-500/40 bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:border-blue-400/60 hover:shadow-blue-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
+          >
+            <span aria-hidden>🧮</span>
+            Age Calculator
+          </motion.a>
+
           <motion.button
             type="button"
             onClick={() => setUpiModalOpen(true)}

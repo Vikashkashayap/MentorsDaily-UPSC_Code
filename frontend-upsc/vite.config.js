@@ -47,6 +47,7 @@ export default defineConfig({
           if (id.includes('react-router')) return 'vendor-router'
           if (id.includes('lucide-react')) return 'vendor-icons'
           if (id.includes('react-helmet-async')) return 'vendor-helmet'
+          if (id.includes('date-fns')) return 'vendor-dates'
 
           if (
             id.includes('react-dom') ||

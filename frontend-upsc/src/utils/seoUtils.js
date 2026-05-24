@@ -1,4 +1,4 @@
-﻿// SEO utility functions for MentorsDaily
+// SEO utility functions for MentorsDaily
 const viteSiteUrl =
   typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL
     ? String(import.meta.env.VITE_SITE_URL).replace(/\/$/, '')
@@ -156,6 +156,13 @@ export const PAGE_SEO_DATA = {
     description: 'Complete UPSC syllabus for prelims, mains, and interview. Detailed subject-wise syllabus with preparation tips.',
     keywords: 'UPSC syllabus, prelims syllabus, mains syllabus, civil services syllabus',
     canonical: '/upsc-syllabus'
+  },
+  '/upsc-age-calculator': {
+    title: 'UPSC Age Calculator 2026 - Check IAS Eligibility & Attempts',
+    description: 'Use MentorsDaily UPSC Age Calculator to instantly check IAS eligibility, UPSC age limit, category relaxation, and remaining attempts for UPSC CSE 2026.',
+    keywords: 'UPSC Age Calculator, IAS Age Calculator, UPSC Eligibility Calculator, UPSC Age Limit Calculator, UPSC Attempt Calculator, IAS Eligibility Checker, UPSC Eligibility by DOB, UPSC Age Criteria, UPSC Age Limit for OBC, UPSC Age Limit for SC ST, UPSC Age Limit for General',
+    canonical: '/upsc-age-calculator',
+    ogImage: '/images/hero.webp'
   },
   '/download-ncerts': {
     title: 'Download NCERT Books for UPSC | Free PDFs | MentorsDaily',

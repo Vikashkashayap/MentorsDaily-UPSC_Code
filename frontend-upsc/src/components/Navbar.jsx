@@ -374,6 +374,21 @@ export default function Navbar() {
                     UPSC Syllabus
                   </Link>
                   <Link
+                    to="/upsc-age-calculator"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isDark 
+                        ? 'text-gray-300 hover:bg-gray-700 hover:text-blue-400' 
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full mr-3 transition-colors ${
+                      isDark 
+                        ? 'bg-gray-500 group-hover:bg-blue-400' 
+                        : 'bg-gray-300 group-hover:bg-blue-600'
+                    }`}></span>
+                    UPSC Age Calculator
+                  </Link>
+                  <Link
                     to="/budget-survey"
                     className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
                       isDark 
@@ -748,6 +763,7 @@ export default function Navbar() {
                       { path: "/previous-year-papers", label: "Previous Year Papers" },
                       { path: "/free-study-materials", label: "Free Study Materials" },
                       { path: "/upsc-syllabus", label: "UPSC Syllabus" },
+                      { path: "/upsc-age-calculator", label: "UPSC Age Calculator" },
                       { path: "/budget-survey", label: "Budget & Survey" },
                       { path: "/download-ncerts", label: "Download NCERTs" },
                       { path: "/preparation-blogs", label: "UPSC Preparation Blog" }
