@@ -112,7 +112,21 @@ function buildBlogMeta(blog, requestSlug, env = process.env, routeBase = "/prepa
   const pathname = `${cleanBase}/${encodeURIComponent(String(slugPath).replace(/\/+/g, ""))}`;
   const url = ensureHttps(`${siteUrl}${pathname}`);
 
-  return { title, description, image, url, pathname, plainTitle };
+  const keywords =
+    (blog.seoKeyword && String(blog.seoKeyword).trim()) ||
+    (Array.isArray(blog.tags) && blog.tags.length
+      ? blog.tags.map((t) => String(t).trim()).filter(Boolean).join(", ")
+      : "");
+
+  return {
+    title,
+    description,
+    image,
+    url,
+    pathname,
+    plainTitle,
+    keywords: keywords || undefined,
+  };
 }
 
 function buildDefaultBlogMeta(requestSlug, env = process.env, routeBase = "/preparation-blog") {
@@ -129,6 +143,7 @@ function buildDefaultBlogMeta(requestSlug, env = process.env, routeBase = "/prep
     url,
     pathname: `${cleanBase}/${safeSlug}`,
     plainTitle: "Mentors Daily Blog",
+    keywords: undefined,
   };
 }
 
