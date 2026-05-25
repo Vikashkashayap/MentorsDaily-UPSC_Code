@@ -14,16 +14,18 @@ const { uploadFileService } = require("./uploadFiles.service.js");
 exports.createBlogService = async (blogData, file, userId) => {
   logger.info("preparationBlog.service.js << createBlogService << Creating blog");
   try {
-    const folder = file.mimetype === "application/pdf" ? "pdfs" : "thumbnails";
-    const uploadedFile = await uploadFileService(file, { folder, uploadedBy: userId });
-
     const patch = {
       user: userId,
     };
-    if (file.mimetype === "application/pdf") {
-      patch.pdfUrl = uploadedFile.url;
-    } else {
-      patch.thumbnailUrl = uploadedFile.url;
+
+    if (file) {
+      const folder = file.mimetype === "application/pdf" ? "pdfs" : "thumbnails";
+      const uploadedFile = await uploadFileService(file, { folder, uploadedBy: userId });
+      if (file.mimetype === "application/pdf") {
+        patch.pdfUrl = uploadedFile.url;
+      } else {
+        patch.thumbnailUrl = uploadedFile.url;
+      }
     }
 
     const blog = await createBlogRepo({

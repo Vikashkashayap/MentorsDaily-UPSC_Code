@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "../styles/legacy.css";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), "Inter", "Segoe UI", sans-serif;
+}

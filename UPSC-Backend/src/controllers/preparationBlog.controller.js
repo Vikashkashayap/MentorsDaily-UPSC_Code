@@ -30,9 +30,6 @@ function parseOptionalDate(value) {
 exports.createBlogController = async (req, res) => {
   try {
     const file = req.file;
-    if (!file) {
-      return setBadRequest(res, { message: "No file uploaded" });
-    }
 
     const {
       title,
@@ -71,6 +68,16 @@ exports.createBlogController = async (req, res) => {
       return setBadRequest(res, { message: "publishDate is required for scheduled blogs" });
     }
 
+    const resolvedThumbnailUrl = String(
+      thumbnailUrl || thumbnail || metaImage || ""
+    ).trim();
+    if (!file && !resolvedThumbnailUrl) {
+      return setBadRequest(res, {
+        message:
+          "Featured image is required. Upload an image file or provide a Meta Image URL.",
+      });
+    }
+
     const blogData = {
       title,
       content,
@@ -81,8 +88,8 @@ exports.createBlogController = async (req, res) => {
       seoKeyword: seoKeyword || "",
       metaTitle: metaTitle || "",
       metaDescription: metaDescription || "",
-      metaImage: metaImage || "",
-      thumbnailUrl: String(thumbnailUrl || thumbnail || "").trim(),
+      metaImage: metaImage || resolvedThumbnailUrl,
+      thumbnailUrl: resolvedThumbnailUrl,
       imageAlt: imageAlt || "",
       template: normalizedTemplate,
       ctaText: ctaText || "",
