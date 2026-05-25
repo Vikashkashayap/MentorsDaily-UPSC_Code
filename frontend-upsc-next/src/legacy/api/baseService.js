@@ -102,6 +102,10 @@ export default async function callApi({
 
     throw e instanceof Error
       ? e
-      : new Error(e?.response?.data?.message || "API CALL Failed");
+      : new Error(
+          e?.response?.data?.data?.message ||
+            e?.response?.data?.message ||
+            "API CALL Failed"
+        );
   }
 }

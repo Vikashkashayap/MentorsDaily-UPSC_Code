@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -17,6 +18,26 @@ const nextConfig: NextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  webpack: (config, { isServer, webpack }) => {
+    if (!isServer) {
+      const axiosRoot = path.join(process.cwd(), "node_modules/axios");
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /axios[\\/]lib[\\/]adapters[\\/]http\.js$/,
+          path.join(axiosRoot, "lib/helpers/null.js")
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+          /axios[\\/]lib[\\/]platform[\\/]node[\\/]index\.js$/,
+          path.join(axiosRoot, "lib/platform/browser/index.js")
+        ),
+        new webpack.NormalModuleReplacementPlugin(
+          /axios[\\/]lib[\\/]platform[\\/]node[\\/]classes[\\/]FormData\.js$/,
+          path.join(axiosRoot, "lib/helpers/null.js")
+        )
+      );
+    }
+    return config;
   },
   async redirects() {
     return [

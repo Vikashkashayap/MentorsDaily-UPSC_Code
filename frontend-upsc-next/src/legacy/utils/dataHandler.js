@@ -56,7 +56,9 @@ export class DataHandler {
       console.error('API Error:', error);
 
       if (showErrorMessage) {
-        const errorMsg = error?.response?.data?.message ||
+        const errorMsg =
+          error?.response?.data?.data?.message ||
+          error?.response?.data?.message ||
           error?.message ||
           errorMessage;
         messageHandler.error(errorMsg);
@@ -65,7 +67,11 @@ export class DataHandler {
       return {
         status: API_STATUS.ERROR,
         data: null,
-        message: error?.response?.data?.message || error?.message || errorMessage,
+        message:
+          error?.response?.data?.data?.message ||
+          error?.response?.data?.message ||
+          error?.message ||
+          errorMessage,
         error: error
       };
     } finally {

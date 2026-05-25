@@ -219,6 +219,17 @@ const ManagePreparationBlogs = () => {
       return;
     }
 
+    if (!stripHtml(formData.title).trim() || !stripHtml(formData.content).trim()) {
+      alert('Title and content are required.');
+      return;
+    }
+
+    const metaImageUrl = formData.metaImage?.trim() || '';
+    if (!editingBlog && !formData.image && !metaImageUrl) {
+      alert('Please upload a featured image or provide a Meta Image URL.');
+      return;
+    }
+
     const formDataToSend = new FormData();
     formDataToSend.append('title', formData.title);
     formDataToSend.append('content', formData.content);
@@ -241,6 +252,8 @@ const ManagePreparationBlogs = () => {
     
     if (formData.image) {
       formDataToSend.append('file', formData.image);
+    } else if (metaImageUrl) {
+      formDataToSend.append('thumbnailUrl', metaImageUrl);
     }
 
     const result = await dataHandler.handleApiCall(
@@ -631,10 +644,15 @@ const ManagePreparationBlogs = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Featured Image
+                    {!editingBlog && (
+                      <span className="ml-1 text-xs text-red-500 font-normal">
+                        (required unless Meta Image URL is set)
+                      </span>
+                    )}
                   </label>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/*,application/pdf"
                     onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
