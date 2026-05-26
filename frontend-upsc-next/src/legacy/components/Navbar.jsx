@@ -583,7 +583,7 @@ export default function Navbar() {
 
           <a
             href="https://studentportal.mentorsdaily.com"
-            className="hidden lg:inline-flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+            className="hidden lg:inline-flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-blue-600 to-blue-600 rounded-lg hover:from-blue-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
           >
             Student Portal
           </a>
