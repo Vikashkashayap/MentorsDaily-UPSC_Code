@@ -45,6 +45,7 @@ export const decodeHtmlEntities = (text = "") => {
   }
 };
 
+
 // Generate an SEO-friendly slug from a string
 export const slugify = (text = "") => {
   try {
