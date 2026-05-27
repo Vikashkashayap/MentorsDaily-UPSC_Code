@@ -83,19 +83,19 @@ export const PAGE_SEO_DATA = {
   },
   '/uppcs-mentorship': {
     title: 'UPPCS 2026 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2026 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2026 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2026, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship'
   },
   '/uppcs-mentorship-2027': {
     title: 'UPPCS 2027 Programme | MentorsDaily',
-    description: 'Structured UPPCS 2027 batch â€” syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
+    description: 'Structured UPPCS 2027 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
     keywords: 'UPPCS 2027, UPPSC, state PCS, Prelims, Mains, mentorship, MentorsDaily',
     canonical: '/uppcs-mentorship-2027'
   },
   '/mppsc-mentorship-2027': {
     title: 'MPPSC 2027 Programme | MentorsDaily',
-    description: 'MPPSC 2027 daily mentorship â€” structured syllabus, module tests, MP state focus, and Razorpay enrolment at â‚¹35,000.',
+    description: 'MPPSC 2027 daily mentorship — structured syllabus, module tests, MP state focus, and Razorpay enrolment at ₹35,000.',
     keywords: 'MPPSC 2027, Madhya Pradesh PCS, state PCS, daily sessions, mentorship, MentorsDaily',
     canonical: '/mppsc-mentorship-2027'
   },

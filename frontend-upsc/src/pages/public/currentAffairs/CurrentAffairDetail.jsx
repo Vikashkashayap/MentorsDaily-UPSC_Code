@@ -221,7 +221,7 @@ const CurrentAffairDetail = () => {
             onClick={() => navigate('/current-affairs')}
             className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md text-sm font-semibold"
           >
-            â† Back
+            ← Back
           </button>
         </div>
 
@@ -240,13 +240,13 @@ const CurrentAffairDetail = () => {
 
               {hasContent(post.paperName) && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-md">
-                  <span className="mr-1">ðŸ“š</span>
+                  <span className="mr-1" aria-hidden="true">📚</span>
                   {decodeHtmlEntities(getPlainText(post.paperName))}
                 </span>
               )}
               {hasContent(post.subject) && (
                 <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md">
-                  <span className="mr-1">ðŸ“–</span>
+                  <span className="mr-1" aria-hidden="true">📖</span>
                   {decodeHtmlEntities(getPlainText(post.subject))}
                 </span>
               )}

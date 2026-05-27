@@ -53,7 +53,7 @@ export default function PublicLayout({
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <SEOHead pathname={location.pathname} />
       <MessageDisplay />
 

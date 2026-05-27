@@ -565,7 +565,7 @@ export default function Navbar() {
 
           <a
             href="https://studentportal.mentorsdaily.com"
-            className="hidden lg:inline-flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+            className="hidden lg:inline-flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium leading-none text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
           >
             Student Portal
           </a>
@@ -874,7 +874,7 @@ export default function Navbar() {
               <a
                 href="https://studentportal.mentorsdaily.com"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center px-4 py-2.5 text-base font-medium leading-snug text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 shadow-md mt-1.5"
+                className="flex items-center justify-center px-4 py-2.5 text-base font-medium leading-snug text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md mt-1.5"
               >
                 🎓 Student Portal
               </a>

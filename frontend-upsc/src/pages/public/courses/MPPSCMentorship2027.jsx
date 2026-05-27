@@ -279,29 +279,14 @@ export default function MPPSCMentorship2027() {
             <div className="uppcs-timeline">
               {TIMELINE.map((item) => (
                 <div key={item.phase} className="uppcs-tl-item">
-                  {item.align === "left" ? (
-                    <>
-                      <div className="uppcs-tl-content">
-                        <div className="uppcs-tl-phase">{item.phase}</div>
-                        <h3>{item.title}</h3>
-                        <div className="uppcs-dates">{item.dates}</div>
-                        <p>{item.body}</p>
-                      </div>
-                      <div className="uppcs-tl-dot" />
-                      <div className="uppcs-tl-spacer" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="uppcs-tl-spacer" />
-                      <div className="uppcs-tl-dot" />
-                      <div className="uppcs-tl-content">
-                        <div className="uppcs-tl-phase">{item.phase}</div>
-                        <h3>{item.title}</h3>
-                        <div className="uppcs-dates">{item.dates}</div>
-                        <p>{item.body}</p>
-                      </div>
-                    </>
-                  )}
+                  <div className="uppcs-tl-content">
+                    <div className="uppcs-tl-phase">{item.phase}</div>
+                    <h3>{item.title}</h3>
+                    <div className="uppcs-dates">{item.dates}</div>
+                    <p>{item.body}</p>
+                  </div>
+                  <div className="uppcs-tl-dot" aria-hidden="true" />
+                  <div className="uppcs-tl-spacer" aria-hidden="true" />
                 </div>
               ))}
             </div>

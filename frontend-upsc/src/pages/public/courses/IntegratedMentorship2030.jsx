@@ -202,7 +202,7 @@ export default function IMPPage() {
   const discountPercentage = course?.discountPercentage || 0;
   const savings = basePrice - sellingPrice;
 
-  const formatPrice = (p) => (p === 0 ? "Free" : `â‚¹${p?.toLocaleString?.('en-IN')}`);
+  const formatPrice = (p) => (p === 0 ? "Free" : `₹${p?.toLocaleString?.("en-IN")}`);
 
   return (
     <>
@@ -244,16 +244,16 @@ export default function IMPPage() {
             <div className="bg-white/80 backdrop-blur-sm border-2 border-green-200 rounded-lg p-3 md:p-4 mb-6 shadow-lg max-w-2xl mx-auto">
               <div className="space-y-1.5 md:space-y-2">
                 <p className="text-sm md:text-base font-semibold text-gray-800 flex items-center justify-center gap-2">
-                  <span className="text-green-600">âœ“</span> Get 100% Fee Refund after Clearing Prelims!
+                  <span className="text-green-600" aria-hidden="true">✓</span> Get 100% Fee Refund after Clearing Prelims!
                 </p>
                 <p className="text-sm md:text-base font-semibold text-gray-800 flex items-center justify-center gap-2">
-                  <span className="text-green-600">âœ“</span> Free Hostel & Library facilities for Mains and Interview
+                  <span className="text-green-600" aria-hidden="true">✓</span> Free Hostel & Library facilities for Mains and Interview
                 </p>
               </div>
             </div>
 
             <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 max-w-3xl mx-auto">
-              When we started building <strong className="text-gray-900">IMP â€“ the Integrated Mentorship Program</strong>, we weren't chasing trends. We were listening to students.
+              When we started building <strong className="text-gray-900">IMP – the Integrated Mentorship Program</strong>, we weren&apos;t chasing trends. We were listening to students.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">

@@ -1,5 +1,6 @@
 /* UPPCS 2026 landing — scoped layout for UPPCSMentorship2025.jsx */
 .uppcs2026-landing {
+  overflow-x: hidden;
   --uppcs-navy: #1a2e4a;
   --uppcs-navy2: #243b55;
   --uppcs-gold: #e8a020;
@@ -422,7 +423,8 @@
   border: 3px solid var(--uppcs-white);
   box-shadow: 0 0 0 3px var(--uppcs-gold);
   flex-shrink: 0;
-  margin-top: 28px;
+  align-self: center;
+  margin-top: 0;
   z-index: 2;
 }
 

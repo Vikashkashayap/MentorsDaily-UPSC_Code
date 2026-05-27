@@ -2,13 +2,32 @@
 
 /* Global font stack for consistent rendering */
 html,
-body {
+body,
+#root,
+.app-container {
   font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+#root,
+.app-container {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* html, body {
