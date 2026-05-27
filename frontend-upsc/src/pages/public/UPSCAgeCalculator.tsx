@@ -218,6 +218,8 @@ function UPSCAgeCalculatorPage() {
         ))}
       </Helmet>
 
+      
+
       <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-blue-50/80 via-white to-indigo-50/40 dark:from-gray-950 dark:via-blue-950/20 dark:to-gray-950">
         {/* Animated background blobs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
