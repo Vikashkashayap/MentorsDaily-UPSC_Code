@@ -1,11 +1,19 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { getPageSEO, generateMetaTags, generateJSONLD, SEO_CONFIG } from '../../utils/seoUtils';
+import {
+  getPageSEO,
+  generateMetaTags,
+  generateJSONLD,
+  SEO_CONFIG,
+  shouldNoindexPath,
+} from '../../utils/seoUtils';
 
 const SEOHead = ({ pathname, customData = {} }) => {
   const pageData = { ...getPageSEO(pathname), ...customData };
   const metaTags = generateMetaTags(pageData, pathname);
   const jsonLd = generateJSONLD(pageData, pathname);
+  const noindex = shouldNoindexPath(pathname) || Boolean(pageData?.noindex);
+  const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
 
   return (
     <Helmet>
@@ -14,7 +22,7 @@ const SEOHead = ({ pathname, customData = {} }) => {
       <meta name="description" content={metaTags.description} />
       <meta name="keywords" content={metaTags.keywords} />
       <meta name="author" content={SEO_CONFIG.author} />
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={metaTags.robots || robotsContent} />
       <meta name="language" content="en" />
       <meta name="revisit-after" content="7 days" />
       
@@ -77,9 +85,7 @@ const SEOHead = ({ pathname, customData = {} }) => {
       <meta name="msapplication-starturl" content="/" />
       
       {/* Mobile Optimization Meta Tags */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-      <meta name="HandheldFriendly" content="true" />
-      <meta name="MobileOptimized" content="320" />
+      {/* Keep viewport/mobile meta in `index.html` to avoid duplicates */}
       
       {/* Hreflang tags for international SEO */}
       <link rel="alternate" hrefLang="en-IN" href={metaTags.canonical} />
@@ -87,7 +93,6 @@ const SEOHead = ({ pathname, customData = {} }) => {
       <link rel="alternate" hrefLang="x-default" href={metaTags.canonical} />
       
       {/* Additional Open Graph tags */}
-      <meta property="og:updated_time" content={new Date().toISOString()} />
       <meta property="og:see_also" content={SEO_CONFIG.siteUrl} />
       
       {/* Additional Twitter tags */}
@@ -95,24 +100,12 @@ const SEOHead = ({ pathname, customData = {} }) => {
       <meta name="twitter:domain" content="mentorsdaily.com" />
       
       {/* Favicon and App Icons */}
-      <link rel="icon" type="image/png" sizes="32x32" href="/Logo/icon.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/Logo/icon.png" />
-      <link rel="apple-touch-icon" sizes="180x180" href="/Logo/icon.png" />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      <link rel="manifest" href="/site.webmanifest" />
       <link rel="mask-icon" href="/Logo/icon.png" color="#2563eb" />
-      
-      {/* Preconnect to external domains for performance */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://www.google-analytics.com" />
-      <link rel="preconnect" href="https://www.googletagmanager.com" />
-      
-      {/* DNS Prefetch for better performance */}
-      <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-      <link rel="dns-prefetch" href="//www.google-analytics.com" />
-      <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-      
-      {/* Performance hints */}
-      <link rel="prefetch" href={metaTags.canonical} />
     </Helmet>
   );
 };

@@ -16,6 +16,41 @@ export const SEO_CONFIG = {
   googleSiteVerification: 'your-google-verification-code'
 };
 
+/**
+ * Routes that should not be indexed (auth walls, dashboards, admin, user-only pages).
+ * Keep in sync with `public/robots.txt` disallows.
+ */
+export const shouldNoindexPath = (pathname = "") => {
+  const p = String(pathname || "");
+  if (!p) return false;
+
+  // Admin / private areas
+  if (p.startsWith("/admin")) return true;
+  if (p === "/dashboard" || p.startsWith("/dashboard/")) return true;
+  if (p === "/home" || p.startsWith("/home/")) return true;
+
+  // Logged-in product areas (disallowed in robots.txt)
+  const privatePrefixes = [
+    "/ask",
+    "/study/current-affairs",
+    "/library",
+    "/mcq",
+    "/pyqs",
+    "/my-tests",
+    "/answer-evaluation",
+    "/mains-pyqs",
+    "/my-progress",
+    "/help-support",
+    "/profile",
+  ];
+  if (privatePrefixes.some((x) => p === x || p.startsWith(`${x}/`))) return true;
+
+  // Thin/auth pages (avoid indexing)
+  if (p === "/login" || p === "/register") return true;
+
+  return false;
+};
+
 export const stripHTML = (html = "") => {
   try {
     const tmp = document.createElement('div');
@@ -1023,6 +1058,7 @@ export const generateMetaTags = (pageData, pathname) => {
     description: optimizedDescription,
     keywords: pageData.keywords,
     canonical: currentUrl,
+    robots: shouldNoindexPath(pathname) || Boolean(pageData?.noindex) ? "noindex, nofollow" : "index, follow",
     openGraph: {
       title: ogTitle,
       description: ogDescription,
