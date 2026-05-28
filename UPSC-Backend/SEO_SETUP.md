@@ -1,9 +1,9 @@
-# SEO and social previews (preparation blogs)
+# SEO and social previews (preparation blogs + courses)
 
 This stack uses three layers:
 
 1. **React (`react-helmet-async`)** — Updates `<title>` and Open Graph / Twitter tags in the browser after data loads (good for users and JS-capable crawlers).
-2. **HTML injection for crawlers** — When the API process also serves the Vite `dist` folder, known bots (Facebook, WhatsApp, LinkedIn, Twitter, etc.) get `index.html` with meta tags **already in the HTML** for `/preparation-blog/:slug`.
+2. **HTML injection for crawlers** — When the API process also serves the Vite `dist` folder, known bots (Facebook, WhatsApp, LinkedIn, Twitter, etc.) get `index.html` with meta tags **already in the HTML** for:\n+\n+   - `/preparation-blog/:slug` (blogs)\n+   - `/integrated-mentorship-2031` and `/integrated-mentorship-2032`\n+   - `/program/:slug` (dynamic program landing)\n+   - `/courses/:courseId/:courseSlug?` (canonical course details)
 3. **Optional `prerender-node`** — Forwards eligible bot requests to an external Prerender.io-compatible service for **full-page** prerendering (optional).
 
 ## Environment variables
@@ -57,6 +57,17 @@ npm run seo:sitemap
 
 Writes `public/sitemap-preparation-blogs.xml`. `robots.txt` references this file.
 
+Regenerate course URLs (canonical `/courses/:courseId/:courseSlug?`):
+
+```bash
+cd frontend-upsc
+set SITE_URL=https://mentorsdaily.com
+set API_URL=https://api.mentorsdaily.com
+npm run seo:sitemap:courses
+```
+
+Writes `public/sitemap-courses.xml`. `robots.txt` references this file.
+
 ## Verify previews
 
 - [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
@@ -64,3 +75,8 @@ Writes `public/sitemap-preparation-blogs.xml`. `robots.txt` references this file
 - Twitter/X card validator (tool availability varies)
 
 Use “Scrape again” after deploy so caches refresh.
+
+## Verify indexing (Google)
+
+1. **Google Search Console**
+   - Submit these sitemaps:\n+     - `/sitemap.xml`\n+     - `/sitemap-preparation-blogs.xml`\n+     - `/sitemap-courses.xml`\n+   - Inspect a sample course URL (URL Inspection) and request indexing.\n+2. **Structured data (Course schema)**\n+   - Run Google Rich Results Test on:\n+     - `/integrated-mentorship-2031`\n+     - `/integrated-mentorship-2032`\n+3. **Lighthouse (quick check)**\n+   - `npm run seo:analyze` (frontend script) for an at-a-glance SEO score.\n*** End Patch"}"}]} for ApplyPatch - must be plain. Let's correct now.

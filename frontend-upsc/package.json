@@ -12,7 +12,8 @@
     "assets:optimize": "node scripts/optimize-images.mjs",
     "seo:analyze": "lighthouse --chrome-flags=\"--headless\" --output=html --output-path=./seo-report.html https://mentorsdaily.com",
     "seo:test": "lighthouse --chrome-flags=\"--headless\" --output=json --output-path=./seo-report.json https://mentorsdaily.com",
-    "seo:sitemap": "node scripts/generate-sitemap.mjs"
+    "seo:sitemap": "node scripts/generate-sitemap.mjs",
+    "seo:sitemap:courses": "node scripts/generate-sitemap-courses.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

@@ -67,6 +67,24 @@ export default function Navbar() {
       badgeClass: "bg-cyan-100 text-cyan-700",
       mobileAccentClass: "bg-cyan-50 border-cyan-100",
     },
+    {
+      path: "/integrated-mentorship-2031",
+      label: "Integrated Mentorship 2031",
+      timeline: "78M",
+      dotClass: "bg-red-500",
+      hoverClass: "hover:bg-red-50 hover:text-red-700",
+      badgeClass: "bg-red-100 text-red-700",
+      mobileAccentClass: "bg-red-50 border-red-100",
+    },
+    {
+      path: "/integrated-mentorship-2032",
+      label: "Integrated Mentorship 2032",
+      timeline: "90M",
+      dotClass: "bg-green-500",
+      hoverClass: "hover:bg-green-50 hover:text-green-700",
+      badgeClass: "bg-green-100 text-green-700",
+      mobileAccentClass: "bg-green-50 border-green-100",
+    },
   ];
 
   const uppcsYearItems = [

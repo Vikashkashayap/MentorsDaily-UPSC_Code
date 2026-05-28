@@ -8,6 +8,7 @@ import IntegratedMentorship2030 from "./IntegratedMentorship2030";
 import { IMP_2027_SLUG } from "./imp2027DetailDefaults";
 import { IMP_2028_SLUG } from "./imp2028DetailDefaults";
 import { IMP_2029_SLUG } from "./imp2029DetailDefaults";
+import SEO from "../../../components/SEO/SEO";
 
 const LEGACY_SLUG_ALIASES = {
   "integrated mentorship 2026": "integrated-mentorship-2026",
@@ -64,6 +65,12 @@ export default function DynamicImpLandingPage() {
 
   return (
     <div className="min-h-[50vh] flex items-center justify-center bg-[#F8F9FB] px-6 text-center">
+      <SEO
+        title="Program not found | MentorsDaily"
+        description="The program you are looking for does not exist. Please check the URL or explore available programs."
+        url={`/program/${encodeURIComponent(String(canonicalSlug || ""))}`}
+        noindex
+      />
       <div>
         <h1 className="text-2xl font-bold text-[#1A3C6E] mb-2">Program not found</h1>
         <p className="text-[#6B7280]">Please check the URL or explore available programs.</p>

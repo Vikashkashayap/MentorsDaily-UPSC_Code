@@ -81,8 +81,34 @@ const CourseCard = ({
   } = course;
 
   useEffect(() => {
-    const original = Number(basePrice || 0);
-    const final = Number(sellingPrice || original);
+    // Special-case Integrated Mentorship 2031/2032 cards to show
+    // ₹3,80,000 → ₹1,90,000 and ₹4,20,000 → ₹2,10,000 (50% OFF),
+    // even if backend basePrice isn't configured yet.
+    const rawSlug = typeof course?.slug === "string" ? course.slug.trim() : "";
+    const slugLower = rawSlug.toLowerCase();
+    const titleLower = title?.toLowerCase() || "";
+    const categoryLower = category?.toLowerCase() || "";
+    const isIntegrated =
+      slugLower.includes("integrated") ||
+      titleLower.includes("integrated") ||
+      categoryLower.includes("integrated");
+
+    const yearMatch =
+      isIntegrated
+        ? slugLower.match(/(2031|2032)/i) ||
+          titleLower.match(/(2031|2032)/i) ||
+          categoryLower.match(/(2031|2032)/i)
+        : null;
+
+    const final = Number(sellingPrice || basePrice || 0);
+    const overrideOriginal =
+      yearMatch?.[0] === "2031" && final === 190000
+        ? 380000
+        : yearMatch?.[0] === "2032" && final === 210000
+          ? 420000
+          : null;
+
+    const original = Number(overrideOriginal ?? basePrice ?? 0);
     const discountPercent = original > 0 ? Math.round(((original - final) / original) * 100) : 0;
     setPricing({ original, final, discountPercent });
     setAppliedCoupon(null);
@@ -162,24 +188,34 @@ const CourseCard = ({
 
   // Check if course is integrated and get the year
   const getIntegratedRoute = () => {
-    if (course?.slug && String(course.slug).trim() !== "") {
-      return `/program/${encodeURIComponent(String(course.slug).trim())}`;
-    }
-
-    const titleLower = title?.toLowerCase() || '';
-    const categoryLower = category?.toLowerCase() || '';
+    const rawSlug = typeof course?.slug === "string" ? course.slug.trim() : "";
+    const slugLower = rawSlug.toLowerCase();
+    const titleLower = title?.toLowerCase() || "";
+    const categoryLower = category?.toLowerCase() || "";
     
     // Check if title or category contains "integrated"
-    if (titleLower.includes('integrated') || categoryLower.includes('integrated')) {
-      // Extract IMP target year (2026–2030)
-      // Covers: 2026, 2027, 2028, 2029, 2030
+    const isIntegrated =
+      slugLower.includes("integrated") ||
+      titleLower.includes("integrated") ||
+      categoryLower.includes("integrated");
+
+    if (isIntegrated) {
+      // Extract target year (2026–2032)
       const yearMatch =
-        titleLower.match(/(202[6-9]|2030)/) ||
-        categoryLower.match(/(202[6-9]|2030)/);
-      if (yearMatch) {
-        return `/integrated-mentorship-${yearMatch[0]}`;
+        slugLower.match(/(202[6-9]|203[0-2])/i) ||
+        titleLower.match(/(202[6-9]|203[0-2])/i) ||
+        categoryLower.match(/(202[6-9]|203[0-2])/i);
+
+      if (yearMatch) return `/integrated-mentorship-${yearMatch[0]}`;
+
+      // If slug already looks like a canonical integrated mentorship slug, prefer it.
+      if (slugLower.startsWith("integrated-mentorship-")) {
+        return `/${encodeURIComponent(rawSlug)}`;
       }
     }
+
+    // Not integrated: if backend slug exists use dynamic landing route.
+    if (rawSlug) return `/program/${encodeURIComponent(rawSlug)}`;
     return null;
   };
 

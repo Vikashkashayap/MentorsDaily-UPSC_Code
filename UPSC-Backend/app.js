@@ -92,16 +92,26 @@ if (FRONTEND_DIST) {
     createPrepBlogBotHtmlMiddleware,
     createPreparationBlogHtmlRouteHandler,
   } = require("./src/middleware/spaBotPrepBlog.middleware.js");
+  const {
+    createCourseBotHtmlMiddleware,
+    createCourseHtmlRouteHandler,
+  } = require("./src/middleware/spaBotCourse.middleware.js");
   const prepBlogBotHtml = createPrepBlogBotHtmlMiddleware(distResolved);
+  const courseBotHtml = createCourseBotHtmlMiddleware(distResolved);
   const preparationBlogHtmlRoute = createPreparationBlogHtmlRouteHandler(
     distResolved,
     "/preparation-blog"
   );
   const legacyBlogHtmlRoute = createPreparationBlogHtmlRouteHandler(distResolved, "/blog");
+  const courseHtmlRoute = createCourseHtmlRouteHandler(distResolved);
 
   // Explicit SSR-like entry route for social crawlers and first-page hits.
   app.get("/preparation-blog/:slug", preparationBlogHtmlRoute);
   app.get("/blog/:slug", legacyBlogHtmlRoute);
+  app.get("/integrated-mentorship-2031", courseHtmlRoute);
+  app.get("/integrated-mentorship-2032", courseHtmlRoute);
+  app.get("/program/:slug", courseHtmlRoute);
+  app.get("/courses/:courseId/:courseSlug?", courseHtmlRoute);
 
   app.use(
     express.static(distResolved, {
@@ -121,6 +131,7 @@ if (FRONTEND_DIST) {
     })
   );
   app.use(prepBlogBotHtml);
+  app.use(courseBotHtml);
   app.use((req, res, next) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
     if (req.path.startsWith("/api")) return next();

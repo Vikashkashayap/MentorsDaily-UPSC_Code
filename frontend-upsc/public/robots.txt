@@ -4,6 +4,7 @@ Allow: /
 # Sitemap
 Sitemap: https://mentorsdaily.com/sitemap.xml
 Sitemap: https://mentorsdaily.com/sitemap-preparation-blogs.xml
+Sitemap: https://mentorsdaily.com/sitemap-courses.xml
 
 # Crawl-delay
 Crawl-delay: 1

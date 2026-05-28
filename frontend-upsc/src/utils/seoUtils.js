@@ -69,18 +69,18 @@ export const PAGE_SEO_DATA = {
     canonical: '/',
     ogImage: '/images/hero.webp'
   },
-  '/login': {
-    title: 'Login - MentorsDaily | Access Your UPSC Preparation Dashboard',
-    description: 'Login to your MentorsDaily account and continue your UPSC preparation journey with personalized mentorship and study materials.',
-    keywords: 'UPSC login, MentorsDaily login, civil services dashboard, study progress',
-    canonical: '/login'
-  },
-  '/register': {
-    title: 'Register - MentorsDaily | Start Your UPSC Journey Today',
-    description: 'Join thousands of successful UPSC aspirants with MentorsDaily. Get expert mentorship, comprehensive study materials, and personalized guidance.',
-    keywords: 'UPSC registration, join MentorsDaily, civil services preparation, mentorship signup',
-    canonical: '/register'
-  },
+  // '/login': {
+  //   title: 'Login - MentorsDaily | Access Your UPSC Preparation Dashboard',
+  //   description: 'Login to your MentorsDaily account and continue your UPSC preparation journey with personalized mentorship and study materials.',
+  //   keywords: 'UPSC login, MentorsDaily login, civil services dashboard, study progress',
+  //   canonical: '/login'
+  // },
+  // '/register': {
+  //   title: 'Register - MentorsDaily | Start Your UPSC Journey Today',
+  //   description: 'Join thousands of successful UPSC aspirants with MentorsDaily. Get expert mentorship, comprehensive study materials, and personalized guidance.',
+  //   keywords: 'UPSC registration, join MentorsDaily, civil services preparation, mentorship signup',
+  //   canonical: '/register'
+  // },
   '/uppcs-mentorship': {
     title: 'UPPCS 2026 Programme | MentorsDaily',
     description: 'Structured UPPCS 2026 batch — syllabus tree, module tests, mentor review, and MentorsDaily portal. Complete and Prelims Booster tracks.',
@@ -753,10 +753,41 @@ export const generateJSONLD = (pageData = {}, pathname) => {
   }
 
   // Add Course/EducationalProgram schema for Integrated Mentorship pages
-  if (pathname === '/integrated-mentorship-2026' || pathname === '/integrated-mentorship-2027' || pathname === '/integrated-mentorship-2028' || pathname === '/integrated-mentorship-2029' || pathname === '/integrated-mentorship-2030') {
-    const year = pathname.includes('2026') ? '2026' : pathname.includes('2027') ? '2027' : pathname.includes('2028') ? '2028' : pathname.includes('2029') ? '2029' : '2030';
-    const duration = year === '2026' ? 'P18M' : year === '2027' ? 'P30M' : year === '2028' ? 'P42M' : year === '2029' ? 'P48M' : 'P66M';
-    const durationText = year === '2026' ? '18 Months' : year === '2027' ? '30 Months' : year === '2028' ? '42 Months' : year === '2029' ? '48 Months' : '66 Months';
+  if (
+    pathname === '/integrated-mentorship-2026' ||
+    pathname === '/integrated-mentorship-2027' ||
+    pathname === '/integrated-mentorship-2028' ||
+    pathname === '/integrated-mentorship-2029' ||
+    pathname === '/integrated-mentorship-2030' ||
+    pathname === '/integrated-mentorship-2031' ||
+    pathname === '/integrated-mentorship-2032'
+  ) {
+    const year =
+      pathname.includes('2026') ? '2026' :
+      pathname.includes('2027') ? '2027' :
+      pathname.includes('2028') ? '2028' :
+      pathname.includes('2029') ? '2029' :
+      pathname.includes('2030') ? '2030' :
+      pathname.includes('2031') ? '2031' :
+      '2032';
+
+    const duration =
+      year === '2026' ? 'P18M' :
+      year === '2027' ? 'P30M' :
+      year === '2028' ? 'P42M' :
+      year === '2029' ? 'P48M' :
+      year === '2030' ? 'P66M' :
+      year === '2031' ? 'P78M' :
+      'P90M';
+
+    const durationText =
+      year === '2026' ? '18 Months' :
+      year === '2027' ? '30 Months' :
+      year === '2028' ? '42 Months' :
+      year === '2029' ? '48 Months' :
+      year === '2030' ? '66 Months' :
+      year === '2031' ? '78 Months' :
+      '90 Months';
     
     const courseSchema = {
       "@context": "https://schema.org",
@@ -890,6 +921,31 @@ export const generateJSONLD = (pageData = {}, pathname) => {
       ]
     };
     schemas.push(faqSchema);
+  }
+
+  // Add dynamic Course schema for generic course details pages (/courses/:courseId and /course/:category/:title)
+  // Note: we only have lightweight info at this layer (title/description/canonical). Rich fields (price, duration)
+  // can be injected server-side or passed in via customData where available.
+  if (
+    (typeof canonicalPath === "string" && canonicalPath.startsWith("/courses/")) ||
+    (typeof canonicalPath === "string" && canonicalPath.startsWith("/course/"))
+  ) {
+    const courseTitle = pageData?.title ? stripHTML(String(pageData.title)) : "Course";
+    const courseDescription = pageData?.description ? stripHTML(String(pageData.description)) : SEO_CONFIG.defaultDescription;
+    const dynamicCourseSchema = {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": courseTitle,
+      "description": courseDescription,
+      "url": currentUrl,
+      "provider": {
+        "@type": "EducationalOrganization",
+        "name": "MentorsDaily",
+        "url": baseUrl,
+        "logo": `${baseUrl}/Logo/logo.png`,
+      },
+    };
+    schemas.push(dynamicCourseSchema);
   }
 
   return schemas;

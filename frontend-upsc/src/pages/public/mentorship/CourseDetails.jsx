@@ -8,6 +8,8 @@ import OptimizedImage from '../../../components/utility/OptimizedImage';
 import { resolveCourseThumbnailUrl } from '../../../utils/mediaUrls';
 import CouponApplyBox from '../../../components/coupon/CouponApplyBox';
 import { applyCoupon, getAutoApplyCoupon } from '../../../api/coreService';
+import SEO from "../../../components/SEO/SEO";
+import { optimizeDescription, optimizeTitle, stripHTML } from "../../../utils/seoUtils";
 
 const CourseDetails = () => {
   const { courseId, category, title } = useParams();
@@ -248,6 +250,14 @@ const CourseDetails = () => {
   }
 
   const thumbnailUrl = resolveCourseThumbnailUrl(course);
+  const courseSlug = course?.slug ? String(course.slug).trim() : (course?.title ? generateSlug(stripHTML(course.title)) : "");
+  const canonicalPath = course?._id
+    ? `/courses/${encodeURIComponent(String(course._id))}${courseSlug ? `/${encodeURIComponent(courseSlug)}` : ""}`
+    : (category && title ? `/course/${encodeURIComponent(String(category))}/${encodeURIComponent(String(title))}` : "");
+
+  const seoTitle = course?.title ? optimizeTitle(`${stripHTML(course.title)} | MentorsDaily`) : "Course | MentorsDaily";
+  const seoDescriptionRaw = course?.shortDescription || course?.description || "";
+  const seoDescription = optimizeDescription(stripHTML(seoDescriptionRaw));
 
   // Check if the course is an UPSC Integrated course
   const isIntegratedCourse = () => {
@@ -263,6 +273,12 @@ const CourseDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        image={thumbnailUrl || undefined}
+        url={canonicalPath || undefined}
+      />
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
