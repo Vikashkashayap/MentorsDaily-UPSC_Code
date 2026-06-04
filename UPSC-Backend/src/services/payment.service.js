@@ -7,6 +7,7 @@ const emiInstallmentRepo = require('../repositories/emi.installment.repository')
 const logger = require('../utility/logger');
 const { getErrorMessage } = require('../utility/errorMessage');
 const razorpay = require('../utility/razorpay.js');
+const { assertValidRazorpayOrderId } = require('../utility/razorpayIdValidation.js');
 const crypto = require('crypto');
 const { sendEmail} = require('../utility/email.service');
 const {generatePaymentConfirmationHTML } = require('../utility/paymentConfirmationEmail.js');
@@ -324,13 +325,34 @@ exports.initiateCoursePayment = async (data) => {
                 detail.includes('Razorpay') ? detail : `Razorpay: ${detail}`
             );
         }
+
+        const orderIdFromRzp = razorpayOrder?.id;
+        logger.info(
+            `paymentService.js <<initiateCoursePayment>> Razorpay orders.create ok | orderId=${orderIdFromRzp} | paymentId=${newPayment._id}`
+        );
+        try {
+            assertValidRazorpayOrderId(orderIdFromRzp, 'Razorpay orders.create response');
+        } catch (idErr) {
+            logger.error(
+                `paymentService.js <<initiateCoursePayment>> ${idErr.message} | raw=${JSON.stringify(razorpayOrder)}`
+            );
+            throw idErr;
+        }
         
         const updatedPayment = await paymentRepo.updatePaymentStatus(newPayment._id, {
-            razorpayOrderId: razorpayOrder.id,
+            razorpayOrderId: orderIdFromRzp,
             gatewayResponse: razorpayOrder
         });
 
-        return { payment: updatedPayment, course, razorpayOrder };
+        return {
+            payment: updatedPayment,
+            course,
+            razorpayOrder: {
+                id: orderIdFromRzp,
+                amount: razorpayOrder.amount,
+                currency: razorpayOrder.currency,
+            },
+        };
     }
     
     return { payment: newPayment, course, razorpayOrder: null };

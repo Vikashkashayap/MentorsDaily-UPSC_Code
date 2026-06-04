@@ -46,13 +46,16 @@ exports.initiateCoursePayment = async (req, res) => {
       couponCode: couponCode != null ? String(couponCode).trim().toUpperCase() : null,
     });
 
-    logger.info('paymentController.js < initiateCoursePayment: Payment initiated successfully');
+    const rzpOrderId = paymentResult.razorpayOrder?.id;
+    logger.info(
+      `paymentController.js < initiateCoursePayment: ok | paymentId=${paymentResult.payment?._id} | razorpayOrderId=${rzpOrderId ?? 'none'} | freeCheckout=${!!paymentResult.freeCheckout}`
+    );
 
     return setCreateSuccess(res, {
       message: 'Course payment initiated successfully',
       payment: paymentResult.payment,
       course: paymentResult.course,
-      razorpayOrder: paymentResult.razorpayOrder
+      razorpayOrder: paymentResult.razorpayOrder,
     });
   } catch (error) {
     const msg = getErrorMessage(error);

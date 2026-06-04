@@ -4,6 +4,11 @@ import {
   verifyCoursePayment,
 } from "../../api/coreService";
 import PaymentReceipt from "./PaymentReceipt";
+import {
+  assertRazorpayPublicKey,
+  assertValidRazorpayOrderId,
+  assertValidRazorpaySubscriptionId,
+} from "../../utils/razorpayCheckout";
 
 /**
  * Resolves MongoDB course id for payment: document _id, then slug → VITE_IMP_*_COURSE_ID, then VITE_PAYMENT_FALLBACK_COURSE_ID.
@@ -138,11 +143,11 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
       } else if (
         rawResponse &&
         rawResponse.payment &&
-        rawResponse.razorpayOrder
+        (rawResponse.razorpayOrder || rawResponse.razorpaySubscription)
       ) {
         orderData = rawResponse;
       } else {
-        console.error("Invalid response structure:", rawResponse);
+        console.error("[PaymentForm] Invalid initiate response structure:", rawResponse);
         alert("Failed to initiate payment. Please try again.");
         setLoading(false);
         setPaymentStatus("failed");
@@ -150,12 +155,20 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
       }
 
       if (!orderData || !orderData.payment) {
-        console.error("Missing required data in orderData");
+        console.error("[PaymentForm] Missing payment in orderData:", orderData);
         alert("Failed to initiate payment. Please try again.");
         setLoading(false);
         setPaymentStatus("failed");
         return;
       }
+
+      console.info("[PaymentForm] initiate ok", {
+        paymentId: orderData.payment?._id,
+        razorpayOrderId: orderData.razorpayOrder?.id,
+        razorpaySubscriptionId:
+          orderData.razorpaySubscription?.id ??
+          orderData.payment?.razorpaySubscriptionId,
+      });
 
       // 100% coupon / free checkout: server completes without Razorpay order.
       if (!orderData.razorpayOrder && orderData.payment?.status === "SUCCESS") {
@@ -182,13 +195,81 @@ const PaymentForm = ({ course, onPaymentSuccess, onClose, mentorshipPlan }) => {
         setPaymentStatus("failed");
         return;
       }
+
+      let razorpayKey;
+      try {
+        razorpayKey = assertRazorpayPublicKey(import.meta.env.VITE_RAZORPAY_KEY_ID);
+      } catch (keyErr) {
+        console.error("[PaymentForm]", keyErr.message);
+        alert(keyErr.message);
+        setLoading(false);
+        setPaymentStatus("failed");
+        return;
+      }
+
+      const subscriptionIdRaw =
+        orderData.razorpaySubscription?.id ??
+        orderData.payment?.razorpaySubscriptionId ??
+        null;
+      const useSubscriptionCheckout = Boolean(subscriptionIdRaw);
+
+      if (useSubscriptionCheckout) {
+        try {
+          assertValidRazorpaySubscriptionId(subscriptionIdRaw);
+        } catch (subErr) {
+          console.error(
+            "[PaymentForm] Refusing subscription checkout — invalid id:",
+            subscriptionIdRaw,
+            subErr
+          );
+          alert(
+            subErr.message ||
+              "Invalid subscription id. Checkout was not opened."
+          );
+          setLoading(false);
+          setPaymentStatus("failed");
+          return;
+        }
+      }
+
+      if (!useSubscriptionCheckout) {
+        if (!orderData.razorpayOrder) {
+          console.error(
+            "[PaymentForm] razorpayOrder missing for one-time checkout:",
+            orderData
+          );
+          alert("Failed to initiate payment. No Razorpay order was created.");
+          setLoading(false);
+          setPaymentStatus("failed");
+          return;
+        }
+        try {
+          assertValidRazorpayOrderId(orderData.razorpayOrder.id);
+        } catch (orderErr) {
+          console.error(
+            "[PaymentForm] Refusing checkout — invalid order id:",
+            orderData.razorpayOrder?.id,
+            orderErr
+          );
+          alert(orderErr.message || "Invalid Razorpay order. Checkout was not opened.");
+          setLoading(false);
+          setPaymentStatus("failed");
+          return;
+        }
+      }
+
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderData.razorpayOrder.amount,
-        currency: orderData.razorpayOrder.currency || "INR",
-        name: import.meta.env.VITE_RAZORPAY_PAYMENT_SCREEN_NAME,
+        key: razorpayKey,
+        name:
+          import.meta.env.VITE_RAZORPAY_PAYMENT_SCREEN_NAME || "MentorsDaily",
         description: course.title,
-        order_id: orderData.razorpayOrder.id,
+        ...(useSubscriptionCheckout
+          ? { subscription_id: String(subscriptionIdRaw).trim() }
+          : {
+              amount: orderData.razorpayOrder.amount,
+              currency: orderData.razorpayOrder.currency || "INR",
+              order_id: orderData.razorpayOrder.id,
+            }),
         handler: async function (razorpayResponse) {
           try {
             setPaymentStatus("success");
