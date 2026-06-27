@@ -49,9 +49,15 @@ const generateEmiInstallments = (totalAmount, months, paymentId) => {
 
 /** When checkout slug is integrated-mentorship-20xx but Mongo row is missing or is another year, still charge correct plan amounts (must match frontend defaults). */
 const IMP_PLAN_AMOUNTS_BY_YEAR = {
-    '2027': { weekly: 35000, daily: 60000 },
-    '2028': { weekly: 65000, daily: 90000 },
+    '2027': { weekly: 30000, daily: 60000 },
+    '2028': { weekly: 55000, daily: 90000 },
     '2029': { weekly: 90000, daily: 120000 },
+};
+
+/** Fixed weekly checkout — not scaled from daily admin price. */
+const IMP_WEEKLY_PRICING_BY_YEAR = {
+    '2027': { price: 30000, oldPrice: 60000 },
+    '2028': { price: 55000, oldPrice: 110000 },
 };
 
 /** Default full-pay amount (no weekly/daily in payload) for slug-only checkout aligned to each program’s “daily” list price. */
@@ -86,16 +92,29 @@ function resolveFullPayAmountBySlug(slug) {
     return resolveImpFullPayAmountBySlug(slug) ?? resolveUppcsFullPayAmountBySlug(slug);
 }
 
+function resolveImpPlanAmountsFromCourse(course, defaultDaily, defaultWeekly) {
+    const selling = Number(
+        course?.sellingPrice != null ? course.sellingPrice : course?.basePrice
+    );
+    if (!Number.isFinite(selling) || selling < 0) return null;
+
+    const slug = String(course?.slug || '').toLowerCase().trim();
+    const yearMatch = slug.match(/integrated-mentorship-(20\d{2})/);
+    const year = yearMatch ? yearMatch[1] : null;
+    const fixedWeekly = year && IMP_WEEKLY_PRICING_BY_YEAR[year];
+
+    return {
+        daily: selling,
+        weekly: fixedWeekly ? fixedWeekly.price : Number(defaultWeekly) || selling,
+    };
+}
+
 function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
     const slug = (requestedSlug != null ? String(requestedSlug) : String(course.slug || '')).toLowerCase().trim();
     const title = ((course.title || '') + '').toLowerCase();
     const yearMatch = slug.match(/integrated-mentorship-(20\d{2})\b/);
     const year = yearMatch ? yearMatch[1] : null;
-    const byYear = year && IMP_PLAN_AMOUNTS_BY_YEAR[year];
-    if (byYear) {
-        if (mentorshipPlan === 'weekly') return byYear.weekly;
-        if (mentorshipPlan === 'daily') return byYear.daily;
-    }
+    const defaults = year && IMP_PLAN_AMOUNTS_BY_YEAR[year];
 
     const dp = course.detailPage && typeof course.detailPage === 'object' ? course.detailPage : null;
     const ps = dp && dp.pricingSection ? dp.pricingSection : null;
@@ -105,11 +124,28 @@ function resolveCourseAmountFromPlan(course, mentorshipPlan, requestedSlug) {
     if (mentorshipPlan === 'daily' && ps && ps.daily && ps.daily.price != null) {
         return Number(ps.daily.price);
     }
+
+    const fromCourse = resolveImpPlanAmountsFromCourse(
+        course,
+        defaults?.daily,
+        defaults?.weekly
+    );
+    if (fromCourse) {
+        if (mentorshipPlan === 'weekly') return fromCourse.weekly;
+        if (mentorshipPlan === 'daily') return fromCourse.daily;
+    }
+
+    const byYear = defaults;
+    if (byYear) {
+        if (mentorshipPlan === 'weekly') return byYear.weekly;
+        if (mentorshipPlan === 'daily') return byYear.daily;
+    }
+
     const isImp2027 =
         slug === 'integrated-mentorship-2027' ||
         (title.includes('integrated') && title.includes('2027'));
     if (isImp2027) {
-        if (mentorshipPlan === 'weekly') return 35000;
+        if (mentorshipPlan === 'weekly') return 30000;
         if (mentorshipPlan === 'daily') return 60000;
     }
     return null;
@@ -193,18 +229,18 @@ exports.initiateCoursePayment = async (data) => {
       planAmount != null && !Number.isNaN(planAmount) && Number.isFinite(Number(planAmount))
         ? Number(planAmount)
         : null;
+    const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
     const fromSlugFull =
-      !mentorshipPlan && courseSlug != null && String(courseSlug).trim()
+      !mentorshipPlan && courseSlug != null && String(courseSlug).trim() && fromCourse == null
         ? resolveFullPayAmountBySlug(courseSlug)
         : null;
-    const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
     let totalCourseAmount =
       fromPlan != null
         ? fromPlan
-        : fromSlugFull != null
-          ? fromSlugFull
-          : fromCourse != null
-            ? fromCourse
+        : fromCourse != null
+          ? fromCourse
+          : fromSlugFull != null
+            ? fromSlugFull
             : NaN;
 
     let appliedCouponCode = null;

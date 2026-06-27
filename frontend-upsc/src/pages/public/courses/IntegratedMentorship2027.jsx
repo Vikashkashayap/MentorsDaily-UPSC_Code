@@ -16,6 +16,7 @@ import {
   getDefaultImp2027DetailPage,
   mergeImpDetailPage,
 } from "./imp2027DetailDefaults";
+import { applyCoursePricingToImpDetail } from "./impCoursePricing";
 
 function Imp2027DetailSkeleton() {
   return (
@@ -114,7 +115,8 @@ export default function IntegratedMentorship2027() {
         const base = getDefaultImp2027DetailPage();
         if (c) {
           setCourse(c);
-          setDetail(mergeImpDetailPage(base, c.detailPage || {}));
+          const merged = mergeImpDetailPage(base, c.detailPage || {});
+          setDetail(applyCoursePricingToImpDetail(merged, { ...c, slug: c.slug || IMP_2027_SLUG }));
         } else {
           setDetail(base);
         }

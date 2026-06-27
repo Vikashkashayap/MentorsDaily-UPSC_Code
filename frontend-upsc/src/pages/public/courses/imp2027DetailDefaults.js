@@ -97,9 +97,9 @@ export function getDefaultImp2027DetailPage() {
       toggleHint: "Scroll down for a feature-by-feature comparison table ↓",
       weekly: {
         name: "Weekly Mentorship",
-        price: 35000,
-        oldPrice: 70000,
-        saveLabel: "Save ₹35,000 (50% off) — Limited Seats",
+        price: 30000,
+        oldPrice: 60000,
+        saveLabel: "Save ₹30,000 (50% off) — Limited Seats",
         // durationLine: "30-Month Full Program · Batch Starts June 2025",
         features: [
           // { ok: true, cls: "green", text: "All NCERT Books Provided" },
@@ -142,7 +142,7 @@ export function getDefaultImp2027DetailPage() {
         midLabel: "Daily",
         midPrice: "₹60,000",
         rightLabel: "Weekly",
-        rightPrice: "₹35,000",
+        rightPrice: "₹30,000",
       },
       comparisonRows: [
         { type: "cat", label: "Mentoring & Guidance" },

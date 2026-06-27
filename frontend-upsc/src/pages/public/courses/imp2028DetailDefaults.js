@@ -103,9 +103,9 @@ export function getDefaultImp2028DetailPage() {
         name: "Weekly Plan",
         ribbon: "Flexible",
         tagline: "Structured guidance for self-paced learners.",
-        price: 65000,
-        oldPrice: 95000,
-        saveLabel: "Save ₹30,000 — 33.33% Off · Self-Paced",
+        price: 55000,
+        oldPrice: 110000,
+        saveLabel: "Save ₹55,000 (50% off) · Self-Paced",
         durationLine: "36-Month Program · Batch Starts April 2026",
         features: [
           { ok: true, cls: "green", text: "Weekly 1:1 Personalized Mentor Sessions" },
