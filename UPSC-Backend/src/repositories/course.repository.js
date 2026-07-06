@@ -1,5 +1,8 @@
 const Course = require("../models/course.model");
 
+/** Courses visible on public UI (missing isActive counts as active). */
+const PUBLIC_ACTIVE_FILTER = { isActive: { $ne: false } };
+
 exports.createCourse = async (courseData) => {
   try {
     const newCourse = await Course.create(courseData);
@@ -25,35 +28,39 @@ exports.findBy = async (query) => {
   }
 };
 
-exports.findCourseBySlug = async (slug) => {
+exports.findCourseBySlug = async (slug, { activeOnly = false } = {}) => {
   try {
     if (!slug) return null;
-    return await Course.findOne({ slug: String(slug).trim() }).lean();
+    const query = { slug: String(slug).trim() };
+    if (activeOnly) Object.assign(query, PUBLIC_ACTIVE_FILTER);
+    return await Course.findOne(query).lean();
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
-exports.findAllCourse = async () => {
+exports.findAllCourse = async ({ activeOnly = false } = {}) => {
   try {
-    return await Course.find({}).sort({ createdAt: -1 }).lean();
+    const filter = activeOnly ? PUBLIC_ACTIVE_FILTER : {};
+    return await Course.find(filter).sort({ createdAt: -1 }).lean();
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
-exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
+exports.findAllCoursePaginated = async (page = 1, limit = 12, { activeOnly = false } = {}) => {
   try {
+    const filter = activeOnly ? PUBLIC_ACTIVE_FILTER : {};
     const safePage = Math.max(1, parseInt(page, 10) || 1);
     const safeLimit = Math.min(100, Math.max(1, parseInt(limit, 10) || 12));
     const skip = (safePage - 1) * safeLimit;
     const [data, total] = await Promise.all([
-      Course.find({})
+      Course.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(safeLimit)
         .lean(),
-      Course.countDocuments({}),
+      Course.countDocuments(filter),
     ]);
     return {
       data,
@@ -75,7 +82,9 @@ exports.updateCourse = async (id, updateData) => {
     }
 
     Object.keys(updateData).forEach((key) => {
-      course[key] = updateData[key];
+      if (updateData[key] !== undefined && key !== "_id" && key !== "__v") {
+        course[key] = updateData[key];
+      }
     });
 
     const updatedCourse = await course.save();

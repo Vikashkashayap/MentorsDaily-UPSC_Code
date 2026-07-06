@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getCourses } from "../../../api/coreService";
+import { getCourses, clearCoursesCache } from "../../../api/coreService";
 import CourseCard from "../../../components/CourseCard";
+import { sortMentorshipCourses } from "./mentorshipCourseSort";
+import { COURSES_UPDATED_EVENT, unwrapCourseList } from "../courses/courseVisibility";
 
 const PAGE_SIZE = 12;
 
@@ -16,20 +18,20 @@ const MentorshipCourses = () => {
 
   const hasMore = pagination ? page < pagination.totalPages : false;
 
-  const fetchCourses = useCallback(async (pageNum = 1, append = false) => {
+  const fetchCourses = useCallback(async (pageNum = 1, append = false, { showLoading = true } = {}) => {
     if (append) setLoadingMore(true);
-    else setLoading(true);
+    else if (showLoading) setLoading(true);
     try {
       const res = await getCourses({ page: pageNum, limit: PAGE_SIZE });
-      const list = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      const list = unwrapCourseList(res);
       if (res.pagination) {
         setPagination(res.pagination);
         setPage(res.pagination.page);
       }
       if (append) {
-        setCourses((prev) => [...prev, ...list]);
+        setCourses((prev) => sortMentorshipCourses([...prev, ...list]));
       } else {
-        setCourses(list);
+        setCourses(sortMentorshipCourses(list));
       }
       setError(null);
     } catch (err) {
@@ -42,6 +44,12 @@ const MentorshipCourses = () => {
 
   useEffect(() => {
     fetchCourses(1, false);
+    const onCoursesUpdated = () => {
+      clearCoursesCache();
+      fetchCourses(1, false, { showLoading: false });
+    };
+    window.addEventListener(COURSES_UPDATED_EVENT, onCoursesUpdated);
+    return () => window.removeEventListener(COURSES_UPDATED_EVENT, onCoursesUpdated);
   }, [fetchCourses]);
 
   const loadMore = () => {

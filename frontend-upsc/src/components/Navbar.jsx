@@ -1,6 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { SUPER5_BATCH_NAV_ITEMS } from "../pages/public/courses/super5BatchConfig";
+import { filterNavItemsByActiveCourses } from "../pages/public/courses/courseVisibility";
+import { useActiveCourseSlugs } from "../hooks/useActiveCourseSlugs";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -21,6 +24,7 @@ export default function Navbar() {
   const statePcsCloseTimeout = useRef(null);
   const logoSources = ["/Logo/logo.png", "https://mentorsdaily.com/Logo/logo.png"];
   const activeLogoSrc = logoSources[Math.min(logoSourceIndex, logoSources.length - 1)];
+  const activeCourseSlugs = useActiveCourseSlugs();
   const mentorshipYearItems = [
     {
       path: "/integrated-mentorship-2026",
@@ -86,6 +90,15 @@ export default function Navbar() {
       mobileAccentClass: "bg-green-50 border-green-100",
     },
   ];
+
+  const visibleMentorshipItems = useMemo(
+    () => filterNavItemsByActiveCourses(mentorshipYearItems, activeCourseSlugs),
+    [activeCourseSlugs]
+  );
+  const visibleSuper5Items = useMemo(
+    () => filterNavItemsByActiveCourses(SUPER5_BATCH_NAV_ITEMS, activeCourseSlugs),
+    [activeCourseSlugs]
+  );
 
   const uppcsYearItems = [
     {
@@ -462,7 +475,9 @@ export default function Navbar() {
               onMouseLeave={handleMentorshipLeave}
             >
               <button className={`flex items-center px-2.5 xl:px-3 py-2 text-[13px] xl:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
-                mentorshipOpen || location.pathname.startsWith("/integrated-mentorship")
+                mentorshipOpen ||
+                location.pathname.startsWith("/integrated-mentorship") ||
+                location.pathname.startsWith("/super-5-batch")
                   ? isDark
                     ? "text-blue-400 bg-blue-900/50 font-semibold"
                     : "text-blue-700 bg-blue-50 font-semibold"
@@ -486,7 +501,7 @@ export default function Navbar() {
                   onMouseEnter={handleMentorshipEnter}
                   onMouseLeave={handleMentorshipLeave}
                 >
-                  {mentorshipYearItems.map((item) => (
+                  {visibleMentorshipItems.map((item) => (
                     <Link
                       key={item.path}
                       to={item.path}
@@ -503,6 +518,34 @@ export default function Navbar() {
                       
                     </Link>
                   ))}
+                  {visibleSuper5Items.length > 0 ? (
+                    <>
+                  <div className={`my-1 border-t ${isDark ? "border-gray-700" : "border-gray-100"}`} />
+                  <p
+                    className={`px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider ${
+                      isDark ? "text-gray-500" : "text-gray-400"
+                    }`}
+                  >
+                    Super 5 Batch
+                  </p>
+                  {visibleSuper5Items.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center justify-between px-4 py-3 text-sm rounded-lg transition-all duration-200 group ${
+                        isDark
+                          ? "text-gray-200 hover:bg-gray-700 hover:text-white"
+                          : `text-gray-700 ${item.hoverClass}`
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
+                        {item.label}
+                      </span>
+                    </Link>
+                  ))}
+                    </>
+                  ) : null}
                 </div>
               )}
             </div>
@@ -829,7 +872,7 @@ export default function Navbar() {
                 </button>
                 {mobileMentorshipOpen && (
                   <div className="ml-4 mt-1 space-y-1 bg-gray-50 rounded-lg p-2">
-                    {mentorshipYearItems.map((item) => (
+                    {visibleMentorshipItems.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
@@ -845,6 +888,29 @@ export default function Navbar() {
                         </span>
                       </Link>
                     ))}
+                    {visibleSuper5Items.length > 0 ? (
+                      <>
+                    <p className="px-2 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      Super 5 Batch
+                    </p>
+                    {visibleSuper5Items.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
+                      >
+                        <span className="flex items-center">
+                          <span className={`w-2 h-2 rounded-full mr-2.5 ${item.dotClass}`}></span>
+                          {item.label}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}>
+                          {item.timeline}
+                        </span>
+                      </Link>
+                    ))}
+                      </>
+                    ) : null}
                   </div>
                 )}
               </div>

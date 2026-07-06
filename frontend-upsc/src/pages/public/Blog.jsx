@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPreparationBlogs } from "../../api/coreService";
+import SectionHeading from "../../components/ui/SectionHeading";
 
 const BlogCard = ({ title, subtitle, image, to, category, imageAlt }) => {
   return (
@@ -123,27 +124,21 @@ const Blog = () => {
   }
 
   return (
-    <section className="w-full py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <section className="w-full py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <div className="inline-block mb-4">
-            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">JOURNEY</span>
-          </div>
-          <h2 className=" text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-             Latest From Our <span className="text-blue-600">Blog</span>
-          </h2>
-           <div className="w-24 h-1.5 mx-auto bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-6"></div>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Stay updated with the latest insights, tips, and strategies for your UPSC preparation journey
-          </p>
-        </div>
+        <SectionHeading
+          badge="Journey"
+          title="Latest From Our"
+          highlight="Blog"
+          subtitle="Stay updated with the latest insights, tips, and strategies for your UPSC preparation journey"
+        />
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
           {blogs.map((blog, idx) => (
             <BlogCard 
                 key={blog._id || idx} 
                 title={stripHtml(blog.title)}
-                subtitle={blog.category} // Using category as subtitle equivalent
+                subtitle={blog.category}
                 category={blog.category}
                 image={getBlogImage(blog)}
                 imageAlt={blog.imageAlt}
@@ -152,17 +147,17 @@ const Blog = () => {
           ))}
         </div>
         
-        {/* <div className="text-center">
+        <div className="text-center">
           <Link
-             to="/preparation-blogs"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            to="/preparation-blogs"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border-2 border-blue-600 text-blue-600 font-bold rounded-xl hover:bg-blue-600 hover:text-white shadow-sm hover:shadow-lg transition-all duration-300"
           >
-            <span>View More</span>
+            View All Articles
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
-        </div> */}
+        </div>
       </div>
     </section>
   );

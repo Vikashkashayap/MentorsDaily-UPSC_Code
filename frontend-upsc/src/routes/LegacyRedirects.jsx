@@ -18,3 +18,12 @@ export function LegacyPreparationBlogAliasRedirect() {
   if (!slug) return <Navigate to="/preparation-blogs" replace />;
   return <Navigate to={`/preparation-blog/${encodeURIComponent(slug)}`} replace />;
 }
+
+/** Old `/program/:slug` URLs → canonical `/:slug` (no "program" in path). */
+export function LegacyProgramSlugRedirect() {
+  const { slug } = useParams();
+  const location = useLocation();
+  if (!slug) return <Navigate to="/mentorship-courses" replace />;
+  const target = `/${encodeURIComponent(slug)}${location.search}${location.hash}`;
+  return <Navigate to={target} replace />;
+}

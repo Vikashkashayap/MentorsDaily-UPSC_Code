@@ -48,6 +48,8 @@ export default function DynamicImpLandingPage() {
     "integrated-mentorship-2026": <IntegratedMentorship2026 />,
     [IMP_2027_SLUG]: <IntegratedMentorship2027 />,
     [IMP_2028_SLUG]: <IntegratedMentorship2028 />,
+    "super-5-batch-2027": <IntegratedMentorship2027 hideWeeklyPlan courseSlug="super-5-batch-2027" />,
+    "super-5-batch-2028": <IntegratedMentorship2028 hideWeeklyPlan courseSlug="super-5-batch-2028" />,
     [IMP_2029_SLUG]: <IntegratedMentorship2029 />,
     "integrated-mentorship-2030": <IntegratedMentorship2030 />,
   };
@@ -68,7 +70,7 @@ export default function DynamicImpLandingPage() {
       <SEO
         title="Program not found | MentorsDaily"
         description="The program you are looking for does not exist. Please check the URL or explore available programs."
-        url={`/program/${encodeURIComponent(String(canonicalSlug || ""))}`}
+        url={`/${encodeURIComponent(String(canonicalSlug || ""))}`}
         noindex
       />
       <div>

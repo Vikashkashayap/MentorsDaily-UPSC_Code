@@ -78,7 +78,9 @@ export default function Imp2029View({
   discountedDailyPrice,
   discountedWeeklyPrice,
   showCouponInput = true,
+  hideWeeklyPlan = false,
 }) {
+  const showWeeklyPlan = !hideWeeklyPlan;
   const [tab, setTab] = useState(d.includedSection.tabs[0]?.id ?? "foundation");
   const [openFaq, setOpenFaq] = useState(-1);
   const [timelineViewPct, setTimelineViewPct] = useState(100);
@@ -343,11 +345,15 @@ export default function Imp2029View({
             </h2>
             <p className="text-[#D5E8F0] mt-3 max-w-xl mx-auto leading-relaxed">{d.pricingSection.sub}</p>
           </div>
-          <p className="text-center text-sm text-white/45 mb-12">
-            Scroll down for a <strong className="text-[#FDBA74]">feature-by-feature comparison</strong> table ↓
-          </p>
+          {showWeeklyPlan ? (
+            <p className="text-center text-sm text-white/45 mb-12">
+              Scroll down for a <strong className="text-[#FDBA74]">feature-by-feature comparison</strong> table ↓
+            </p>
+          ) : (
+            <div className="mb-12" />
+          )}
 
-          <div className="grid md:grid-cols-2 gap-7 mb-12 items-stretch">
+          <div className={`grid ${showWeeklyPlan ? "md:grid-cols-2" : "grid-cols-1"} gap-7 mb-12 items-stretch`}>
             {/* Daily first (left) */}
             <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#E86B2A] shadow-[0_12px_48px_rgba(232,107,42,0.28)] relative hover:-translate-y-1 transition-transform flex flex-col">
               <div className="absolute top-[18px] -right-7 bg-[#E86B2A] text-white text-[0.72rem] font-extrabold py-1.5 px-9 rotate-[38deg] z-[2] tracking-wide">
@@ -415,12 +421,14 @@ export default function Imp2029View({
               </div>
             </div>
 
-            {/* Weekly second (right) */}
-            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#CBD5E1] hover:-translate-y-1 transition-transform shadow-[0_10px_30px_rgba(13,34,64,0.12)] relative flex flex-col">
-              <div className="absolute top-5 right-5 text-[0.68rem] font-extrabold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#E8F1FF] text-[#1A3C6E] border border-[#BFD7F1]">
-                Value Plan
-              </div>
-              <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
+            {showWeeklyPlan ? (
+              <>
+                {/* Weekly second (right) */}
+                <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#CBD5E1] hover:-translate-y-1 transition-transform shadow-[0_10px_30px_rgba(13,34,64,0.12)] relative flex flex-col">
+                  <div className="absolute top-5 right-5 text-[0.68rem] font-extrabold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#E8F1FF] text-[#1A3C6E] border border-[#BFD7F1]">
+                    Value Plan
+                  </div>
+                  <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
                 <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
                 {d.pricingSection.weekly.tagline && (
                   <p className="text-sm text-[#6B7280] mb-2">{d.pricingSection.weekly.tagline}</p>
@@ -490,89 +498,95 @@ export default function Imp2029View({
                 </div>
               </div>
             </div>
-          </div>
+          </>
+          ) : null}
+        </div>
 
-          {/* Comparison — light card (Daily vs Weekly) */}
-          <div className="rounded-2xl overflow-hidden border border-[#CBD5E1] bg-white shadow-[0_8px_40px_rgba(15,23,42,0.12)]">
-            <h3 className="text-center font-['Poppins'] font-bold text-[#0F172A] text-[1.05rem] sm:text-lg py-4 px-4 border-b border-[#E5E7EB] bg-white m-0">
-              {d.pricingSection.comparisonTitle}
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full table-fixed border-collapse text-sm min-w-[min(100%,520px)]">
-                <thead>
-                  <tr className="bg-[#2563EB]">
-                    <th className="w-[38%] align-middle text-left py-4 px-4 font-['Poppins'] text-[0.7rem] sm:text-xs font-bold text-white uppercase tracking-wide">
-                      {d.pricingSection.comparisonHead.left}
-                    </th>
-                    <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
-                      <div className="flex flex-col items-center justify-center gap-1 text-center">
-                        <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
-                          {d.pricingSection.comparisonHead.midLabel}
-                        </span>
-                        <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
-                          {d.pricingSection.comparisonHead.midPrice ?? fmt(d.pricingSection.daily.price)}
-                        </span>
-                      </div>
-                    </th>
-                    <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
-                      <div className="flex flex-col items-center justify-center gap-1 text-center">
-                        <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
-                          {d.pricingSection.comparisonHead.rightLabel}
-                        </span>
-                        <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
-                          {d.pricingSection.comparisonHead.rightPrice ?? fmt(d.pricingSection.weekly.price)}
-                        </span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {d.pricingSection.comparisonRows.map((row, ri) => {
-                    if (row.type === "cat") {
-                      return (
-                        <tr key={ri} className="bg-[#5B7FA3]">
-                          <td
-                            colSpan={3}
-                            className="py-2.5 px-4 font-['Poppins'] text-[0.65rem] sm:text-xs font-bold text-white uppercase tracking-wide"
-                          >
-                            {row.label}
-                          </td>
-                        </tr>
-                      );
-                    }
-                    if (row.type === "text") {
-                      return (
-                        <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
-                          <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
-                            {row.f}
-                          </td>
-                          <td className="align-middle px-2 py-3 text-center">
-                            {renderLightComparisonCell(row.d, row.dPill)}
-                          </td>
-                          <td className="align-middle px-2 py-3 text-center">
-                            {renderLightComparisonCell(row.w, row.wPill)}
-                          </td>
-                        </tr>
-                      );
-                    }
-                    return (
-                      <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
-                        <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
-                          {row.f}
-                        </td>
-                        <td className="align-middle px-2 py-3 text-center">
-                          {renderLightComparisonCell(row.d, row.dPill)}
-                        </td>
-                        <td className="align-middle px-2 py-3 text-center">
-                          {renderLightComparisonCell(row.w, row.wPill)}
-                        </td>
+          {showWeeklyPlan ? (
+            <>
+              {/* Comparison — light card (Daily vs Weekly) */}
+              <div className="rounded-2xl overflow-hidden border border-[#CBD5E1] bg-white shadow-[0_8px_40px_rgba(15,23,42,0.12)]">
+                <h3 className="text-center font-['Poppins'] font-bold text-[#0F172A] text-[1.05rem] sm:text-lg py-4 px-4 border-b border-[#E5E7EB] bg-white m-0">
+                  {d.pricingSection.comparisonTitle}
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full table-fixed border-collapse text-sm min-w-[min(100%,520px)]">
+                    <thead>
+                      <tr className="bg-[#2563EB]">
+                        <th className="w-[38%] align-middle text-left py-4 px-4 font-['Poppins'] text-[0.7rem] sm:text-xs font-bold text-white uppercase tracking-wide">
+                          {d.pricingSection.comparisonHead.left}
+                        </th>
+                        <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
+                          <div className="flex flex-col items-center justify-center gap-1 text-center">
+                            <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
+                              {d.pricingSection.comparisonHead.midLabel}
+                            </span>
+                            <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
+                              {d.pricingSection.comparisonHead.midPrice ?? fmt(d.pricingSection.daily.price)}
+                            </span>
+                          </div>
+                        </th>
+                        <th className="w-[31%] align-middle py-4 px-2 sm:px-3">
+                          <div className="flex flex-col items-center justify-center gap-1 text-center">
+                            <span className="font-['Poppins'] text-[0.7rem] sm:text-xs font-bold uppercase tracking-wide text-white">
+                              {d.pricingSection.comparisonHead.rightLabel}
+                            </span>
+                            <span className="font-['Poppins'] text-[0.95rem] sm:text-base font-extrabold leading-tight text-[#FDBA74]">
+                              {d.pricingSection.comparisonHead.rightPrice ?? fmt(d.pricingSection.weekly.price)}
+                            </span>
+                          </div>
+                        </th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                    </thead>
+                    <tbody>
+                      {d.pricingSection.comparisonRows.map((row, ri) => {
+                        if (row.type === "cat") {
+                          return (
+                            <tr key={ri} className="bg-[#5B7FA3]">
+                              <td
+                                colSpan={3}
+                                className="py-2.5 px-4 font-['Poppins'] text-[0.65rem] sm:text-xs font-bold text-white uppercase tracking-wide"
+                              >
+                                {row.label}
+                              </td>
+                            </tr>
+                          );
+                        }
+                        if (row.type === "text") {
+                          return (
+                            <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
+                              <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
+                                {row.f}
+                              </td>
+                              <td className="align-middle px-2 py-3 text-center">
+                                {renderLightComparisonCell(row.d, row.dPill)}
+                              </td>
+                              <td className="align-middle px-2 py-3 text-center">
+                                {renderLightComparisonCell(row.w, row.wPill)}
+                              </td>
+                            </tr>
+                          );
+                        }
+                        return (
+                          <tr key={ri} className="border-b border-[#E5E7EB] bg-white hover:bg-[#F8FAFC]">
+                            <td className="align-middle py-3.5 px-4 text-[#334155] font-medium text-[0.8rem] sm:text-[0.875rem]">
+                              {row.f}
+                            </td>
+                            <td className="align-middle px-2 py-3 text-center">
+                              {renderLightComparisonCell(row.d, row.dPill)}
+                            </td>
+                            <td className="align-middle px-2 py-3 text-center">
+                              {renderLightComparisonCell(row.w, row.wPill)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          ) : null}
           <p
             className="text-center mt-9 text-sm text-[#94A3B8] imp-html-inline"
             dangerouslySetInnerHTML={{ __html: d.pricingSection.helpHtml }}

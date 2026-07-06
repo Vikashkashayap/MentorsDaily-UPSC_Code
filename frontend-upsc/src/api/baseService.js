@@ -19,6 +19,14 @@ function getRequestKey(url, method, headers = {}, body) {
   return `${normalizedMethod}:${url}:${JSON.stringify(safeHeaders)}:${bodyKey}`;
 }
 
+/** Drop cached GET responses whose request key contains the substring (e.g. "get-course"). */
+export function clearResponseCacheByUrlSubstring(substring = "") {
+  if (!substring) return;
+  for (const key of responseCache.keys()) {
+    if (key.includes(substring)) responseCache.delete(key);
+  }
+}
+
 export default async function callApi({
   endpoint,
   method,

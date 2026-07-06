@@ -1,4 +1,4 @@
-import callApi from "./baseService.js";
+import callApi, { clearResponseCacheByUrlSubstring } from "./baseService.js";
 
 const CLIENT_CACHE_TTL_MS = 5 * 60 * 1000;
 const memoryCache = new Map();
@@ -50,6 +50,8 @@ export const clearCoursesCache = () => {
   } catch {
     /* ignore */
   }
+  clearResponseCacheByUrlSubstring("get-course");
+  clearResponseCacheByUrlSubstring("course/slug");
 };
 
 export const register = async (payload) => {
@@ -99,20 +101,26 @@ export const getUsers = async () => {
   }
 };
 
-// Fetch all courses (optional pagination: { page, limit })
+// Fetch all courses (optional pagination: { page, limit, includeInactive })
 export const getCourses = async (options = {}) => {
   try {
-    const { page, limit } = options;
+    const { page, limit, includeInactive = false } = options;
     let endpoint = "api/v1/get-course";
+    const params = new URLSearchParams();
     if (Number.isInteger(page) && Number.isInteger(limit) && page >= 1 && limit >= 1) {
-      endpoint += `?page=${page}&limit=${limit}`;
+      params.set("page", String(page));
+      params.set("limit", String(limit));
     }
+    if (includeInactive) params.set("includeInactive", "1");
+    const qs = params.toString();
+    if (qs) endpoint += `?${qs}`;
     const cacheKey = makeCacheKey("courses", endpoint);
     const cached = getCachedValue(cacheKey);
     if (cached) return cached;
     const response = await callApi({
       endpoint,
       method: "GET",
+      requiresAuth: Boolean(includeInactive),
     });
     setCachedValue(cacheKey, response.data);
     return response.data;
@@ -311,6 +319,7 @@ export const updateCourse = async (id, payload) => {
       body: payload,
       requiresAuth: true,
     });
+    clearCoursesCache();
     return response.data;
   } catch (error) {
     console.error("Error updating course:", error);

@@ -18,6 +18,19 @@ function parseDetailPageField(body) {
   }
 }
 
+function isAdminUser(user) {
+  return user && (user.usertype === "admin" || user.usertype === "super_admin");
+}
+
+function parseBooleanField(value) {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value === "boolean") return value;
+  const s = String(value).trim().toLowerCase();
+  if (s === "true" || s === "1") return true;
+  if (s === "false" || s === "0") return false;
+  return undefined;
+}
+
 exports.createCourse = async (req, res) => {
   logger.info('courseController.js << createCourse');
   try {
@@ -73,6 +86,11 @@ exports.createCourse = async (req, res) => {
       courseData.detailPage = parsedDetail;
     }
 
+    const isActive = parseBooleanField(req.body.isActive);
+    if (isActive !== undefined) {
+      courseData.isActive = isActive;
+    }
+
     if (thumbnailFile) {
       const uploadedImage = await uploadFileService(thumbnailFile, {
         folder: "thumbnails",
@@ -119,8 +137,12 @@ exports.findAllCourse = async (req, res) => {
     const pageNum = usePagination ? page : 1;
     const limitNum = usePagination ? limit : 100;
 
-    logger.info(`courseController.js <<findAllCourse<< Fetching courses page=${pageNum} limit=${limitNum}`);
-    const result = await courseService.findAllCoursePaginated(pageNum, limitNum);
+    const includeInactive =
+      req.query.includeInactive === "1" || req.query.includeInactive === "true";
+    const activeOnly = !(includeInactive && isAdminUser(req.user));
+
+    logger.info(`courseController.js <<findAllCourse<< page=${pageNum} limit=${limitNum} activeOnly=${activeOnly}`);
+    const result = await courseService.findAllCoursePaginated(pageNum, limitNum, { activeOnly });
     setSuccess(res, {
       message: 'Courses fetched successfully',
       data: result.data,
@@ -166,7 +188,7 @@ exports.findCourseById = async (req, res) => {
 exports.findCourseBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const course = await courseService.findCourseBySlug(slug);
+    const course = await courseService.findCourseBySlug(slug, { activeOnly: true });
     if (!course) {
       return setNotFoundError(res, { message: 'Course not found' });
     }
@@ -194,6 +216,11 @@ exports.updateCourse = async (req, res) => {
                     return setBadRequest(res, { message: 'detailPage must be valid JSON' });
                 }
             }
+        }
+
+        const isActive = parseBooleanField(updateData.isActive);
+        if (isActive !== undefined) {
+            updateData.isActive = isActive;
         }
         
         if (req.file) {

@@ -17,6 +17,10 @@ import {
   mergeImpDetailPage,
 } from "./imp2028DetailDefaults";
 import { applyCoursePricingToImpDetail } from "./impCoursePricing";
+import {
+  applySuper5BatchDetailOverrides,
+  extractYearFromSlug,
+} from "./super5BatchDetailOverrides";
 
 function Imp2028DetailSkeleton() {
   return (
@@ -47,9 +51,10 @@ function Imp2028DetailSkeleton() {
   );
 }
 
-export default function IntegratedMentorship2028() {
+export default function IntegratedMentorship2028({ courseSlug = IMP_2028_SLUG, hideWeeklyPlan = false }) {
   const [course, setCourse] = useState(null);
   const [detail, setDetail] = useState(() => getDefaultImp2028DetailPage());
+  const slugToFetch = courseSlug || IMP_2028_SLUG;
   const [loading, setLoading] = useState(true);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
@@ -71,20 +76,34 @@ export default function IntegratedMentorship2028() {
       try {
         setLoading(true);
         let c = null;
-        const envelope = await getCourseBySlug(IMP_2028_SLUG);
+        const envelope = await getCourseBySlug(slugToFetch);
         c = unwrapCourseFromSlugResponse(envelope);
         if (cancelled) return;
         const base = getDefaultImp2028DetailPage();
         if (c) {
           setCourse(c);
           const merged = mergeImpDetailPage(base, c.detailPage || {});
-          setDetail(applyCoursePricingToImpDetail(merged, { ...c, slug: c.slug || IMP_2028_SLUG }));
+          let next = applyCoursePricingToImpDetail(merged, { ...c, slug: c.slug || slugToFetch });
+          if (hideWeeklyPlan) {
+            next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
+          }
+          setDetail(next);
         } else {
-          setDetail(base);
+          let next = base;
+          if (hideWeeklyPlan) {
+            next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
+          }
+          setDetail(next);
         }
       } catch (e) {
         console.error(e);
-        if (!cancelled) setDetail(getDefaultImp2028DetailPage());
+        if (!cancelled) {
+          let next = getDefaultImp2028DetailPage();
+          if (hideWeeklyPlan) {
+            next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
+          }
+          setDetail(next);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -92,7 +111,7 @@ export default function IntegratedMentorship2028() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [slugToFetch, hideWeeklyPlan]);
 
   useEffect(() => {
     if (showPaymentForm) document.body.style.overflow = "hidden";
@@ -309,7 +328,7 @@ export default function IntegratedMentorship2028() {
       return {
         _id: id || undefined,
         title: detail?.hero?.cardTitle ?? "Integrated Mentorship Program - 2028",
-        slug: IMP_2028_SLUG,
+        slug: slugToFetch,
         basePrice,
         sellingPrice,
         discountPercentage,
@@ -380,6 +399,7 @@ export default function IntegratedMentorship2028() {
         discountedDailyPrice={couponAdjustedDailyPrice}
         discountedWeeklyPrice={couponAdjustedWeeklyPrice}
         showCouponInput={showCouponInput}
+        hideWeeklyPlan={hideWeeklyPlan}
       />
 
       {showPaymentForm && (
@@ -391,7 +411,12 @@ export default function IntegratedMentorship2028() {
                 <span dangerouslySetInnerHTML={{ __html: paymentCourseBase.title }} />
                 {enrollPlan === "weekly" || enrollPlan === "daily" ? (
                   <span className="block text-sm font-normal text-white/90 mt-1">
-                    Plan: {enrollPlan === "daily" ? "Daily Mentorship" : "Weekly Mentorship"}
+                    Plan:{" "}
+                    {hideWeeklyPlan
+                      ? `Super 5 Batch ${extractYearFromSlug(slugToFetch)}`
+                      : enrollPlan === "daily"
+                        ? "Daily Mentorship"
+                        : "Weekly Mentorship"}
                   </span>
                 ) : null}
               </h3>

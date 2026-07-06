@@ -54,7 +54,10 @@ const AdminCoupons = () => {
 
   const loadData = async () => {
     try {
-      const [courseRes, couponRes] = await Promise.all([getCourses(), getCoupons()]);
+      const [courseRes, couponRes] = await Promise.all([
+        getCourses({ includeInactive: true, limit: 100, page: 1 }),
+        getCoupons(),
+      ]);
       const courseList = Array.isArray(courseRes?.data)
         ? courseRes.data
         : Array.isArray(courseRes?.data?.data)

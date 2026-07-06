@@ -48,6 +48,11 @@ const courseSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: undefined,
   },
+  /** When false, course is hidden from public listings and slug landing API */
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -65,5 +70,6 @@ courseSchema.pre("save", function (next) {
 
 courseSchema.index({ createdAt: -1 });
 courseSchema.index({ category: 1, createdAt: -1 });
+courseSchema.index({ isActive: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Course", courseSchema);

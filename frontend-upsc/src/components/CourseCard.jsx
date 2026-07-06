@@ -6,6 +6,7 @@ import OptimizedImage from "./utility/OptimizedImage";
 import { resolveLegacyUploadThumb } from "../utils/mediaUrls";
 import CouponApplyBox from "./coupon/CouponApplyBox";
 import { applyCoupon, getAutoApplyCoupon } from "../api/coreService";
+import { courseLandingPath } from "../pages/public/courses/super5BatchConfig";
 
 const CourseCard = ({
   title,
@@ -27,6 +28,9 @@ const CourseCard = ({
   couponTargetCourseId,
   onCouponTargetSelect,
   couponRadioName = "course-coupon-target",
+  featured = false,
+  variant = "default",
+  showCoupon = true,
   _id,
   showPaymentForm: externalShowPaymentForm,
   onPaymentFormClose,
@@ -214,9 +218,21 @@ const CourseCard = ({
       }
     }
 
-    // Not integrated: if backend slug exists use dynamic landing route.
-    if (rawSlug) return `/program/${encodeURIComponent(rawSlug)}`;
+    // Backend slug (e.g. super-5-batch-2028) — canonical path without /program prefix.
+    if (rawSlug) return courseLandingPath(rawSlug);
     return null;
+  };
+
+  const handleViewDetails = (e) => {
+    e?.stopPropagation?.();
+    const integratedRoute = getIntegratedRoute();
+    if (integratedRoute) {
+      navigate(integratedRoute);
+      return;
+    }
+    const courseSlug = generateSlug(title);
+    const categorySlug = category ? generateSlug(category) : "course";
+    navigate(`/course/${categorySlug}/${courseSlug}`);
   };
 
   const handleCardClick = (e) => {
@@ -506,11 +522,152 @@ const CourseCard = ({
     );
   }
 
+  // Landing page — premium card design
+  if (variant === "landing") {
+    return (
+      <>
+        <div
+          className={`group relative flex flex-col h-full bg-white rounded-2xl border overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+            featured
+              ? "border-indigo-300 shadow-lg shadow-indigo-100/50 ring-1 ring-indigo-200"
+              : "border-gray-100 shadow-md hover:border-blue-200 hover:shadow-blue-500/10"
+          }`}
+          onClick={handleCardClick}
+        >
+          {featured && (
+            <div className="absolute top-3 right-3 z-20">
+              <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md uppercase tracking-wide">
+                Popular
+              </span>
+            </div>
+          )}
+
+          <div className="relative h-44 overflow-hidden bg-gradient-to-br from-slate-100 to-blue-50">
+            {displayThumbnailUrl && !imageError ? (
+              <OptimizedImage
+                src={displayThumbnailUrl}
+                onError={() => setImageError(true)}
+                alt={title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div className={`w-full h-full flex items-center justify-center ${getAvatarColor(title)}`}>
+                <span className="text-white text-3xl font-bold">{getInitials(title)}</span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+            {category && (
+              <span className="absolute bottom-3 left-3 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-800 rounded-lg shadow-sm backdrop-blur-sm">
+                {category.replace(/<[^>]*>/g, "").trim()}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col flex-1 p-4">
+            <h3
+              className="text-[15px] font-bold text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-blue-700 transition-colors"
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
+
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {duration && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium bg-slate-50 text-gray-600 rounded-md border border-gray-100">
+                  <svg className="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  <span dangerouslySetInnerHTML={{ __html: duration }} />
+                </span>
+              )}
+              {mode && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium bg-slate-50 text-gray-600 rounded-md border border-gray-100">
+                  <svg className="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
+                  </svg>
+                  <span dangerouslySetInnerHTML={{ __html: mode }} />
+                </span>
+              )}
+              {language && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-medium bg-slate-50 text-gray-600 rounded-md border border-gray-100">
+                  <span dangerouslySetInnerHTML={{ __html: language }} />
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center flex-wrap gap-2 mb-4">
+              {pricing.discountPercent > 0 && (
+                <span className="text-sm text-gray-400 line-through">{formatPrice(pricing.original)}</span>
+              )}
+              <span className="text-xl font-bold text-gray-900">{formatPrice(pricing.final)}</span>
+              {pricing.discountPercent > 0 && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  {pricing.discountPercent}% OFF
+                </span>
+              )}
+            </div>
+
+            {showCoupon && (
+              <div className="mb-3">
+                <CouponApplyBox
+                  onApply={handleApplyCoupon}
+                  onClear={clearCoupon}
+                  loading={couponApplying}
+                  appliedCoupon={appliedCoupon}
+                  errorMessage={couponError}
+                  compact
+                  isSelected={isCouponSelected}
+                  onSelect={
+                    typeof onCouponTargetSelect === "function" && _id
+                      ? () => onCouponTargetSelect(String(_id))
+                      : undefined
+                  }
+                  radioName={couponRadioName}
+                />
+              </div>
+            )}
+
+            <div className="mt-auto flex gap-2">
+              <button
+                type="button"
+                className="flex-1 py-2.5 text-sm font-semibold text-blue-600 border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors"
+                onClick={handleViewDetails}
+              >
+                View Details
+              </button>
+              <button
+                type="button"
+                className="flex-1 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 transition-all"
+                onClick={handleEnrollClick}
+              >
+                {pricing.final === 0 ? "Enroll Free" : "Enroll Now"}
+              </button>
+            </div>
+          </div>
+        </div>
+        {shouldShowPaymentForm && <PaymentModal />}
+      </>
+    );
+  }
+
   // Regular card view
   return (
     <>
       {/* Outer Card Container */}
-      <div className="relative p-2 rounded-xl border-2 border-blue-200 shadow-lg bg-white">
+      <div
+        className={`relative p-2 rounded-xl border-2 shadow-lg bg-white transition-all duration-300 ${
+          featured
+            ? "border-indigo-400 shadow-indigo-100 shadow-xl scale-[1.02]"
+            : "border-blue-200"
+        }`}
+      >
+        {featured && (
+          <div className="absolute -top-3 right-3 z-30">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full text-[11px] font-semibold shadow-md whitespace-nowrap">
+              Most Popular
+            </div>
+          </div>
+        )}
         {/* Category Ribbon - Between outer and inner */}
         {category && (
           <div className="absolute -top-2 -left-2 z-20">

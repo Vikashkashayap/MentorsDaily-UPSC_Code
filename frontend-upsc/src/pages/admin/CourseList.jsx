@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   getCourses,
   deleteCourse,
+  updateCourse,
   clearCoursesCache,
 } from "../../api/coreService";
 import CourseManagementCard from "../../components/CourseManagementCard";
@@ -9,6 +10,7 @@ import EditCourseModal from "../../components/EditCourseModal";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { messageHandler } from "../../utils/messageHandler";
+import { notifyCoursesUpdated, unwrapCourseList } from "../public/courses/courseVisibility";
 
 
 
@@ -18,34 +20,37 @@ const CourseList = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [coursesLoading, setCoursesLoading] = useState(false);
+  const [togglingId, setTogglingId] = useState(null);
   const [editCourse, setEditCourse] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
 
 
-  const loadCourses = async () => {
+  const loadCourses = async ({ showLoading = true } = {}) => {
     try {
-      setCoursesLoading(true);
+      if (showLoading) setCoursesLoading(true);
       clearCoursesCache();
-      const res = await getCourses();
-      const inner = res?.data;
-      const list = Array.isArray(inner)
-        ? inner
-        : Array.isArray(inner?.data)
-          ? inner.data
-          : [];
+      const res = await getCourses({ includeInactive: true, limit: 100, page: 1 });
+      const list = unwrapCourseList(res);
       setCourses(list);
       setHasLoaded(true);
     } catch (e) {
       console.error("Error loading courses:", e);
-      const errMsg = e?.response?.data?.message || "Failed to load courses";
+      const errMsg = e?.response?.data?.data?.message || e?.response?.data?.message || "Failed to load courses";
       messageHandler.error(errMsg);
       setHasLoaded(true);
     } finally {
-      setCoursesLoading(false);
+      if (showLoading) setCoursesLoading(false);
     }
   };
+
+  function unwrapUpdatedCourse(res) {
+    const inner = res?.data;
+    if (inner?.data && typeof inner.data === "object" && inner.data._id) return inner.data;
+    if (inner?._id) return inner;
+    return null;
+  }
 
   useEffect(() => {
     if (!hasLoaded) {
@@ -71,6 +76,45 @@ const CourseList = () => {
     loadCourses(); // Refresh the courses list
   };
 
+  const toggleCourseActive = async (course) => {
+    const courseId = course._id;
+    const nextActive = course.isActive !== false;
+    const wasActive = !nextActive;
+
+    setCourses((prev) =>
+      prev.map((c) => (c._id === courseId ? { ...c, isActive: nextActive } : c))
+    );
+
+    try {
+      setTogglingId(courseId);
+      const res = await updateCourse(courseId, { isActive: nextActive });
+      const updated = unwrapUpdatedCourse(res);
+      if (updated) {
+        setCourses((prev) =>
+          prev.map((c) => (c._id === courseId ? { ...c, ...updated } : c))
+        );
+      }
+      clearCoursesCache();
+      notifyCoursesUpdated();
+      messageHandler.success(
+        nextActive ? "Course is now live on the website." : "Course hidden from public pages."
+      );
+    } catch (err) {
+      setCourses((prev) =>
+        prev.map((c) => (c._id === courseId ? { ...c, isActive: wasActive } : c))
+      );
+      console.error("Error toggling course status:", err);
+      const errMsg =
+        err?.response?.data?.data?.message ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update course status";
+      messageHandler.error(errMsg);
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   // Delete a course
   const removeCourse = async (id) => {
     try {
@@ -78,6 +122,7 @@ const CourseList = () => {
       const msg = res.data?.message || "Course deleted successfully";
       messageHandler.success(msg);
       clearCoursesCache();
+      notifyCoursesUpdated();
       await loadCourses();
     } catch (err) {
       console.error("Error deleting course:", err);
@@ -110,6 +155,8 @@ const CourseList = () => {
               onEdit={startEditCourse}
               onDelete={removeCourse}
               onView={handleViewCourse}
+              onToggleActive={toggleCourseActive}
+              togglingActive={togglingId === item._id}
             />
           ))}
         </div>

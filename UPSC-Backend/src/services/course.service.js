@@ -55,13 +55,15 @@ exports.findCourseById = async (courseId) => {
   }
 };
 
-exports.findCourseBySlug = async (slug) => {
+exports.findCourseBySlug = async (slug, { activeOnly = false } = {}) => {
   try {
     const s = String(slug ?? "").trim();
     if (!s) return null;
 
-    let course = await courseRepository.findCourseBySlug(s);
+    let course = await courseRepository.findCourseBySlug(s, { activeOnly });
     if (course) return course;
+
+    if (activeOnly) return null;
 
     const fallbackId = resolveCourseIdFromSlugEnv(s);
     if (fallbackId) {
@@ -81,11 +83,11 @@ exports.findCourseBySlug = async (slug) => {
   }
 };
 
-exports.findAllCourse = async () => {
+exports.findAllCourse = async ({ activeOnly = false } = {}) => {
   try {
-    logger.info('courseService.js <<findAll<< Fetching all courses');
+    logger.info(`courseService.js <<findAll<< Fetching courses activeOnly=${activeOnly}`);
     
-    const courses = await courseRepository.findAllCourse();
+    const courses = await courseRepository.findAllCourse({ activeOnly });
     
     logger.info(`courseService.js <<findAll<< Successfully fetched ${courses.length} courses`);
     return courses;
@@ -95,10 +97,10 @@ exports.findAllCourse = async () => {
   }
 };
 
-exports.findAllCoursePaginated = async (page = 1, limit = 12) => {
+exports.findAllCoursePaginated = async (page = 1, limit = 12, { activeOnly = false } = {}) => {
   try {
-    logger.info(`courseService.js <<findAllPaginated<< Fetching courses page=${page} limit=${limit}`);
-    const result = await courseRepository.findAllCoursePaginated(page, limit);
+    logger.info(`courseService.js <<findAllPaginated<< page=${page} limit=${limit} activeOnly=${activeOnly}`);
+    const result = await courseRepository.findAllCoursePaginated(page, limit, { activeOnly });
     logger.info(`courseService.js <<findAllPaginated<< Fetched ${result.data.length} of ${result.total} courses`);
     return result;
   } catch (err) {

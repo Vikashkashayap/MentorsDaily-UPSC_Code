@@ -361,7 +361,7 @@ const CreateCourseForm = ({
                   placeholder="e.g. integrated-mentorship-2031"
                 />
                 <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                  Public landing URL will be `/program/{'{slug}'}`.
+                  Public landing URL will be `/{'{slug}'}` (e.g. /super-5-batch-2028).
                 </p>
               </div>
 

@@ -55,7 +55,9 @@ export default function Imp2027View({
   discountedDailyPrice,
   discountedWeeklyPrice,
   showCouponInput = true,
+  hideWeeklyPlan = false,
 }) {
+  const showWeeklyPlan = !hideWeeklyPlan;
   const [tab, setTab] = useState("foundation");
   const [openFaq, setOpenFaq] = useState(-1);
   const [timelineViewPct, setTimelineViewPct] = useState(100);
@@ -321,12 +323,16 @@ export default function Imp2027View({
             </h2>
             <p className="text-[#D5E8F0] mt-3 max-w-xl mx-auto leading-relaxed">{d.pricingSection.sub}</p>
           </div>
-          <p className="text-center text-sm text-white/45 mb-12 whitespace-pre-line">
-            {d.pricingSection.toggleHint ||
-              "Scroll down for a feature-by-feature comparison table ↓"}
-          </p>
+          {showWeeklyPlan ? (
+            <p className="text-center text-sm text-white/45 mb-12 whitespace-pre-line">
+              {d.pricingSection.toggleHint ||
+                "Scroll down for a feature-by-feature comparison table ↓"}
+            </p>
+          ) : (
+            <div className="mb-12" />
+          )}
 
-          <div className="grid md:grid-cols-2 gap-7 mb-12 items-stretch">
+          <div className={`grid gap-7 mb-12 items-stretch ${showWeeklyPlan ? "md:grid-cols-2" : "grid-cols-1"}`}>
             {/* Daily first (left) */}
             <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#E86B2A] shadow-[0_12px_48px_rgba(232,107,42,0.28)] relative hover:-translate-y-1 transition-transform flex flex-col">
               <div className="absolute top-[18px] -right-7 bg-[#E86B2A] text-white text-[0.72rem] font-extrabold py-1.5 px-9 rotate-[38deg] z-[2] tracking-wide">
@@ -392,84 +398,87 @@ export default function Imp2027View({
             </div>
 
             {/* Weekly second (right) */}
-            <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#CBD5E1] hover:-translate-y-1 transition-transform shadow-[0_10px_30px_rgba(13,34,64,0.12)] relative flex flex-col">
-              <div className="absolute top-5 right-5 text-[0.68rem] font-extrabold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#E8F1FF] text-[#1A3C6E] border border-[#BFD7F1]">
-                Value Plan
-              </div>
-              <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
-                <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
-                <div className="flex items-end gap-2 flex-wrap">
-                  <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(weeklyDisplayPrice)}</span>
-                  <span className="text-[#6B7280] line-through text-base mb-1">{fmt(d.pricingSection.weekly.oldPrice)}</span>
+            {showWeeklyPlan ? (
+              <div className="rounded-[20px] overflow-hidden bg-white border-2 border-[#CBD5E1] hover:-translate-y-1 transition-transform shadow-[0_10px_30px_rgba(13,34,64,0.12)] relative flex flex-col">
+                <div className="absolute top-5 right-5 text-[0.68rem] font-extrabold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#E8F1FF] text-[#1A3C6E] border border-[#BFD7F1]">
+                  Value Plan
                 </div>
-                {discountedWeeklyPrice != null ? (
-                  <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
-                    Coupon Applied
+                <div className="px-8 pt-8 pb-5 border-b border-[#E5E7EB] bg-gradient-to-br from-[#F8FAFC] to-[#EEF4FB]">
+                  <div className="font-['Poppins'] text-2xl font-extrabold text-[#1A3C6E] mb-2">{d.pricingSection.weekly.name}</div>
+                  <div className="flex items-end gap-2 flex-wrap">
+                    <span className="font-['Poppins'] text-4xl font-black text-[#1A3C6E]">{fmt(weeklyDisplayPrice)}</span>
+                    <span className="text-[#6B7280] line-through text-base mb-1">{fmt(d.pricingSection.weekly.oldPrice)}</span>
                   </div>
-                ) : null}
-                <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
-                  {d.pricingSection.weekly.saveLabel}
-                </div>
-                <p className="text-sm font-semibold text-[#5B8DB8] mt-3">{d.pricingSection.weekly.durationLine}</p>
-              </div>
-              <div className="px-8 py-6 flex flex-col grow">
-                <ul className="space-y-0 mb-6">
-                  {d.pricingSection.weekly.features.map((f, i) => (
-                    <li
-                      key={i}
-                      className={`flex gap-2.5 py-2 border-b border-[#F2F4F7] text-sm ${
-                        f.ok === false ? "text-[#6B7280]" : "text-[#1C2B3A]"
-                      }`}
-                    >
-                      {f.ok === false ? (
-                        <DynIcon name="X" className="text-[#D1D5DB] shrink-0 mt-0.5" size={16} />
-                      ) : (
-                        <DynIcon
-                          name="Check"
-                          className={`shrink-0 mt-0.5 ${
-                            f.cls === "green"
-                              ? "text-[#2D7D4E]"
-                              : f.cls === "orange"
-                                ? "text-[#E86B2A]"
-                                : "text-[#F59E0B]"
-                          }`}
-                          size={16}
-                        />
-                      )}
-                      <span className={f.highlight ? "font-bold text-[#E86B2A]" : ""}>{f.text}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-auto">
-                  {showCouponInput ? (
-                    <div className="mb-3">
-                      <CouponApplyBox
-                        onApply={onApplyCouponWeekly || onApplyCoupon}
-                        onClear={onClearCouponWeekly || onClearCoupon}
-                        loading={Boolean(couponApplyingWeekly ?? couponApplying)}
-                        appliedCoupon={appliedCouponWeekly}
-                        errorMessage={couponErrorWeekly}
-                        compact
-                      />
+                  {discountedWeeklyPrice != null ? (
+                    <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
+                      Coupon Applied
                     </div>
                   ) : null}
-                  <button
-                    type="button"
-                    onClick={() => onEnroll?.("weekly")}
-                    className="group block w-full text-center bg-[#1A3C6E] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#0D2240] shadow-[0_8px_20px_rgba(13,34,64,0.28)] transition-all"
-                  >
-                    {d.pricingSection.weekly.cta} <DynIcon name="ArrowRight" className="inline transition-transform group-hover:translate-x-0.5" size={16} />
-                  </button>
+                  <div className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full bg-[#D1FAE5] text-[#2D7D4E]">
+                    {d.pricingSection.weekly.saveLabel}
+                  </div>
+                  <p className="text-sm font-semibold text-[#5B8DB8] mt-3">{d.pricingSection.weekly.durationLine}</p>
+                </div>
+                <div className="px-8 py-6 flex flex-col grow">
+                  <ul className="space-y-0 mb-6">
+                    {d.pricingSection.weekly.features.map((f, i) => (
+                      <li
+                        key={i}
+                        className={`flex gap-2.5 py-2 border-b border-[#F2F4F7] text-sm ${
+                          f.ok === false ? "text-[#6B7280]" : "text-[#1C2B3A]"
+                        }`}
+                      >
+                        {f.ok === false ? (
+                          <DynIcon name="X" className="text-[#D1D5DB] shrink-0 mt-0.5" size={16} />
+                        ) : (
+                          <DynIcon
+                            name="Check"
+                            className={`shrink-0 mt-0.5 ${
+                              f.cls === "green"
+                                ? "text-[#2D7D4E]"
+                                : f.cls === "orange"
+                                  ? "text-[#E86B2A]"
+                                  : "text-[#F59E0B]"
+                            }`}
+                            size={16}
+                          />
+                        )}
+                        <span className={f.highlight ? "font-bold text-[#E86B2A]" : ""}>{f.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-auto">
+                    {showCouponInput ? (
+                      <div className="mb-3">
+                        <CouponApplyBox
+                          onApply={onApplyCouponWeekly || onApplyCoupon}
+                          onClear={onClearCouponWeekly || onClearCoupon}
+                          loading={Boolean(couponApplyingWeekly ?? couponApplying)}
+                          appliedCoupon={appliedCouponWeekly}
+                          errorMessage={couponErrorWeekly}
+                          compact
+                        />
+                      </div>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => onEnroll?.("weekly")}
+                      className="group block w-full text-center bg-[#1A3C6E] text-white font-['Poppins'] font-bold py-4 rounded-[10px] hover:bg-[#0D2240] shadow-[0_8px_20px_rgba(13,34,64,0.28)] transition-all"
+                    >
+                      {d.pricingSection.weekly.cta} <DynIcon name="ArrowRight" className="inline transition-transform group-hover:translate-x-0.5" size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
           </div>
 
           {/* Comparison */}
-          <div className="rounded-[18px] overflow-hidden border border-white/10 bg-white/4">
-            <h3 className="text-center py-6 font-['Poppins'] font-bold text-white border-b border-white/10">
-              {d.pricingSection.comparisonTitle}
-            </h3>
+          {!hideWeeklyPlan ? (
+            <div className="rounded-[18px] overflow-hidden border border-white/10 bg-white/4">
+              <h3 className="text-center py-6 font-['Poppins'] font-bold text-white border-b border-white/10">
+                {d.pricingSection.comparisonTitle}
+              </h3>
             <div className="overflow-x-auto">
               <table className="imp2027-comparison-table w-full table-fixed border-collapse text-sm">
                 <thead>
@@ -534,7 +543,7 @@ export default function Imp2027View({
                 </tbody>
               </table>
             </div>
-          </div>
+          </div>) : null}
           <p
             className="text-center mt-9 text-sm text-white/45 imp-html-inline"
             dangerouslySetInnerHTML={{ __html: d.pricingSection.helpHtml }}

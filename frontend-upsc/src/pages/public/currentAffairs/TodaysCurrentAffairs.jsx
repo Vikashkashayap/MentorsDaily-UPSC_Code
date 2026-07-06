@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { slugify, decodeHtmlEntities, stripHTML } from "../../../utils/seoUtils";
 import { fetchCurrentAffairs } from "../../../api/coreService";
 import { formatDate } from "../../../utils/dateUtils";
+import SectionHeading from "../../../components/ui/SectionHeading";
 
 const TodaysCurrentAffairs = () => {
   const navigate = useNavigate();
@@ -147,134 +148,24 @@ const TodaysCurrentAffairs = () => {
   }
 
   return (
-    <div className="w-full py-8 bg-gradient-to-br from-sky-50 via-white to-indigo-50">
+    <section className="w-full py-14 md:py-20 bg-gradient-to-b from-white to-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-              Today's Current Affairs
-            </h2>
-            <div className="flex gap-2">
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 transition-colors duration-200 disabled:opacity-50"
-                title="Refresh posts"
-              >
-                <svg
-                  className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto rounded-full mb-4"></div>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-6">
-          {todaysPosts.map((post) => (
-            <article
-              key={post._id}
-              className="w-full md:max-w-sm bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
-            >
-              {post.thumbnailUrl && (
-                <div className="relative cursor-pointer" onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}>
-                  <img
-                    src={post.thumbnailUrl}
-                    alt={post.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  {post.paperName && (
-                    <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow">
-                      {decodeHtmlEntities(stripHTML(post.paperName))}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <div className="p-5">
-                <h3
-                  className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 hover:text-blue-700 cursor-pointer prose max-w-none"
-                  onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}
-                  dangerouslySetInnerHTML={{ __html: post.title }}
-                />
-
-                {post.subject && (
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {decodeHtmlEntities(stripHTML(post.subject))
-                      .split(',')
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                      .map((sub, idx) => (
-                        <span
-                          key={`${post._id}-sub-${idx}`}
-                          className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-md"
-                        >
-                          📖 {sub}
-                        </span>
-                      ))}
-                  </div>
-                )}
-
-                {post.description && (
-                  <div
-                    className="text-sm text-gray-600 mb-3 line-clamp-3"
-                    dangerouslySetInnerHTML={{
-                      __html: compactHtml(post.description)
-                    }}
-                  />
-                )}
-
-                <div className="flex items-center justify-between text-xs text-gray-500 border-t pt-3">
-                  <span className="flex items-center space-x-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-4 h-4 text-blue-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <span>
-                      {formatDate(post.date)}
-                    </span>
-                  </span>
-
-                  {isDateToday(post.date) && (
-                    <span className="text-blue-600 font-medium">
-                      Today
-                    </span>
-                  )}
-
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="text-center mt-8">
+        <div className="relative">
+          <SectionHeading
+            badge="Stay Updated"
+            title="Today's"
+            highlight="Current Affairs"
+            subtitle="Curated daily news analysis for UPSC Prelims & Mains — GS Papers covered"
+          />
           <button
-            onClick={() => navigate('/current-affairs')}
-            className="relative z-10 inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="absolute top-0 right-0 p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors disabled:opacity-50 border border-blue-100"
+            title="Refresh posts"
+            aria-label="Refresh current affairs"
           >
-            View All Current Affairs
             <svg
-              className="ml-2 w-5 h-5"
+              className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -283,13 +174,103 @@ const TodaysCurrentAffairs = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
           </button>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {todaysPosts.map((post) => (
+            <article
+              key={post._id}
+              className="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-100 hover:-translate-y-1"
+            >
+              {post.thumbnailUrl && (
+                <div
+                  className="relative cursor-pointer overflow-hidden"
+                  onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}
+                >
+                  <img
+                    src={post.thumbnailUrl}
+                    alt={post.title}
+                    className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {post.paperName && (
+                    <span className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-bold bg-emerald-600 text-white rounded-lg shadow">
+                      {decodeHtmlEntities(stripHTML(post.paperName))}
+                    </span>
+                  )}
+                  {isDateToday(post.date) && (
+                    <span className="absolute top-3 right-3 px-2.5 py-1 text-[11px] font-bold bg-blue-600 text-white rounded-lg">
+                      Today
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div className="flex flex-col flex-1 p-5">
+                <h3
+                  className="text-base font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-700 cursor-pointer transition-colors"
+                  onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}
+                  dangerouslySetInnerHTML={{ __html: post.title }}
+                />
+
+                {post.subject && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {decodeHtmlEntities(stripHTML(post.subject))
+                      .split(',')
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .map((sub, idx) => (
+                        <span
+                          key={`${post._id}-sub-${idx}`}
+                          className="inline-flex items-center px-2 py-0.5 text-[11px] font-semibold bg-blue-50 text-blue-700 rounded-md border border-blue-100"
+                        >
+                          {sub}
+                        </span>
+                      ))}
+                  </div>
+                )}
+
+                {post.description && (
+                  <div
+                    className="text-sm text-gray-500 mb-4 line-clamp-2 flex-1"
+                    dangerouslySetInnerHTML={{ __html: compactHtml(post.description) }}
+                  />
+                )}
+
+                <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 pt-3 mt-auto">
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z" />
+                    </svg>
+                    {formatDate(post.date)}
+                  </span>
+                  <span className="text-blue-600 font-semibold group-hover:underline">
+                    Read more →
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <button
+            onClick={() => navigate('/current-affairs')}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+          >
+            View All Current Affairs
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

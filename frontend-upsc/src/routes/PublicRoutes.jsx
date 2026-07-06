@@ -6,6 +6,7 @@ import {
   LegacyCurrentAffairsRedirect,
   LegacyMentorshipCoursesRedirect,
   LegacyPreparationBlogAliasRedirect,
+  LegacyProgramSlugRedirect,
 } from "./LegacyRedirects";
 
 // Lazy load components for better performance
@@ -151,11 +152,7 @@ const PublicRoutes = () => {
           <IntegratedMentorship2032 />
         </PublicLayout>
       } />
-      <Route path="/program/:slug" element={
-        <PublicLayout>
-          <DynamicImpLandingPage />
-        </PublicLayout>
-      } />
+      <Route path="/program/:slug" element={<LegacyProgramSlugRedirect />} />
 
       {/* Study Material Routes */}
       <Route path="/previous-year-papers" element={
@@ -261,6 +258,13 @@ const PublicRoutes = () => {
         </PublicLayout>
       } />
       <Route path="/blog/:slug" element={<LegacyPreparationBlogAliasRedirect />} />
+
+      {/* Dynamic course landing — slug at root (e.g. /super-5-batch-2028) */}
+      <Route path="/:slug" element={
+        <PublicLayout>
+          <DynamicImpLandingPage />
+        </PublicLayout>
+      } />
 
       {/* 404 Route */}
       <Route path="*" element={<NotFound />} />

@@ -3,9 +3,22 @@ import { useTheme } from "../contexts/ThemeContext";
 import { formatDate, formatRelativeTime } from "../utils/dateUtils";
 import { resolveCourseThumbnailUrl } from "../utils/mediaUrls";
 
-const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }) => {
+const CourseManagementCard = ({
+  item,
+  onEdit,
+  onDelete,
+  onView,
+  onToggleActive,
+  togglingActive = false,
+  className = "",
+}) => {
   const [imageError, setImageError] = useState(false);
+  const [isLive, setIsLive] = useState(item.isActive !== false);
   const { isDark } = useTheme();
+
+  useEffect(() => {
+    setIsLive(item.isActive !== false);
+  }, [item._id, item.isActive]);
 
   // Helper function to get initials for fallback avatar
   const getInitials = (name) => {
@@ -39,7 +52,42 @@ const CourseManagementCard = ({ item, onEdit, onDelete, onView, className = "" }
     setImageError(false);
   }, [thumbnailUrl]);
   return (
-    <div className={`group relative p-2 rounded-xl border-2 ${isDark ? 'border-gray-600 bg-gray-800' : 'border-blue-200 bg-white'} shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ${className}`}>
+    <div className={`group relative p-2 rounded-xl border-2 ${isDark ? 'border-gray-600 bg-gray-800' : 'border-blue-200 bg-white'} shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ${!isLive ? 'opacity-80' : ''} ${className}`}>
+      {/* Status + visibility toggle */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+        <span
+          className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full ${
+            isLive
+              ? "bg-green-100 text-green-700"
+              : "bg-gray-200 text-gray-600"
+          }`}
+        >
+          {isLive ? "Live" : "Hidden"}
+        </span>
+        <button
+          type="button"
+          disabled={togglingActive || !onToggleActive}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (togglingActive || !onToggleActive) return;
+            const next = !isLive;
+            setIsLive(next);
+            onToggleActive({ ...item, isActive: next });
+          }}
+          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-60 ${
+            isLive ? "bg-green-500" : isDark ? "bg-gray-600" : "bg-gray-300"
+          }`}
+          aria-label={isLive ? "Deactivate course" : "Activate course"}
+          title={isLive ? "Hide from public website" : "Show on public website"}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+              isLive ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+
       {/* Category Ribbon */}
       {item.category && (
         <div className="absolute -top-2 -left-2 z-20">
