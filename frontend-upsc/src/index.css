@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+/* Brand + accent palette for the Mains Answer Writing landing page (Tailwind v4 theme tokens) */
+@theme {
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #4f46e5;
+  --color-brand-600: #4338ca;
+  --color-brand-700: #3730a3;
+  --color-brand-800: #312e81;
+  --color-brand-900: #1e1b4b;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
+}
+
 /* Global font stack for consistent rendering */
 html,
 body,
@@ -26,7 +42,9 @@ body::-webkit-scrollbar {
 
 #root,
 .app-container {
-  overflow-x: hidden;
+  /* Use clip (not hidden) so these wrappers don't become scroll containers,
+     which would trap the sticky navbar. The page scroll stays on <body>. */
+  overflow-x: clip;
   max-width: 100%;
 }
 

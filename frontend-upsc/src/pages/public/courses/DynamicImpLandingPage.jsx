@@ -5,6 +5,9 @@ import IntegratedMentorship2027 from "./IntegratedMentorship2027";
 import IntegratedMentorship2028 from "./IntegratedMentorship2028";
 import IntegratedMentorship2029 from "./IntegratedMentorship2029";
 import IntegratedMentorship2030 from "./IntegratedMentorship2030";
+import MainsAnswerWritingProgram, {
+  MAINS_ANSWER_WRITING_SLUG,
+} from "./MainsAnswerWritingProgram";
 import { IMP_2027_SLUG } from "./imp2027DetailDefaults";
 import { IMP_2028_SLUG } from "./imp2028DetailDefaults";
 import { IMP_2029_SLUG } from "./imp2029DetailDefaults";
@@ -52,6 +55,7 @@ export default function DynamicImpLandingPage() {
     "super-5-batch-2028": <IntegratedMentorship2028 hideWeeklyPlan courseSlug="super-5-batch-2028" />,
     [IMP_2029_SLUG]: <IntegratedMentorship2029 />,
     "integrated-mentorship-2030": <IntegratedMentorship2030 />,
+    [MAINS_ANSWER_WRITING_SLUG]: <MainsAnswerWritingProgram />,
   };
 
   if (slugToComponent[canonicalSlug]) {

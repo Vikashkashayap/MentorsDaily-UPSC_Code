@@ -1,22 +1,43 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { getCourses, clearCoursesCache } from "../../../api/coreService";
 import CourseCard from "../../../components/CourseCard";
-import { sortMentorshipCourses } from "./mentorshipCourseSort";
+import { sortMentorshipCourses, courseGroup } from "./mentorshipCourseSort";
 import { COURSES_UPDATED_EVENT, unwrapCourseList } from "../courses/courseVisibility";
 
 const PAGE_SIZE = 12;
+
+const FILTERS = [
+  { id: "all", label: "All Programs" },
+  { id: "imp", label: "Integrated Mentorship" },
+  { id: "super5", label: "Super 5 Batch" },
+  { id: "other", label: "Specialized" },
+];
 
 const MentorshipCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const [expandedIdx, setExpandedIdx] = useState(null);
   const [couponTargetCourseId, setCouponTargetCourseId] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
   const hasMore = pagination ? page < pagination.totalPages : false;
+
+  const filterCounts = useMemo(() => {
+    const counts = { all: courses.length, imp: 0, super5: 0, other: 0 };
+    courses.forEach((c) => {
+      const g = courseGroup(c);
+      if (counts[g] !== undefined) counts[g] += 1;
+    });
+    return counts;
+  }, [courses]);
+
+  const filteredCourses = useMemo(() => {
+    if (activeFilter === "all") return courses;
+    return courses.filter((c) => courseGroup(c) === activeFilter);
+  }, [courses, activeFilter]);
 
   const fetchCourses = useCallback(async (pageNum = 1, append = false, { showLoading = true } = {}) => {
     if (append) setLoadingMore(true);
@@ -75,12 +96,36 @@ const MentorshipCourses = () => {
       {/* Courses Section */}
       <section className="w-full py-12 md:py-16">
         <div className="max-w-[1400px] xl:max-w-[1600px] mx-auto px-4 md:px-6">
-          {/* <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-10">
-            <span className="bg-gradient-to-r from-gray-900 via-gray-700 to-gray-600 bg-clip-text text-transparent">
-              Featured Courses
-            </span>
-            <div className="mt-4 w-24 h-1 mx-auto bg-gradient-to-r from-gray-800 to-gray-600 rounded-full"></div>
-          </h2> */}
+          {/* Category filters */}
+          {!loading && !error && courses.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2 mb-10">
+              {FILTERS.map((f) => {
+                const count = filterCounts[f.id] ?? 0;
+                if (f.id !== "all" && count === 0) return null;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setActiveFilter(f.id)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                      activeFilter === f.id
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                        : "bg-white text-gray-600 border border-gray-200 hover:border-blue-200 hover:text-blue-600"
+                    }`}
+                  >
+                    {f.label}
+                    <span
+                      className={`ml-1.5 text-xs ${
+                        activeFilter === f.id ? "text-blue-100" : "text-gray-400"
+                      }`}
+                    >
+                      ({count})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {loading ? (
@@ -101,29 +146,23 @@ const MentorshipCourses = () => {
               </>
             ) : error ? (
               <div className="col-span-full text-center text-red-600">{error}</div>
-            ) : courses.length === 0 ? (
+            ) : filteredCourses.length === 0 ? (
               <div className="col-span-full text-center text-gray-600">
                 No courses found.
               </div>
             ) : (
               <>
-                {courses.map((course, idx) => {
-                  const isExpanded = expandedIdx === idx;
-                  return (
-                    <div key={course._id || idx} className="h-full">
-                      <CourseCard
-                        {...course}
-                        expanded={isExpanded}
-                        inlineExpand={false}
-                        onToggle={() => setExpandedIdx(isExpanded ? null : idx)}
-                        overlayMode={isExpanded}
-                        couponTargetCourseId={couponTargetCourseId}
-                        onCouponTargetSelect={setCouponTargetCourseId}
-                        couponRadioName="mentorship-coupon-target"
-                      />
-                    </div>
-                  );
-                })}
+                {filteredCourses.map((course, idx) => (
+                  <div key={course._id || idx} className="h-full">
+                    <CourseCard
+                      {...course}
+                      variant="landing"
+                      couponTargetCourseId={couponTargetCourseId}
+                      onCouponTargetSelect={setCouponTargetCourseId}
+                      couponRadioName="mentorship-coupon-target"
+                    />
+                  </div>
+                ))}
                 {hasMore && (
                   <div className="col-span-full flex justify-center pt-6">
                     <button

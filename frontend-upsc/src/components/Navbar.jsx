@@ -91,6 +91,18 @@ export default function Navbar() {
     },
   ];
 
+  const flagshipProgramItems = [
+    {
+      path: "/mains-answer-writing-excellence-program",
+      label: "Mains Answer Writing",
+      timeline: "New",
+      dotClass: "bg-indigo-500",
+      hoverClass: "hover:bg-indigo-50 hover:text-indigo-700",
+      badgeClass: "bg-indigo-100 text-indigo-700",
+      mobileAccentClass: "bg-indigo-50 border-indigo-100",
+    },
+  ];
+
   const visibleMentorshipItems = useMemo(
     () => filterNavItemsByActiveCourses(mentorshipYearItems, activeCourseSlugs),
     [activeCourseSlugs]
@@ -546,6 +558,35 @@ export default function Navbar() {
                   ))}
                     </>
                   ) : null}
+                  <div className={`my-1 border-t ${isDark ? "border-gray-700" : "border-gray-100"}`} />
+                  <p
+                    className={`px-4 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider ${
+                      isDark ? "text-gray-500" : "text-gray-400"
+                    }`}
+                  >
+                    Answer Writing
+                  </p>
+                  {flagshipProgramItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`flex items-center justify-between px-4 py-3 text-sm rounded-lg transition-all duration-200 group ${
+                        isDark
+                          ? "text-gray-200 hover:bg-gray-700 hover:text-white"
+                          : `text-gray-700 ${item.hoverClass}`
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
+                        {item.label}
+                      </span>
+                      <span
+                        className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}
+                      >
+                        {item.timeline}
+                      </span>
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
@@ -911,6 +952,25 @@ export default function Navbar() {
                     ))}
                       </>
                     ) : null}
+                    <p className="px-2 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      Answer Writing
+                    </p>
+                    {flagshipProgramItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center justify-between px-3 py-2 text-sm text-gray-700 rounded-lg border transition-all duration-200 hover:shadow-sm ${item.mobileAccentClass}`}
+                      >
+                        <span className="flex items-center">
+                          <span className={`w-2 h-2 rounded-full mr-2.5 ${item.dotClass}`}></span>
+                          {item.label}
+                        </span>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${item.badgeClass}`}>
+                          {item.timeline}
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>

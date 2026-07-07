@@ -9,7 +9,7 @@ function deepClone(obj) {
 const SUPER5_CARD_FEATURES = [
   "All NCERTs & Standard Books Provided",
   "1 Mentor for Max 5 Students — Never More",
-  "Daily 1:1 Personalized Mentorship Sessions & Study Targets",
+  "Daily Group Mentorship Sessions & Study Targets",
   "AI Powered Student Dashboard",
   "Psychologist Support Sessions",
   "Prelims + Mains Test Series",
@@ -75,7 +75,7 @@ export function applySuper5BatchDetailOverrides(detail, year) {
 
   if (d.hero) {
     d.hero.cardTitle = batchLabel;
-    d.hero.cardSubtitle = "1 Mentor for Max 5 Students · Daily 1:1 Sessions";
+    d.hero.cardSubtitle = "1 Mentor for Max 5 Students · Daily Group Sessions";
     d.hero.cardBannerTitle = batchLabel.toUpperCase();
     d.hero.cardListingTitle = batchLabel;
     d.hero.perks = updatePerks(d.hero.perks);
