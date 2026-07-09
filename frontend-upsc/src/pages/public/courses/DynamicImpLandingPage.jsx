@@ -8,6 +8,12 @@ import IntegratedMentorship2030 from "./IntegratedMentorship2030";
 import MainsAnswerWritingProgram, {
   MAINS_ANSWER_WRITING_SLUG,
 } from "./MainsAnswerWritingProgram";
+import SociologyOptionalMentorship, {
+  SOCIOLOGY_OPTIONAL_SLUG,
+} from "./SociologyOptionalMentorship";
+import PsirOptionalMentorship, {
+  PSIR_OPTIONAL_SLUG,
+} from "./PsirOptionalMentorship";
 import { IMP_2027_SLUG } from "./imp2027DetailDefaults";
 import { IMP_2028_SLUG } from "./imp2028DetailDefaults";
 import { IMP_2029_SLUG } from "./imp2029DetailDefaults";
@@ -56,6 +62,10 @@ export default function DynamicImpLandingPage() {
     [IMP_2029_SLUG]: <IntegratedMentorship2029 />,
     "integrated-mentorship-2030": <IntegratedMentorship2030 />,
     [MAINS_ANSWER_WRITING_SLUG]: <MainsAnswerWritingProgram />,
+    [SOCIOLOGY_OPTIONAL_SLUG]: <SociologyOptionalMentorship />,
+    "sociology-optional-mentorship": <SociologyOptionalMentorship />,
+    [PSIR_OPTIONAL_SLUG]: <PsirOptionalMentorship />,
+    "psir-optional-mentorship": <PsirOptionalMentorship />,
   };
 
   if (slugToComponent[canonicalSlug]) {

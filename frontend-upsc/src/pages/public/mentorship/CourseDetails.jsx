@@ -255,8 +255,13 @@ const CourseDetails = () => {
     ? `/courses/${encodeURIComponent(String(course._id))}${courseSlug ? `/${encodeURIComponent(courseSlug)}` : ""}`
     : (category && title ? `/course/${encodeURIComponent(String(category))}/${encodeURIComponent(String(title))}` : "");
 
-  const seoTitle = course?.title ? optimizeTitle(`${stripHTML(course.title)} | MentorsDaily`) : "Course | MentorsDaily";
-  const seoDescriptionRaw = course?.shortDescription || course?.description || "";
+  const seoTitle = course?.metaTitle?.trim()
+    ? optimizeTitle(`${course.metaTitle.trim()} | MentorsDaily`)
+    : course?.title
+      ? optimizeTitle(`${stripHTML(course.title)} | MentorsDaily`)
+      : "Course | MentorsDaily";
+  const seoDescriptionRaw =
+    course?.metaDescription?.trim() || course?.shortDescription || course?.description || "";
   const seoDescription = optimizeDescription(stripHTML(seoDescriptionRaw));
 
   // Check if the course is an UPSC Integrated course

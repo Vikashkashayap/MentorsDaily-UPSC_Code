@@ -2,6 +2,9 @@ const courseService =require ("../services/course.service");
 const logger = require("../utility/logger");
 const { setBadRequest, setCreateSuccess, setServerError, setNotFoundError, setSuccess } = require("../utility/responseHelper");
 const { uploadFileService } = require("../services/uploadFiles.service.js");
+const { buildCourseMeta } = require("../utils/courseSeoHtml.js");
+const { isObjectIdString } = require("../utils/blogSeoHtml.js");
+const { decodePathSegment, rootSlugFromPathname } = require("../utils/courseSlugSeoPaths.js");
 
 /** @returns {object|undefined|false} parsed object, undefined if absent, false if invalid JSON */
 function parseDetailPageField(body) {
@@ -77,6 +80,10 @@ exports.createCourse = async (req, res) => {
     if (slug) {
       courseData.slug = slug;
     }
+
+    courseData.seoKeyword = String(req.body.seoKeyword ?? "").trim();
+    courseData.metaTitle = String(req.body.metaTitle ?? "").trim();
+    courseData.metaDescription = String(req.body.metaDescription ?? "").trim();
 
     const parsedDetail = parseDetailPageField(req.body);
     if (parsedDetail === false) {
@@ -196,6 +203,47 @@ exports.findCourseBySlug = async (req, res) => {
   } catch (err) {
     logger.error(`courseController.js <<findCourseBySlug<< ${err.message}`);
     setServerError(res, { message: err.message || 'Internal server error' });
+  }
+};
+
+/** Public: OG / social meta for course landing pages (WhatsApp, Facebook, etc.) */
+exports.getCourseMetaBySlug = async (req, res) => {
+  try {
+    let slug = decodePathSegment(req.params.slug);
+    if (!slug) {
+      return setBadRequest(res, { message: "Invalid course URL" });
+    }
+    const course = await courseService.findCourseBySlug(slug, { activeOnly: true });
+    if (!course) {
+      return setNotFoundError(res, { message: "Course not found" });
+    }
+    const pathname = `/${encodeURIComponent(slug)}`;
+    const meta = buildCourseMeta(course, process.env, pathname);
+    return setSuccess(res, { message: "Meta fetched successfully", data: meta });
+  } catch (err) {
+    logger.error(`courseController.js <<getCourseMetaBySlug<< ${err.message}`);
+    setServerError(res, { message: err.message || "Failed to fetch meta" });
+  }
+};
+
+/** Public: OG meta for /courses/:courseId detail URLs */
+exports.getCourseMetaById = async (req, res) => {
+  try {
+    const id = decodePathSegment(req.params.id);
+    if (!id || !isObjectIdString(id)) {
+      return setBadRequest(res, { message: "Invalid course id" });
+    }
+    const course = await courseService.findCourseById(id);
+    if (!course || course.isActive === false) {
+      return setNotFoundError(res, { message: "Course not found" });
+    }
+    const slugPart = course.slug ? encodeURIComponent(String(course.slug).trim()) : "course";
+    const pathname = `/courses/${id}/${slugPart}`;
+    const meta = buildCourseMeta(course, process.env, pathname);
+    return setSuccess(res, { message: "Meta fetched successfully", data: meta });
+  } catch (err) {
+    logger.error(`courseController.js <<getCourseMetaById<< ${err.message}`);
+    setServerError(res, { message: err.message || "Failed to fetch meta" });
   }
 };
 exports.updateCourse = async (req, res) => { 

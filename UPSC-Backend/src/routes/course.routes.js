@@ -11,6 +11,8 @@ const { uploadSingleWithContext } = require("../utility/multer.js");
 
 router.post("/create-course", verifyTokenAndAdmin, uploadSingleWithContext('thumbnail'), courseController.createCourse);
 router.get("/get-course", optionalAuth, courseController.findAllCourse);
+router.get("/course/meta/id/:id", courseController.getCourseMetaById);
+router.get("/course/meta/:slug", courseController.getCourseMetaBySlug);
 router.get("/course/slug/:slug", courseController.findCourseBySlug);
 router.get("/course/:id", auth, courseController.findCourseById);
 router.patch("/course/:id", verifyTokenAndAdmin, uploadSingleWithContext('thumbnail'), courseController.updateCourse);

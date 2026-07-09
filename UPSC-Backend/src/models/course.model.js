@@ -43,6 +43,22 @@ const courseSchema = new mongoose.Schema({
     sparse: true,
     unique: true,
   },
+  seoKeyword: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  metaTitle: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+  metaDescription: {
+    type: String,
+    trim: true,
+    maxlength: 320,
+    default: "",
+  },
   /** Structured copy for long-form course landing pages (admin-editable JSON) */
   detailPage: {
     type: mongoose.Schema.Types.Mixed,

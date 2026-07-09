@@ -93,3 +93,21 @@ export function getPreparationBlogOgImageUrl(blog) {
   }
   return `${base}${DEFAULT_OG_IMAGE_PATH}`;
 }
+
+/** Open Graph image for a course: S3 thumbnailUrl, then legacy upload ref. */
+export function getCourseOgImageUrl(course) {
+  if (!course) return toAbsoluteOgUrl(DEFAULT_OG_IMAGE_PATH);
+  const thumbUrl = course.thumbnailUrl && String(course.thumbnailUrl).trim();
+  if (thumbUrl && /^https?:\/\//i.test(thumbUrl)) {
+    return toAbsoluteOgUrl(thumbUrl);
+  }
+  const legacy = course.thumbnail;
+  const fileId = legacy && (legacy._id ?? legacy);
+  const api = getPublicApiOrigin();
+  if (fileId && api) {
+    const u = uploadedBlogImageUrl(fileId, api);
+    if (u) return u;
+  }
+  if (thumbUrl) return toAbsoluteOgUrl(thumbUrl);
+  return toAbsoluteOgUrl(DEFAULT_OG_IMAGE_PATH);
+}

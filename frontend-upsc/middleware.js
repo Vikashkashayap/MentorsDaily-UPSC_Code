@@ -14,6 +14,52 @@ const API_BASE = (
 const BOT_UA =
   /facebookexternalhit|Facebot|LinkedInBot|Twitterbot|Slackbot|Discordbot|WhatsApp|TelegramBot|Pinterest|vkShare|redditbot|Applebot|Googlebot|bingbot|YandexBot|Baiduspider/i;
 
+const RESERVED_ROOT_SLUGS = new Set([
+  'api',
+  'assets',
+  'images',
+  'logo',
+  'favicon.ico',
+  'favicon.png',
+  'apple-touch-icon.png',
+  'site.webmanifest',
+  'robots.txt',
+  'sitemap.xml',
+  'mentorship-courses',
+  'mentorshipcourses',
+  'login',
+  'register',
+  'home',
+  'admin',
+  'student',
+  'contact-us',
+  'about-us',
+  'privacy-policy',
+  'terms-and-conditions',
+  'refund-cancellation',
+  'careers',
+  'success-stories',
+  'budget-survey',
+  'preparation-blogs',
+  'preparation-blog',
+  'blog',
+  'current-affairs',
+  'currentaffairs',
+  'previous-year-papers',
+  'free-study-materials',
+  'free-resource',
+  'upsc-syllabus',
+  'download-ncerts',
+  'upsc-age-calculator',
+  'integrated-mentorship',
+  'program',
+  'courses',
+  'course',
+  'uppcs-mentorship',
+  'uppcs-mentorship-2027',
+  'mppsc-mentorship-2027',
+]);
+
 function stripHtml(html) {
   if (!html) return '';
   return String(html)
@@ -38,6 +84,14 @@ function normalizeToHttps(url, fallback) {
   if (raw.startsWith('//')) return `https:${raw}`;
   if (raw.startsWith('/')) return `${SITE_URL}${raw}`;
   return `${SITE_URL}/${raw.replace(/^\/+/, '')}`;
+}
+
+function isReservedRootSlug(slug) {
+  const s = String(slug || '').trim().toLowerCase();
+  if (!s) return true;
+  if (RESERVED_ROOT_SLUGS.has(s)) return true;
+  if (/\.[a-z0-9]{1,8}$/i.test(s)) return true;
+  return false;
 }
 
 function makeBotHtml({ title, description, canonical, imageUrl, type = 'article' }) {
@@ -77,6 +131,35 @@ function makeBotHtml({ title, description, canonical, imageUrl, type = 'article'
 </html>`;
 }
 
+async function fetchCourseMetaBySlug(slug) {
+  const metaRes = await fetch(`${API_BASE}/api/v1/course/meta/${encodeURIComponent(slug)}`, {
+    headers: { Accept: 'application/json' },
+  });
+  if (!metaRes.ok) return null;
+  const body = await metaRes.json();
+  return body?.data?.data || body?.data || null;
+}
+
+async function fetchCourseMetaById(courseId) {
+  const metaRes = await fetch(`${API_BASE}/api/v1/course/meta/id/${encodeURIComponent(courseId)}`, {
+    headers: { Accept: 'application/json' },
+  });
+  if (!metaRes.ok) return null;
+  const body = await metaRes.json();
+  return body?.data?.data || body?.data || null;
+}
+
+function botHtmlFromCourseMeta(meta, fallbackCanonical) {
+  if (!meta || typeof meta.title !== 'string') return null;
+  return makeBotHtml({
+    title: meta.title,
+    description: (meta.description && String(meta.description).trim()) || stripHtml(meta.title),
+    canonical: meta.url || fallbackCanonical,
+    imageUrl: normalizeToHttps(meta.image, `${SITE_URL}/images/hero.webp`),
+    type: 'website',
+  });
+}
+
 export default async function middleware(request) {
   const ua = request.headers.get('user-agent') || '';
   if (!BOT_UA.test(ua)) {
@@ -84,12 +167,10 @@ export default async function middleware(request) {
   }
 
   const url = new URL(request.url);
-  const prepMatch = url.pathname.match(/^\/preparation-blog\/([^/]+)\/?$/);
-  const currentAffairMatch = url.pathname.match(/^\/current-affairs\/([^/]+)\/?$/);
-  const courseMatch = url.pathname.match(/^\/(integrated-mentorship-\d{4})\/?$/);
-  if (!prepMatch && !currentAffairMatch && !courseMatch) return next();
+  const pathname = url.pathname;
 
   try {
+    const prepMatch = pathname.match(/^\/preparation-blog\/([^/]+)\/?$/);
     if (prepMatch) {
       const slug = decodeURIComponent(prepMatch[1]);
       const metaRes = await fetch(
@@ -116,6 +197,7 @@ export default async function middleware(request) {
       });
     }
 
+    const currentAffairMatch = pathname.match(/^\/current-affairs\/([^/]+)\/?$/);
     if (currentAffairMatch) {
       const slug = decodeURIComponent(currentAffairMatch[1]);
       const detailRes = await fetch(
@@ -142,23 +224,43 @@ export default async function middleware(request) {
       });
     }
 
-    if (courseMatch) {
-      const slug = decodeURIComponent(courseMatch[1]);
-      const courseRes = await fetch(
-        `${API_BASE}/api/v1/course/slug/${encodeURIComponent(slug)}`,
-        { headers: { Accept: 'application/json' } },
-      );
-      if (!courseRes.ok) return next();
-      const body = await courseRes.json();
-      const course = body?.data?.data;
-      if (!course || typeof course.title !== 'string') return next();
-      const html = makeBotHtml({
-        title: stripHtml(course.title),
-        description: stripHtml(course.description || course.title).slice(0, 180),
-        canonical: `${SITE_URL}/${encodeURIComponent(slug)}`,
-        imageUrl: normalizeToHttps(course.thumbnailUrl, `${SITE_URL}/images/hero.png`),
-        type: 'website',
+    const coursesByIdMatch = pathname.match(/^\/courses\/([^/]+)(?:\/[^/]+)?\/?$/);
+    if (coursesByIdMatch) {
+      const courseId = decodeURIComponent(coursesByIdMatch[1]);
+      const meta = await fetchCourseMetaById(courseId);
+      const html = botHtmlFromCourseMeta(meta, `${SITE_URL}${pathname}`);
+      if (!html) return next();
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900',
+        },
       });
+    }
+
+    const programMatch = pathname.match(/^\/program\/([^/]+)\/?$/);
+    if (programMatch) {
+      const slug = decodeURIComponent(programMatch[1]);
+      const meta = await fetchCourseMetaBySlug(slug);
+      const html = botHtmlFromCourseMeta(meta, `${SITE_URL}/program/${encodeURIComponent(slug)}`);
+      if (!html) return next();
+      return new Response(html, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900',
+        },
+      });
+    }
+
+    const rootMatch = pathname.match(/^\/([^/]+)\/?$/);
+    if (rootMatch) {
+      const slug = decodeURIComponent(rootMatch[1]);
+      if (isReservedRootSlug(slug)) return next();
+      const meta = await fetchCourseMetaBySlug(slug);
+      const html = botHtmlFromCourseMeta(meta, `${SITE_URL}/${encodeURIComponent(slug)}`);
+      if (!html) return next();
       return new Response(html, {
         status: 200,
         headers: {
@@ -175,5 +277,11 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/preparation-blog/:path*', '/current-affairs/:path*', '/integrated-mentorship-:year*'],
+  matcher: [
+    '/preparation-blog/:path*',
+    '/current-affairs/:path*',
+    '/courses/:path*',
+    '/program/:path*',
+    '/((?!api|assets|images|Logo|favicon|_next|.*\\..*).*)',
+  ],
 };

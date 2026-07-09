@@ -8,10 +8,14 @@ function buildCourseMeta(course, env = process.env, pathname = "/") {
   const siteUrl = (env.SITE_URL || env.FRONTEND_URL || "https://mentorsdaily.com").replace(/\/$/, "");
   const apiPublic = resolvePublicApiOrigin(env, siteUrl);
 
-  const plainTitle = stripHtmlTags(course?.title) || "MentorsDaily Course";
+  const plainTitle =
+    (course?.metaTitle && String(course.metaTitle).trim()) ||
+    stripHtmlTags(course?.title) ||
+    "MentorsDaily Course";
   const title = `${plainTitle} | MentorsDaily`;
 
   const rawDesc =
+    (course?.metaDescription && String(course.metaDescription).trim()) ||
     (course?.shortDescription && String(course.shortDescription).trim()) ||
     stripHtmlTags(course?.description).slice(0, 180) ||
     "Explore this course on MentorsDaily.";
@@ -30,7 +34,10 @@ function buildCourseMeta(course, env = process.env, pathname = "/") {
   const safePath = String(pathname || "/").startsWith("/") ? String(pathname || "/") : `/${String(pathname || "/")}`;
   const url = ensureHttps(`${siteUrl}${safePath}`);
 
-  return { title, description, image, url, pathname: safePath, plainTitle };
+  const keywords =
+    (course?.seoKeyword && String(course.seoKeyword).trim()) || "";
+
+  return { title, description, image, url, pathname: safePath, plainTitle, keywords };
 }
 
 function buildInjectedHeadFragment(meta) {
@@ -40,9 +47,13 @@ function buildInjectedHeadFragment(meta) {
   const u = escapeHtmlAttr(meta.url);
   const plain = escapeHtmlAttr(meta.plainTitle || stripHtmlTags(meta.title.replace(/\s*\|\s*MentorsDaily\s*$/i, "")));
   const secureImg = meta.image && String(meta.image).startsWith("https://") ? `<meta property="og:image:secure_url" content="${img}" />` : "";
+  const keywordsTag = meta.keywords
+    ? `<meta name="keywords" content="${escapeHtmlAttr(meta.keywords)}" />`
+    : "";
   return [
     `<title>${t}</title>`,
     `<meta name="description" content="${d}" />`,
+    keywordsTag,
     `<link rel="canonical" href="${u}" />`,
     `<meta property="og:title" content="${t}" />`,
     `<meta property="og:description" content="${d}" />`,

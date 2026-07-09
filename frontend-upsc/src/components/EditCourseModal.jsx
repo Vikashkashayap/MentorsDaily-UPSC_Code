@@ -28,6 +28,9 @@ const EditCourseModal = ({
     language: "English",
     thumbnail: null,
     slug: "",
+    seoKeyword: "",
+    metaTitle: "",
+    metaDescription: "",
   });
   
   const [previewUrl, setPreviewUrl] = useState("");
@@ -47,6 +50,9 @@ const EditCourseModal = ({
         language: course.language || "English",
         thumbnail: null,
         slug: course.slug || "",
+        seoKeyword: course.seoKeyword || "",
+        metaTitle: course.metaTitle || "",
+        metaDescription: course.metaDescription || "",
       });
 
       const thumb =
@@ -155,6 +161,9 @@ const EditCourseModal = ({
       if (editForm.slug != null && editForm.slug.trim() !== "") {
         formData.append('slug', editForm.slug.trim());
       }
+      formData.append('seoKeyword', editForm.seoKeyword.trim());
+      formData.append('metaTitle', editForm.metaTitle.trim());
+      formData.append('metaDescription', editForm.metaDescription.trim());
       
       if (editForm.thumbnail) {
         formData.append('thumbnail', editForm.thumbnail);
@@ -196,6 +205,9 @@ const EditCourseModal = ({
       language: "English",
       thumbnail: null,
       slug: "",
+      seoKeyword: "",
+      metaTitle: "",
+      metaDescription: "",
     });
     setPreviewUrl("");
     setMessage("");
@@ -391,6 +403,67 @@ const EditCourseModal = ({
                   <p className={`text-xs mt-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
                     Used for public landing URL lookup. Must be unique.
                   </p>
+                </div>
+
+                {/* SEO Settings */}
+                <div className={`rounded-lg border p-5 space-y-4 ${isDark ? 'border-gray-600 bg-gray-700/30' : 'border-gray-200 bg-gray-50'}`}>
+                  <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>SEO Settings</h3>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      SEO Focus Keyword
+                    </label>
+                    <input
+                      name="seoKeyword"
+                      type="text"
+                      value={editForm.seoKeyword}
+                      onChange={handleEditFormChange}
+                      placeholder="e.g., UPSC integrated mentorship"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Meta Title
+                      <span className={`ml-1 text-xs font-normal ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(ideal 50–60 chars)</span>
+                    </label>
+                    <input
+                      name="metaTitle"
+                      type="text"
+                      value={editForm.metaTitle}
+                      onChange={handleEditFormChange}
+                      maxLength={120}
+                      placeholder="Google title for this course"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                    />
+                    <div className="text-right mt-1">
+                      <span className={`text-xs ${editForm.metaTitle.length > 60 ? 'text-orange-500' : isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        {editForm.metaTitle.length}/60
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      Meta Description
+                      <span className={`ml-1 text-xs font-normal ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(ideal 120–160 chars)</span>
+                    </label>
+                    <textarea
+                      name="metaDescription"
+                      value={editForm.metaDescription}
+                      onChange={handleEditFormChange}
+                      rows={3}
+                      maxLength={320}
+                      placeholder="Short summary shown in Google search results"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'}`}
+                    />
+                    <div className="text-right mt-1">
+                      <span className={`text-xs ${editForm.metaDescription.length > 160 ? 'text-orange-500' : isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                        {editForm.metaDescription.length}/160
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
           {/* Thumbnail */}

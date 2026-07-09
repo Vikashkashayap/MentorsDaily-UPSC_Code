@@ -22,6 +22,9 @@ const CreateCourseForm = ({
     language: "English",
     thumbnail: null,
     slug: "",
+    seoKeyword: "",
+    metaTitle: "",
+    metaDescription: "",
   });
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -112,6 +115,9 @@ const CreateCourseForm = ({
       if (form.slug && form.slug.trim() !== "") {
         formData.append("slug", form.slug.trim());
       }
+      formData.append("seoKeyword", form.seoKeyword.trim());
+      formData.append("metaTitle", form.metaTitle.trim());
+      formData.append("metaDescription", form.metaDescription.trim());
       if (form.thumbnail) {
         formData.append('thumbnail', form.thumbnail);
       }
@@ -131,6 +137,9 @@ const CreateCourseForm = ({
         language: "English",
         thumbnail: null,
         slug: "",
+        seoKeyword: "",
+        metaTitle: "",
+        metaDescription: "",
       });
       setPreviewUrl("");
       
@@ -363,6 +372,73 @@ const CreateCourseForm = ({
                 <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
                   Public landing URL will be `/{'{slug}'}` (e.g. /super-5-batch-2028).
                 </p>
+              </div>
+
+              {/* SEO Settings */}
+              <div className={`rounded-lg border p-5 space-y-4 ${isDark ? 'border-gray-600 bg-gray-800/50' : 'border-gray-200 bg-gray-50'}`}>
+                <h3 className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>SEO Settings</h3>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    SEO Focus Keyword
+                  </label>
+                  <input
+                    type="text"
+                    name="seoKeyword"
+                    value={form.seoKeyword}
+                    onChange={handleFormChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
+                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                    placeholder="e.g., UPSC integrated mentorship"
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Meta Title
+                    <span className={`ml-1 text-xs font-normal ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(ideal 50–60 chars)</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="metaTitle"
+                    value={form.metaTitle}
+                    onChange={handleFormChange}
+                    maxLength={120}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${
+                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                    placeholder="Google title for this course"
+                  />
+                  <div className="text-right mt-1">
+                    <span className={`text-xs ${form.metaTitle.length > 60 ? 'text-orange-500' : isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {form.metaTitle.length}/60
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Meta Description
+                    <span className={`ml-1 text-xs font-normal ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>(ideal 120–160 chars)</span>
+                  </label>
+                  <textarea
+                    name="metaDescription"
+                    value={form.metaDescription}
+                    onChange={handleFormChange}
+                    rows={3}
+                    maxLength={320}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 resize-none ${
+                      isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                    placeholder="Short summary shown in Google search results"
+                  />
+                  <div className="text-right mt-1">
+                    <span className={`text-xs ${form.metaDescription.length > 160 ? 'text-orange-500' : isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      {form.metaDescription.length}/160
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Course Thumbnail */}

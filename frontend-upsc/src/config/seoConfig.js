@@ -124,6 +124,22 @@ export const PAGE_SEO_CONFIGS = {
     priority: 0.9,
     changefreq: 'weekly'
   },
+
+  '/sociology-optional-course': {
+    title: 'Sociology Optional Mentorship | UPSC Optional | MentorsDaily',
+    description: 'An always-running, join-anytime Sociology Optional mentorship built on the 3-Layer Sociological Mind (SML): See, Link, Argue. Daily Orbit + self-paced Foundation.',
+    keywords: 'UPSC Sociology Optional, sociology mentorship, sociology optional 2026, sociology answer writing, MentorsDaily',
+    priority: 0.9,
+    changefreq: 'weekly'
+  },
+
+  '/psir-optional-course': {
+    title: 'PSIR Optional Mentorship | UPSC Optional | MentorsDaily',
+    description: 'An always-running, join-anytime Political Science & International Relations (PSIR) Optional mentorship built on the 3-Layer Political Mind (PLM): See, Link, Argue. Daily Orbit + self-paced Foundation.',
+    keywords: 'UPSC PSIR Optional, political science mentorship, PSIR optional 2026, PSIR answer writing, international relations optional, MentorsDaily',
+    priority: 0.9,
+    changefreq: 'weekly'
+  },
   
   // Study Materials
   '/previous-year-papers': {

@@ -48,6 +48,7 @@ app.use((req, res, next) => {
   if (
     req.path.includes("/api/v1/get-course") ||
     req.path.includes("/api/v1/course/slug/") ||
+    req.path.includes("/api/v1/course/meta/") ||
     req.path.includes("/api/v1/get-affairs") ||
     req.path.includes("/api/v1/preparation/get-blog")
   ) {
@@ -105,11 +106,9 @@ if (FRONTEND_DIST) {
   const legacyBlogHtmlRoute = createPreparationBlogHtmlRouteHandler(distResolved, "/blog");
   const courseHtmlRoute = createCourseHtmlRouteHandler(distResolved);
 
-  // Explicit SSR-like entry route for social crawlers and first-page hits.
+  // Explicit SSR-like entry routes for social crawlers and first-page hits.
   app.get("/preparation-blog/:slug", preparationBlogHtmlRoute);
   app.get("/blog/:slug", legacyBlogHtmlRoute);
-  app.get("/integrated-mentorship-2031", courseHtmlRoute);
-  app.get("/integrated-mentorship-2032", courseHtmlRoute);
   app.get("/program/:slug", courseHtmlRoute);
   app.get("/courses/:courseId/:courseSlug?", courseHtmlRoute);
 

@@ -8,6 +8,8 @@ import {
 } from "../../../api/coreService";
 import PaymentForm from "../../../components/payment/PaymentForm";
 import CouponApplyBox from "../../../components/coupon/CouponApplyBox";
+import SEO from "../../../components/SEO/SEO";
+import { getCourseOgImageUrl } from "../../../utils/ogImageUrl";
 import "./mainsAnswerWritingExtras.css";
 
 export const MAINS_ANSWER_WRITING_SLUG = "mains-answer-writing-excellence-program";
@@ -511,12 +513,16 @@ export default function MainsAnswerWritingProgram() {
 
   return (
     <div className="maw-root bg-white text-gray-900 antialiased">
+      <SEO
+        title={course?.metaTitle || course?.title || "Mains Answer Writing Excellence Program"}
+        description={
+          course?.metaDescription ||
+          "A structured academic system for UPSC Mains answer writing built on the MentorsDaily Mains Excellence Framework (MMEF)."
+        }
+        image={getCourseOgImageUrl(course)}
+        url={`/${MAINS_ANSWER_WRITING_SLUG}`}
+      />
       <Helmet>
-        <title>Mains Answer Writing Excellence Program · MentorsDaily</title>
-        <meta
-          name="description"
-          content="A structured academic system for UPSC Mains answer writing. The MentorsDaily Mains Excellence Framework (MMEF): 21 named frameworks, the 9-Layer Answer Architecture, competency-based evaluation, and a deliberate improvement loop."
-        />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
