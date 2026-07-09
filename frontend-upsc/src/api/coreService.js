@@ -593,3 +593,35 @@ export const incrementPreparationBlogViews = async (id) => {
     throw error;
   }
 };
+
+// ============================================
+// SITE BANNERS
+// ============================================
+
+export const getSiteBanners = async () => {
+  try {
+    const response = await callApi({
+      endpoint: "api/v1/site-banners",
+      method: "GET",
+      requiresAuth: false,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching site banners:", error);
+    throw error;
+  }
+};
+
+export const updateSiteBanners = async (payload) => {
+  try {
+    const response = await callApi({
+      endpoint: "api/v1/admin/site-banners",
+      method: "POST",
+      body: payload,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating site banners:", error);
+    throw error;
+  }
+};

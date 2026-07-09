@@ -1,6 +1,8 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "../Navbar";
+import SiteBannerBar from "../SiteBannerBar";
+import { useSiteBanners } from "../../hooks/useSiteBanners";
 const Footer = lazy(() => import("../Footer"));
 const WatsupWidget = lazy(() => import("../../../src/pages/public/components/WatsupWidget"));
 const EnquiryWidget = lazy(() => import("../../pages/public/EnquiryWidget"));
@@ -16,6 +18,7 @@ export default function PublicLayout({
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const location = useLocation();
+  const { banners } = useSiteBanners();
 
   useEffect(() => {
     // Only show popup on the home page
@@ -57,10 +60,26 @@ export default function PublicLayout({
       <SEOHead pathname={location.pathname} />
       <MessageDisplay />
 
-      {/* Top Navbar */}
+      {/* Top mentorship banner — above navbar */}
+      {showNavbar && (
+        <SiteBannerBar
+          banner={banners.topBanner}
+          variant="top"
+          storageKey="md-dismiss-top-banner"
+        />
+      )}
+
+      {/* Navbar */}
       {showNavbar && <Navbar />}
 
-      
+      {/* Course offer banner — below navbar */}
+      {showNavbar && (
+        <SiteBannerBar
+          banner={banners.offerBanner}
+          variant="offer"
+          storageKey="md-dismiss-offer-banner"
+        />
+      )}
 
       {/* Page Content */}
       <main className="flex-1">{children}</main>

@@ -139,6 +139,7 @@ export default function Sidebar({ className = "", open: externalOpen, setOpen: s
         },
         { to: ROUTES.ADMIN_PAYMENTS, label: "Payments", icon: "credit-card" },
         { to: ROUTES.ADMIN_USERS, label: "Users", icon: "users" },
+        { to: ROUTES.ADMIN_SETTINGS, label: PAGE_NAMES.ADMIN_SETTINGS, icon: "help" },
       ],
     },
   ];

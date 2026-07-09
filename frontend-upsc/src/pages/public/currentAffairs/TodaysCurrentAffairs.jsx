@@ -69,6 +69,12 @@ const TodaysCurrentAffairs = () => {
     fetchTodaysPosts(true);
   };
 
+  const getGridColsClass = (count) => {
+    if (count === 1) return "grid-cols-1 max-w-md mx-auto";
+    if (count === 2) return "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto";
+    return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+  };
+
   const compactHtml = (html = "") => {
     try {
       return html
@@ -180,7 +186,7 @@ const TodaysCurrentAffairs = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className={`grid ${getGridColsClass(todaysPosts.length)} gap-6`}>
           {todaysPosts.map((post) => (
             <article
               key={post._id}

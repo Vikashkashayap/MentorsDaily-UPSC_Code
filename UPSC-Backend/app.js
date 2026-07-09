@@ -18,6 +18,7 @@ const axios = require('axios');
 const preparationBlogRoutes = require('./src/routes/preparationBlog.routes.js')
 const previousYearPaperRoutes = require('./src/routes/previousYearPaper.routes.js')
 const couponRoutes = require("./src/routes/coupon.routes.js");
+const siteBannerRoutes = require("./src/routes/siteBanner.routes.js");
 const { getPreparationBlogsSitemapXml } = require('./src/controllers/preparationBlog.controller.js')
 
 connectDB();
@@ -78,6 +79,7 @@ app.use('/api/v1', freeResourceRoutes);
 app.use('/api/v1', preparationBlogRoutes);
 app.use('/api/v1', previousYearPaperRoutes)
 app.use("/api/v1", couponRoutes);
+app.use("/api/v1", siteBannerRoutes);
 
 const FRONTEND_DIST = process.env.FRONTEND_DIST;
 

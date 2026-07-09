@@ -12,7 +12,6 @@ const Blog = lazy(() => import("./Blog"));
 const PaymentForm = lazy(() => import("../../components/payment/PaymentForm.jsx"));
 const TodaysCurrentAffairs = lazy(() => import("./currentAffairs/TodaysCurrentAffairs"));
 import ScholarshipAnnouncement from "./Announcement";
-import MentorshipBanner from "../../components/MentorshipBanner";
 import ContactForm from "../../pages/public/components/Form.jsx";
 import DeferredSection from "../../components/utility/DeferredSection.jsx";
 import { SEO_CONFIG } from "../../utils/seoUtils";
@@ -144,9 +143,6 @@ const LandingPage = () => {
       </Helmet>
 
       <main id="landing-page-content">
-      {/* Mentorship Banner */}
-      <MentorshipBanner />
-
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-5 pointer-events-none" aria-hidden="true" />
         <HeroSection onEnquiryClick={() => setShowEnquiryForm(true)} />

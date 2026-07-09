@@ -136,7 +136,7 @@ body::-webkit-scrollbar {
 /* Banner sliding animation */
 @keyframes slide-right-to-left {
   0% {
-    transform: translateX(0%);
+    transform: translateX(0);
   }
 
   100% {
@@ -145,7 +145,11 @@ body::-webkit-scrollbar {
 }
 
 .animate-slide-right-to-left {
-  animation: slide-right-to-left 12s linear infinite;
+  animation: slide-right-to-left 22s linear infinite;
+}
+
+.site-banner-marquee {
+  will-change: transform;
 }
 
 /* 360-degree rotation for content */
