@@ -586,10 +586,11 @@ export default function MainsAnswerWritingProgram() {
                 Enroll — Founding Cohort
               </a>
               <a
-                href="#curriculum"
+                href="/brochures/MentorsDaily_Answer_Writing_Brochure.pdf"
+                download="MentorsDaily_Answer_Writing_Brochure.pdf"
                 className="inline-flex px-6 py-3 text-base font-semibold text-brand-700 bg-white border border-brand-100 rounded-xl hover:border-brand-200"
               >
-                See the full curriculum
+                Download Brochure
               </a>
             </div>
 
@@ -1371,10 +1372,11 @@ export default function MainsAnswerWritingProgram() {
               Apply for the Founding Cohort
             </a>
             <a
-              href="#curriculum"
+              href="/brochures/MentorsDaily_Answer_Writing_Brochure.pdf"
+              download="MentorsDaily_Answer_Writing_Brochure.pdf"
               className="inline-flex px-7 py-3.5 text-base font-semibold text-white border border-white/25 rounded-xl hover:bg-white/10"
             >
-              Review the curriculum
+              Download Brochure
             </a>
           </div>
         </div>
