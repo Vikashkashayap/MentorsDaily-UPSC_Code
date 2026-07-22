@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 // Use coreService.js for all current affairs API calls
 import { fetchCurrentAffairs, getAvailableSubjects } from '../../api/coreService';
 import { decodeHtmlEntities, stripHTML } from '../../utils/seoUtils';
+import { normalizeMediaUrl } from '../../utils/mediaUrls';
 
 const CurrentAffairsDashboard = () => {
   const [affairs, setAffairs] = useState([]);
@@ -119,7 +120,7 @@ const CurrentAffairsDashboard = () => {
             <div key={affair._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               {affair.thumbnailUrl && (
                 <img
-                  src={affair.thumbnailUrl}
+                  src={normalizeMediaUrl(affair.thumbnailUrl)}
                   alt={affair.title}
                   className="w-full h-48 object-cover"
                 />

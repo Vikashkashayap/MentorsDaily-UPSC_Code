@@ -4,6 +4,7 @@ import { fetchCurrentAffairs, fetchCurrentAffairById, fetchCurrentAffairBySlug }
 import SEOHead from "../../../components/SEO/SEOHead";
 import { slugify, decodeHtmlEntities } from "../../../utils/seoUtils";
 import { formatDate } from "../../../utils/dateUtils";
+import { normalizeMediaUrl } from "../../../utils/mediaUrls";
 
 const CurrentAffairDetail = () => {
   const navigate = useNavigate();
@@ -254,7 +255,7 @@ const CurrentAffairDetail = () => {
 
             {post.thumbnailUrl && (
               <img
-                src={post.thumbnailUrl}
+                src={normalizeMediaUrl(post.thumbnailUrl)}
                 alt={post.title}
                 className="w-full max-h-[60vh] object-contain rounded-xl shadow mb-6"
               />

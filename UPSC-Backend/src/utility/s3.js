@@ -1,6 +1,6 @@
 const path = require("path");
 const crypto = require("crypto");
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
 
 let _client;
 
@@ -73,17 +73,74 @@ function buildObjectKey(folder, originalname, mimetype) {
 }
 
 function publicUrlForKey(key) {
-  const custom = String(process.env.AWS_S3_PUBLIC_BASE_URL || "").trim().replace(/\/$/, "");
   const encoded = String(key)
     .split("/")
     .map((seg) => encodeURIComponent(seg))
     .join("/");
+
+  // Optional CDN / custom public origin (CloudFront, etc.)
+  const custom = String(process.env.AWS_S3_PUBLIC_BASE_URL || "")
+    .trim()
+    .replace(/\/$/, "");
   if (custom) {
     return `${custom}/${encoded}`;
   }
+
   const bucket = getBucket();
   const region = getRegion();
   return `https://${bucket}.s3.${region}.amazonaws.com/${encoded}`;
+}
+
+/**
+ * Rewrite localhost media-proxy URLs to the public S3 object URL.
+ * Keeps already-public S3/CDN URLs unchanged.
+ */
+function toPublicMediaUrl(url) {
+  if (!url || typeof url !== "string") return url;
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+
+  const mediaMatch = trimmed.match(
+    /^https?:\/\/[^/]+\/api\/v1\/media\/(uploads\/(?:images|pdfs|thumbnails)\/[^/?#]+)/i
+  );
+  if (mediaMatch) {
+    return publicUrlForKey(decodeURIComponent(mediaMatch[1]));
+  }
+
+  // Old bucket name → current bucket (same key path), if still used in DB.
+  const oldBucket = String(process.env.AWS_LEGACY_BUCKET_NAME || "mentorsdaily-bucket").trim();
+  if (oldBucket) {
+    const legacy = new RegExp(
+      `^https?:\\/\\/${oldBucket.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\.s3[.-][^/]+\\.amazonaws\\.com\\/(uploads\\/(?:images|pdfs|thumbnails)\\/[^/?#]+)`,
+      "i"
+    );
+    const m = trimmed.match(legacy);
+    if (m) {
+      return publicUrlForKey(decodeURIComponent(m[1]));
+    }
+  }
+
+  return trimmed;
+}
+
+/**
+ * Fetch an object from S3 (for /api/v1/media proxy).
+ * @param {string} key
+ */
+async function getObject(key) {
+  const client = getS3Client();
+  const out = await client.send(
+    new GetObjectCommand({
+      Bucket: getBucket(),
+      Key: key,
+    })
+  );
+  return {
+    body: out.Body,
+    contentType: out.ContentType || "application/octet-stream",
+    contentLength: out.ContentLength,
+    cacheControl: out.CacheControl,
+  };
 }
 
 function isRetryableS3Error(err) {
@@ -157,7 +214,9 @@ module.exports = {
   getS3Client,
   buildObjectKey,
   publicUrlForKey,
+  toPublicMediaUrl,
   putObjectWithRetry,
   uploadBuffer,
+  getObject,
   extensionForUpload,
 };

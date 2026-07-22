@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Calendar, User, Search, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getPreparationBlogs } from '../../api/coreService';
+import { normalizeMediaUrl } from '../../utils/mediaUrls';
 
 const PAGE_SIZE = 6;
 const SEARCH_DEBOUNCE_MS = 350;
@@ -201,7 +202,7 @@ const PreparationBlogs = () => {
                       {(() => {
                         const api = import.meta.env.VITE_API_URL;
                         const cover =
-                          (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                          (blog.thumbnailUrl && normalizeMediaUrl(String(blog.thumbnailUrl).trim())) ||
                           (blog.file?.contentType?.startsWith('image/') && blog.file?._id
                             ? `${api}/api/v1/download/${blog.file._id}`
                             : null);

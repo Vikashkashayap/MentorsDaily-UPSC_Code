@@ -5,10 +5,43 @@ export function getApiBase() {
   return (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 }
 
+/** Public S3 origin for uploaded media (must match backend AWS_BUCKET_NAME region). */
+export function getS3PublicBase() {
+  const fromEnv = (import.meta.env.VITE_S3_PUBLIC_BASE_URL || "").trim().replace(/\/$/, "");
+  if (fromEnv) return fromEnv;
+  return "https://mentorsdaily-images.s3.ap-south-1.amazonaws.com";
+}
+
+/**
+ * Normalize stored media URLs so the browser loads from public S3,
+ * even if DB still has localhost /api/v1/media proxy links.
+ */
+export function normalizeMediaUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("data:")) return trimmed;
+
+  const mediaMatch = trimmed.match(
+    /\/api\/v1\/media\/(uploads\/(?:images|pdfs|thumbnails)\/[^/?#]+)/i
+  );
+  if (mediaMatch) {
+    return `${getS3PublicBase()}/${mediaMatch[1]}`;
+  }
+
+  // Old bucket hostname → current public bucket (same object key).
+  return trimmed.replace(
+    /https?:\/\/mentorsdaily-bucket\.s3[.-][^/]+\.amazonaws\.com/i,
+    getS3PublicBase()
+  );
+}
+
 export function resolveLegacyUploadThumb(thumb) {
   if (!thumb) return null;
   if (typeof thumb === "string") {
-    if (/^https?:\/\//i.test(thumb) || thumb.startsWith("data:")) return thumb;
+    if (/^https?:\/\//i.test(thumb) || thumb.startsWith("data:")) {
+      return normalizeMediaUrl(thumb);
+    }
     return null;
   }
   if (thumb.data) {
@@ -34,7 +67,7 @@ export function resolveFreeResourcePdfUrl(resource) {
   if (!resource) return null;
   const direct = resource.pdfUrl;
   if (direct && /^https?:\/\//i.test(String(direct).trim())) {
-    return String(direct).trim();
+    return normalizeMediaUrl(String(direct).trim());
   }
   const id = resource.fileId?._id ?? resource.fileId;
   if (id) {
@@ -48,7 +81,7 @@ export function resolveBlogCoverUrl(blog, fileBase) {
   if (!blog) return null;
   const tu = blog.thumbnailUrl || blog.thumbnail;
   if (tu && /^https?:\/\//i.test(String(tu).trim())) {
-    return String(tu).trim();
+    return normalizeMediaUrl(String(tu).trim());
   }
   if (tu && String(tu).startsWith("data:")) return String(tu);
   const base = (fileBase || getApiBase()).replace(/\/$/, "");
@@ -63,7 +96,7 @@ export function resolveBlogPdfOrViewUrl(blog, fileBase) {
   if (!blog) return null;
   const pu = blog.pdfUrl;
   if (pu && /^https?:\/\//i.test(String(pu).trim())) {
-    return String(pu).trim();
+    return normalizeMediaUrl(String(pu).trim());
   }
   const base = (fileBase || getApiBase()).replace(/\/$/, "");
   if (blog.file?._id) {

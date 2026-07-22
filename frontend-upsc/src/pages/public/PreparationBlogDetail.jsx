@@ -7,6 +7,7 @@ import {
   getPublicApiOrigin,
   getPreparationBlogOgImageUrl,
 } from '../../utils/ogImageUrl';
+import { normalizeMediaUrl } from '../../utils/mediaUrls';
 
 const parseComparisonRows = (html = '') => {
   if (!html) return [];
@@ -217,12 +218,12 @@ const PreparationBlogDetail = () => {
           <div className="w-full aspect-[1200/630] overflow-hidden relative bg-gray-100">
             {(() => {
               const heroImage =
-                (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                (blog.thumbnailUrl && normalizeMediaUrl(String(blog.thumbnailUrl).trim())) ||
                 (blog.file?.contentType?.startsWith('image/') && blog.file?._id && fileBase
                   ? `${fileBase}/api/v1/view/${blog.file._id}`
                   : null);
               const embedUrl =
-                (blog.pdfUrl && String(blog.pdfUrl).trim()) ||
+                (blog.pdfUrl && normalizeMediaUrl(String(blog.pdfUrl).trim())) ||
                 (blog.file?._id && fileBase ? `${fileBase}/api/v1/view/${blog.file._id}` : null);
               const isPdf =
                 (blog.pdfUrl && /\.pdf($|\?)/i.test(blog.pdfUrl)) ||

@@ -9,6 +9,7 @@ import {
 import { dataHandler } from '../../utils/dataHandler';
 import RichTextField from '../../components/RichTextField';
 import FormattingToolbar from '../../components/FormattingToolbar';
+import { normalizeMediaUrl } from '../../utils/mediaUrls';
 
 const ManagePreparationBlogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -345,7 +346,7 @@ const ManagePreparationBlogs = () => {
                 {(() => {
                   const api = import.meta.env.VITE_API_URL;
                   const cover =
-                    (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) ||
+                    (blog.thumbnailUrl && normalizeMediaUrl(String(blog.thumbnailUrl).trim())) ||
                     (blog.file?.contentType?.startsWith('image/') && blog.file?._id
                       ? `${api}/api/v1/download/${blog.file._id}`
                       : null);

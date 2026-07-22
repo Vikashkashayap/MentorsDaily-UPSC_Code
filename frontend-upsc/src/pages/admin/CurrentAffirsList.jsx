@@ -10,6 +10,7 @@ import { messageHandler } from "../../utils/messageHandler";
 import { useTheme } from "../../contexts/ThemeContext";
 import { decodeHtmlEntities } from "../../utils/seoUtils";
 import { formatDate } from "../../utils/dateUtils";
+import { normalizeMediaUrl } from "../../utils/mediaUrls";
 
 export default function CurrentAffirsList() {
   const { isDark } = useTheme();
@@ -327,7 +328,7 @@ export default function CurrentAffirsList() {
               <div className="relative h-48 overflow-hidden">
                 {item.thumbnailUrl ? (
                   <img
-                    src={item.thumbnailUrl}
+                    src={normalizeMediaUrl(item.thumbnailUrl)}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -584,7 +585,7 @@ export default function CurrentAffirsList() {
                             {editThumbnailPreview ? "New preview" : "Current thumbnail"}
                           </p>
                           <img
-                            src={editThumbnailPreview || editForm.thumbnailUrl}
+                            src={editThumbnailPreview || normalizeMediaUrl(editForm.thumbnailUrl)}
                             alt=""
                             className="max-h-36 rounded-lg border border-gray-200 dark:border-gray-600 object-cover"
                           />
@@ -665,7 +666,7 @@ export default function CurrentAffirsList() {
                 {viewAffair.thumbnailUrl && (
                   <div className="w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
                     <img
-                      src={viewAffair.thumbnailUrl}
+                      src={normalizeMediaUrl(viewAffair.thumbnailUrl)}
                       alt={viewAffair.title}
                       className="w-full h-auto object-contain max-h-96"
                       style={{ minHeight: '200px' }}

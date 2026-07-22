@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPreparationBlogs } from "../../api/coreService";
 import SectionHeading from "../../components/ui/SectionHeading";
+import { normalizeMediaUrl } from "../../utils/mediaUrls";
 
 const BlogCard = ({ title, subtitle, image, to, category, imageAlt }) => {
   return (
@@ -78,7 +79,7 @@ const Blog = () => {
 
   const getBlogImage = (blog) => {
       if (blog.thumbnailUrl && String(blog.thumbnailUrl).trim()) {
-        return String(blog.thumbnailUrl).trim();
+        return normalizeMediaUrl(String(blog.thumbnailUrl).trim());
       }
       if (blog.file?._id && blog.file?.contentType?.startsWith('image/')) {
           return `${import.meta.env.VITE_API_URL}/api/v1/download/${blog.file._id}`;

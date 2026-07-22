@@ -4,6 +4,7 @@ import { slugify, decodeHtmlEntities, stripHTML } from "../../../utils/seoUtils"
 import { fetchCurrentAffairs } from "../../../api/coreService";
 import { formatDate } from "../../../utils/dateUtils";
 import SectionHeading from "../../../components/ui/SectionHeading";
+import { normalizeMediaUrl } from "../../../utils/mediaUrls";
 
 const TodaysCurrentAffairs = () => {
   const navigate = useNavigate();
@@ -198,7 +199,7 @@ const TodaysCurrentAffairs = () => {
                   onClick={() => navigate(`/current-affairs/${slugify(post.title || "")}`)}
                 >
                   <img
-                    src={post.thumbnailUrl}
+                    src={normalizeMediaUrl(post.thumbnailUrl)}
                     alt={post.title}
                     className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
                   />

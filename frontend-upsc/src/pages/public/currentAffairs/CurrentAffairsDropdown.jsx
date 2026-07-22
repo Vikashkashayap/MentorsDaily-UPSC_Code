@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { fetchCurrentAffairs } from "../../../api/coreService";
 import { slugify, decodeHtmlEntities, stripHTML } from "../../../utils/seoUtils";
 import SEOHead from "../../../components/SEO/SEOHead";
+import { normalizeMediaUrl } from "../../../utils/mediaUrls";
 
 
 export default function CurrentAffairsDropdown() {
@@ -457,7 +458,7 @@ export default function CurrentAffairsDropdown() {
                       <div className="relative h-28 sm:h-32 lg:h-36">
                         {item.thumbnailUrl ? (
                           <img
-                            src={item.thumbnailUrl}
+                            src={normalizeMediaUrl(item.thumbnailUrl)}
                             alt={item.title || "Current Affairs Article"}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             itemProp="image"
