@@ -21,8 +21,8 @@ import {
 function Imp2031DetailSkeleton() {
   return (
     <div className="bg-white overflow-x-hidden pb-10 animate-pulse">
-      <div className="h-10 bg-[#0D2240]" />
-      <section className="bg-gradient-to-br from-[#0D2240] via-[#1A3C6E] to-[#1e4d82] pt-16 pb-14">
+      <div className="h-10 bg-[#1E1B4B]" />
+      <section className="bg-gradient-to-br from-[#1E1B4B] via-[#312E81] to-[#3730A3] pt-16 pb-14">
         <div className="max-w-[1180px] mx-auto px-6 grid lg:grid-cols-[1fr_420px] gap-14 lg:gap-16 items-start">
           <div>
             <div className="h-7 w-44 rounded-full bg-white/20 mb-6" />
@@ -265,7 +265,7 @@ export default function IntegratedMentorship2031() {
       {showPaymentForm && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl relative overflow-hidden">
-            <div className="bg-gradient-to-r from-[#1A3C6E] to-[#24527A] p-4 text-white">
+            <div className="bg-gradient-to-r from-[#312E81] to-[#4338CA] p-4 text-white">
               <h3 className="text-xl font-semibold">
                 Enroll in <span dangerouslySetInnerHTML={{ __html: paymentCourseBase.title }} />
                 <span className="block text-sm font-normal text-white/90 mt-1">Plan: Daily Mentorship</span>

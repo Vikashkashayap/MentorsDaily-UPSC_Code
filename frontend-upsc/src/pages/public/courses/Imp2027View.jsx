@@ -217,6 +217,13 @@ export default function Imp2027View({
               >
                 <DynIcon name="Compass" size={18} /> Explore Program
               </a>
+              <a
+                href="/brochures/MentorsDaily-UPSC-2027-Brochure.pdf"
+                download="MentorsDaily-UPSC-2027-Brochure.pdf"
+                className="inline-flex items-center gap-2 border-2 border-white/40 text-white font-['Poppins'] font-semibold px-7 py-3 rounded-lg hover:bg-white/10 transition-colors duration-200"
+              >
+                <DynIcon name="Download" size={18} /> Download Brochure
+              </a>
             </div>
             <div className="imp-fade-up delay-3 flex items-center gap-2 text-sm text-white/55">
               <span

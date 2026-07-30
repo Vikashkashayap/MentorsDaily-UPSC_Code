@@ -554,7 +554,6 @@ export default function Navbar() {
                         <span className={`w-2.5 h-2.5 rounded-full mr-3 ${item.dotClass}`}></span>
                         {item.label}
                       </span>
-                      
                     </Link>
                   ))}
                   {visibleSuper5Items.length > 0 ? (

@@ -1,15 +1,15 @@
-/* Scoped landing page extras (IMP 2031 — indigo theme). */
+/* Scoped landing page extras (IMP 2030 — teal theme). */
 
-.imp2031-root {
+.imp2030-root {
   font-family: "Inter", system-ui, sans-serif;
   color: var(--imp-dark-txt);
-  --imp-navy: #312e81;
-  --imp-navy-dk: #1e1b4b;
-  --imp-navy-lt: #4338ca;
-  --imp-orange: #6366f1;
-  --imp-orange-lt: #e0e7ff;
-  --imp-sky: #e0e7ff;
-  --imp-sky-dk: #818cf8;
+  --imp-navy: #115e59;
+  --imp-navy-dk: #042f2e;
+  --imp-navy-lt: #0f766e;
+  --imp-orange: #0d9488;
+  --imp-orange-lt: #ccfbf1;
+  --imp-sky: #ccfbf1;
+  --imp-sky-dk: #14b8a6;
   --imp-green: #2d7d4e;
   --imp-green-lt: #d1fae5;
   --imp-gold: #f59e0b;
@@ -20,10 +20,10 @@
   --imp-white: #ffffff;
 }
 
-.imp2031-root h1,
-.imp2031-root h2,
-.imp2031-root h3,
-.imp2031-root h4 {
+.imp2030-root h1,
+.imp2030-root h2,
+.imp2030-root h3,
+.imp2030-root h4 {
   font-family: "Poppins", system-ui, sans-serif;
 }
 
@@ -66,15 +66,15 @@
   );
 }
 
-.imp2031-root .imp-timeline-scroll::-webkit-scrollbar {
+.imp2030-root .imp-timeline-scroll::-webkit-scrollbar {
   height: 6px;
 }
-.imp2031-root .imp-timeline-scroll::-webkit-scrollbar-track {
+.imp2030-root .imp-timeline-scroll::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
 }
-.imp2031-root .imp-timeline-scroll::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.65);
+.imp2030-root .imp-timeline-scroll::-webkit-scrollbar-thumb {
+  background: rgba(13, 148, 136, 0.65);
   border-radius: 999px;
 }
 

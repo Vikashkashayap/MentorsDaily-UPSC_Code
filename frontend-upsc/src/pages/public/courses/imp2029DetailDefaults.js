@@ -160,7 +160,7 @@ export function getDefaultImp2029DetailPage() {
         { type: "text", f: "Practice Hub (topic-wise questions)", d: "Unlimited", w: "Limited" },
       ],
       helpHtml:
-        'Questions about which plan is right for you? <a class="text-[#E86B2A] font-semibold underline-offset-2 hover:underline" href="https://wa.me/918766233193" target="_blank" rel="noreferrer">Chat with us on WhatsApp</a> and we\'ll help you decide.',
+        'Questions about which plan is right for you? <a class="text-[#2563EB] font-semibold underline-offset-2 hover:underline" href="https://wa.me/918766233193" target="_blank" rel="noreferrer">Chat with us on WhatsApp</a> and we\'ll help you decide.',
     },
     uspSection: {
       tag: "Our 3 Guarantees",
@@ -214,11 +214,11 @@ export function getDefaultImp2029DetailPage() {
       sub: "IMP 2029 students get exclusive access to a personalised digital dashboard that tracks every dimension of their UPSC preparation in real time.",
       cards: [
         { title: "Module Roadmap", body: "Visual journey of your entire 48-month syllabus broken into structured, week-by-week modules. Always know what's next.", icon: "Map", accent: "border-[#1A3C6E]", iconShell: "bg-[#EEF3FA] text-[#1A3C6E]" },
-        { title: "Daily and Weekly Target System", body: "Auto-generated daily and weekly goals based on your progress, pace, and upcoming milestones. Stay on track without guesswork.", icon: "Target", accent: "border-[#E86B2A]", iconShell: "bg-[#FDE8D8] text-[#E86B2A]" },
+        { title: "Daily and Weekly Target System", body: "Auto-generated daily and weekly goals based on your progress, pace, and upcoming milestones. Stay on track without guesswork.", icon: "Target", accent: "border-[#2563EB]", iconShell: "bg-[#DBEAFE] text-[#1A3C6E]" },
         { title: "Syllabus Tracker", body: "Mark topics as Learned, In Progress, or Pending. Get a bird's-eye view of your coverage across all GS papers and optional.", icon: "ListChecks", accent: "border-[#2D7D4E]", iconShell: "bg-[#D1FAE5] text-[#2D7D4E]" },
         { title: "UPSC-Style Mock Tests", body: "Take full-length, UPSC pattern tests directly from your dashboard. Get instant scores, solutions, and topic-wise rank analysis.", icon: "FileCheck2", accent: "border-[#7C3AED]", iconShell: "bg-[#EDE9FE] text-[#7C3AED]", note: "Full Access · Both Plans", noteTone: "text-[#2D7D4E]" },
         { title: "Fault Analysis", body: "Identifies recurring error patterns across your mock tests — by topic, question type, and difficulty — so you fix weaknesses, not symptoms.", icon: "Search", accent: "border-[#F59E0B]", iconShell: "bg-[#FEF9C3] text-[#CA8A04]" },
-        { title: "Practice Hub", body: "Access 20,000+ curated questions organised by subject, topic, and difficulty level. Drill any area of the syllabus on demand.", icon: "Dumbbell", accent: "border-[#5B8DB8]", iconShell: "bg-[#D5E8F0] text-[#1A3C6E]", note: "Full Access · Daily Plan", noteTone: "text-[#2D7D4E]", note2: "Limited · Weekly Plan", note2Tone: "text-[#E86B2A]" },
+        { title: "Practice Hub", body: "Access 20,000+ curated questions organised by subject, topic, and difficulty level. Drill any area of the syllabus on demand.", icon: "Dumbbell", accent: "border-[#5B8DB8]", iconShell: "bg-[#D5E8F0] text-[#1A3C6E]", note: "Full Access · Daily Plan", noteTone: "text-[#2D7D4E]", note2: "Limited · Weekly Plan", note2Tone: "text-[#2563EB]" },
         { title: "Live Progress Dashboard", body: "Real-time visual graphs of your performance across all modules, answer writing scores, and mock test trends — updated after every activity.", icon: "BarChart3", accent: "border-[#2D3A8C]", iconShell: "bg-[#E0E7FF] text-[#2D3A8C]" },
         {
           title: "AI Mentor",
@@ -236,12 +236,12 @@ export function getDefaultImp2029DetailPage() {
       title: "Your Road to UPSC 2029 — Phase by Phase",
       sub: "A structured roadmap from April 2026 to April 2030, covering every stage of UPSC preparation with zero gaps.",
       phases: [
-        { numLabel: "1", color: "#E86B2A", sub: "Phase 1", label: "Orientation & Foundation" },
+        { numLabel: "1", color: "#2563EB", sub: "Phase 1", label: "Orientation & Foundation" },
         { numLabel: "2", color: "#24527A", sub: "Phase 2", label: "NCERTs & Core Concepts" },
         { numLabel: "3", color: "#5B8DB8", sub: "Phase 3", label: "GS Papers 1–4 + Workshops" },
         { numLabel: "4", color: "#24527A", sub: "Phase 4", label: "Integrated Revision + Current Affairs" },
         { numLabel: "5", color: "#5B8DB8", sub: "Phase 5", label: "Full Mock Test Series" },
-        { numLabel: "6", color: "#E86B2A", sub: "Phase 6", label: "Prelims Final Sprint" },
+        { numLabel: "6", color: "#2563EB", sub: "Phase 6", label: "Prelims Final Sprint" },
         { numLabel: "🎯", color: "#2D7D4E", sub: "Phase 7", label: "PRELIMS EXAM", highlight: true },
         { numLabel: "7", color: "#24527A", sub: "Phase 8", label: "Mains Answer Writing Intensive" },
         { numLabel: "8", color: "#5B8DB8", sub: "Phase 9", label: "MAINS + INTERVIEW" },

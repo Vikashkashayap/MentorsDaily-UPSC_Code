@@ -17,6 +17,7 @@ import PsirOptionalMentorship, {
 import { IMP_2027_SLUG } from "./imp2027DetailDefaults";
 import { IMP_2028_SLUG } from "./imp2028DetailDefaults";
 import { IMP_2029_SLUG } from "./imp2029DetailDefaults";
+import { IMP_2030_SLUG } from "./imp2030DetailDefaults";
 import SEO from "../../../components/SEO/SEO";
 
 const LEGACY_SLUG_ALIASES = {
@@ -24,12 +25,12 @@ const LEGACY_SLUG_ALIASES = {
   "integrated mentorship 2027": IMP_2027_SLUG,
   "integrated mentorship 2028": IMP_2028_SLUG,
   "integrated mentorship 2029": IMP_2029_SLUG,
-  "integrated mentorship 2030": "integrated-mentorship-2030",
+  "integrated mentorship 2030": IMP_2030_SLUG,
   "imp-2026": "integrated-mentorship-2026",
   "imp-2027": IMP_2027_SLUG,
   "imp-2028": IMP_2028_SLUG,
   "imp-2029": IMP_2029_SLUG,
-  "imp-2030": "integrated-mentorship-2030",
+  "imp-2030": IMP_2030_SLUG,
 };
 
 const normalizeSlug = (value = "") => {
@@ -60,7 +61,7 @@ export default function DynamicImpLandingPage() {
     "super-5-batch-2027": <IntegratedMentorship2027 hideWeeklyPlan courseSlug="super-5-batch-2027" />,
     "super-5-batch-2028": <IntegratedMentorship2028 hideWeeklyPlan courseSlug="super-5-batch-2028" />,
     [IMP_2029_SLUG]: <IntegratedMentorship2029 />,
-    "integrated-mentorship-2030": <IntegratedMentorship2030 />,
+    [IMP_2030_SLUG]: <IntegratedMentorship2030 />,
     [MAINS_ANSWER_WRITING_SLUG]: <MainsAnswerWritingProgram />,
     [SOCIOLOGY_OPTIONAL_SLUG]: <SociologyOptionalMentorship />,
     "sociology-optional-mentorship": <SociologyOptionalMentorship />,
