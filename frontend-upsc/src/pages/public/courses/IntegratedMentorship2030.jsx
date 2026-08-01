@@ -89,7 +89,7 @@ function Imp2030DetailSkeleton() {
   );
 }
 
-export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, hideWeeklyPlan = true }) {
+export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, hideWeeklyPlan = false }) {
   const [course, setCourse] = useState(null);
   const [detail, setDetail] = useState(() => getDefaultImp2030DetailPage());
   const slugToFetch = courseSlug || IMP_2030_SLUG;
