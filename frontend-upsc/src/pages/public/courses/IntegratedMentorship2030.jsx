@@ -93,6 +93,7 @@ export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, h
   const [course, setCourse] = useState(null);
   const [detail, setDetail] = useState(() => getDefaultImp2030DetailPage());
   const slugToFetch = courseSlug || IMP_2030_SLUG;
+  const isSuper5Batch = /super-5-batch/i.test(slugToFetch);
   const [loading, setLoading] = useState(true);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [showEnquiryForm, setShowEnquiryForm] = useState(false);
@@ -122,13 +123,13 @@ export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, h
           setCourse(c);
           const merged = mergeImpDetailPage(base, c.detailPage || {});
           let next = applyCoursePricingToImpDetail(merged, { ...c, slug: c.slug || slugToFetch });
-          if (hideWeeklyPlan) {
+          if (isSuper5Batch) {
             next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
           }
           setDetail(next);
         } else {
           let next = base;
-          if (hideWeeklyPlan) {
+          if (isSuper5Batch) {
             next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
           }
           setDetail(next);
@@ -137,7 +138,7 @@ export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, h
         console.error(e);
         if (!cancelled) {
           let next = getDefaultImp2030DetailPage();
-          if (hideWeeklyPlan) {
+          if (isSuper5Batch) {
             next = applySuper5BatchDetailOverrides(next, extractYearFromSlug(slugToFetch));
           }
           setDetail(next);
@@ -149,7 +150,7 @@ export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, h
     return () => {
       cancelled = true;
     };
-  }, [slugToFetch, hideWeeklyPlan]);
+  }, [slugToFetch, isSuper5Batch]);
 
   useEffect(() => {
     if (showPaymentForm) document.body.style.overflow = "hidden";
@@ -447,7 +448,7 @@ export default function IntegratedMentorship2030({ courseSlug = IMP_2030_SLUG, h
                 {enrollPlan === "weekly" || enrollPlan === "daily" ? (
                   <span className="block text-sm font-normal text-white/90 mt-1">
                     Plan:{" "}
-                    {hideWeeklyPlan
+                    {isSuper5Batch
                       ? `Super 5 Batch ${extractYearFromSlug(slugToFetch)}`
                       : enrollPlan === "daily"
                         ? "Daily Mentorship"
