@@ -61,7 +61,7 @@ export default function DynamicImpLandingPage() {
     "super-5-batch-2027": <IntegratedMentorship2027 hideWeeklyPlan courseSlug="super-5-batch-2027" />,
     "super-5-batch-2028": <IntegratedMentorship2028 hideWeeklyPlan courseSlug="super-5-batch-2028" />,
     [IMP_2029_SLUG]: <IntegratedMentorship2029 />,
-    [IMP_2030_SLUG]: <IntegratedMentorship2030 />,
+    [IMP_2030_SLUG]: <IntegratedMentorship2030 hideWeeklyPlan />,
     [MAINS_ANSWER_WRITING_SLUG]: <MainsAnswerWritingProgram />,
     [SOCIOLOGY_OPTIONAL_SLUG]: <SociologyOptionalMentorship />,
     "sociology-optional-mentorship": <SociologyOptionalMentorship />,

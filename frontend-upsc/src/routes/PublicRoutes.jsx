@@ -139,7 +139,7 @@ const PublicRoutes = () => {
       } />
       <Route path="/integrated-mentorship-2030" element={
         <PublicLayout>
-          <IntegratedMentorship2030 />
+          <IntegratedMentorship2030 hideWeeklyPlan />
         </PublicLayout>
       } />
       <Route path="/integrated-mentorship-2031" element={
