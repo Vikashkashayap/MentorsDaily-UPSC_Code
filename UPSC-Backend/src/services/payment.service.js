@@ -230,18 +230,25 @@ exports.initiateCoursePayment = async (data) => {
         ? Number(planAmount)
         : null;
     const fromCourse = course.sellingPrice != null ? Number(course.sellingPrice) : null;
+    // Landing-page slug prices (UPPCS/MPPSC/IMP) override MongoDB sellingPrice so Razorpay matches the page fee.
     const fromSlugFull =
-      !mentorshipPlan && courseSlug != null && String(courseSlug).trim() && fromCourse == null
+      !mentorshipPlan && courseSlug != null && String(courseSlug).trim()
         ? resolveFullPayAmountBySlug(courseSlug)
         : null;
     let totalCourseAmount =
       fromPlan != null
         ? fromPlan
-        : fromCourse != null
-          ? fromCourse
-          : fromSlugFull != null
-            ? fromSlugFull
+        : fromSlugFull != null
+          ? fromSlugFull
+          : fromCourse != null
+            ? fromCourse
             : NaN;
+
+    if (fromSlugFull != null && fromCourse != null && fromSlugFull !== fromCourse) {
+        logger.info(
+            `paymentService.js <<initiateCoursePayment>> slug=${courseSlug} amount=${fromSlugFull} (overrides DB sellingPrice=${fromCourse})`
+        );
+    }
 
     let appliedCouponCode = null;
     let couponDiscountAmount = 0;
